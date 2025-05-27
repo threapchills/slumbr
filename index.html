@@ -169,43 +169,42 @@
             border-radius: 8px;
         }
 
-        /* Position elements according to your layout */
+          /* Position elements according to your layout */
         .channel.sky {
-            left: calc(28% - 47.5px); /* 47.5px is half of channel width 95px */
-            top: calc(54% - 120px);  /* 120px is half of channel height 240px, top refers to center Y */
-                                     /* Original Kivy: {"center_x": .28, "center_y": .54} */
+            left: calc(28% - 47.5px);
+            top: calc(58% - 120px);
         }
 
         .channel.fire {
             left: calc(74% - 47.5px);
-            top: calc(54% - 120px);
+            top: calc(58% - 120px);
         }
 
         .channel.earth {
             left: calc(27% - 47.5px);
-            top: calc(28% - 120px); /* Original Kivy: {"center_x": .27, "center_y": .28} */
+            top: calc(80% - 120px);
         }
 
         .channel.sea {
             left: calc(73% - 47.5px);
-            top: calc(28% - 120px);
+            top: calc(80% - 120px);
         }
 
-        .control-knob.astral { /* Small knob: 50px width */
-            left: calc(38% - 25px); /* 25px is half of 50px */
-            top: calc(68% - 25px - 18px);  /* center_y: .68. Knob is 50px, readout ~18px. */
-                                     /* Let's position the top of the control-knob div */
+        .control-knob.astral {
+            left: calc(38% - 25px);
+            top: calc(28% - 25px);
         }
 
         .control-knob.lucid {
             left: calc(62% - 25px);
-            top: calc(68% - 25px - 18px);
+            top: calc(28% - 25px);
         }
 
-        .control-knob.master { /* Large knob: 175px width */
-            left: calc(50% - 87.5px); /* 87.5px is half of 175px */
-            top: calc(37% - 87.5px - 24px); /* center_y: .37. Knob is 175px, readout ~24px */
+        .control-knob.master {
+            left: calc(50% - 87.5px);
+            top: calc(64% - 87.5px);
         }
+
         
         /* Corrected flex order for earth & sea */
         .channel.earth .channel-content,
