@@ -13,16 +13,17 @@
 
         body {
             font-family: Arial, sans-serif;
-            background: #1a1a2e;
+            background: #1a1a2e; /* Base background for the page */
             overflow: hidden;
             user-select: none;
+            color: white; 
         }
 
         .app-container {
             width: 540px;
             height: 835px;
             position: relative;
-            margin: 0 auto;
+            margin: 20px auto; 
             background-image: url('background.png');
             background-size: cover;
             background-position: center;
@@ -31,13 +32,13 @@
 
         .channel {
             position: absolute;
-            display: flex;
+            display: flex; 
             flex-direction: column;
             align-items: center;
             width: 95px;
-            height: 240px;
-            gap: 4px;
-            padding: 4px;
+            height: 240px; 
+            padding: 4px; /* Keep outer padding for the channel block */
+            /* gap: 4px; This gap is for items *within* .channel, if it had direct children other than .channel-content */
         }
 
         .knob-container {
@@ -48,19 +49,18 @@
 
         .knob-slider {
             position: absolute;
-            width: 75px;
-            height: 75px;
+            width: 100%; 
+            height: 100%;
             opacity: 0;
             cursor: pointer;
             z-index: 2;
-            /* For vertical knobs, we might need to use input type range and transform it if pure CSS,
-               but here it's an invisible overlay. For actual rotation use a library or complex CSS. */
+            margin: 0; 
         }
 
         .knob-image {
             position: absolute;
-            width: 75px;
-            height: 75px;
+            width: 100%;
+            height: 100%;
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -70,7 +70,7 @@
         }
 
         .knob-readout {
-            width: 75px;
+            width: 75px; 
             height: 24px;
             text-align: center;
             font-size: 12px;
@@ -81,23 +81,44 @@
         .channel-spinner {
             width: 90px;
             height: 36px;
-            background: transparent;
+            background: transparent; /* The select box itself */
             border: 1.5px solid rgba(58, 137, 255, 0.4);
             border-radius: 8px;
-            color: white;
+            color: white; /* Text color of the selected item shown in the box */
             font-size: 18px;
-            text-align: center;
+            text-align: center; 
+            text-align-last: center;
             cursor: pointer;
-            padding: 0 8px;
-            -webkit-appearance: none; /* For Safari/Chrome */
-            -moz-appearance: none; /* For Firefox */
-            appearance: none; /* Standard */
+            padding: 0 4px; 
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
 
         .channel-spinner:focus {
             outline: none;
             border-color: rgba(58, 137, 255, 0.8);
         }
+
+        /* Styling for the dropdown list options */
+        select.channel-spinner option {
+            background-color: #1f1f3d; /* Dark background for options */
+            color: white; /* White text for options */
+            font-size: 16px; /* Slightly smaller font for dropdown if needed */
+        }
+        
+        /* Optional: Style for hovered option, though browser usually handles this */
+        select.channel-spinner option:hover {
+            background-color: #3c3c5d; 
+        }
+
+        /* Optional: Style for the selected option within the opened dropdown */
+        /* This is often controlled by browser/OS default highlighting */
+        select.channel-spinner option:checked {
+             /* background-color: #00375e; /* Example: a different background for checked in dropdown */
+             /* font-weight: bold; */ /* Already usually bolded by browser */
+        }
+
 
         .control-knob {
             position: absolute;
@@ -106,62 +127,31 @@
             align-items: center;
         }
 
-        .control-knob.small {
-            width: 50px;
-            /* height: auto; Height is determined by content + readout below */
-        }
-         .control-knob.small .knob-container {  width: 50px; height: 50px; }
-         .control-knob.small .knob-slider { width: 50px; height: 50px; }
-         .control-knob.small .knob-image { width: 50px; height: 50px; }
+        .control-knob.small .knob-container { width: 50px; height: 50px; }
+        .control-knob.small .knob-readout { width: 50px; font-size: 10px; height: 18px; line-height: 18px; margin-top: 2px;}
 
-
-        .control-knob.large {
-            width: 175px;
-            /* height: auto; */
-        }
         .control-knob.large .knob-container { width: 175px; height: 175px; }
-        .control-knob.large .knob-slider { width: 175px; height: 175px; }
-        .control-knob.large .knob-image { width: 175px; height: 175px; }
+        .control-knob.large .knob-readout { width: 175px; font-size: 14px; height: 24px; line-height: 24px; margin-top: 5px;}
 
-
-        .control-knob .knob-readout {
-            color: white;
-            text-align: center;
-            margin-top: 4px; /* Consistent small gap */
-        }
-
-        .control-knob.small .knob-readout {
-            font-size: 10px;
-            width: 50px; /* Match knob */
-            height: 18px;
-            line-height: 18px;
-        }
-
-        .control-knob.large .knob-readout {
-            font-size: 14px;
-            width: 175px; /* Match knob */
-            height: 24px;
-            line-height: 24px;
-        }
 
         .save-load-buttons {
             position: absolute;
-            bottom: 8px; /* As per original */
+            bottom: 8px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 20px; /* As per original */
+            gap: 20px;
         }
 
         .save-load-button {
             width: 120px;
-            height: 80px; /* As per original */
+            height: 80px;
             background: transparent;
             border: none;
             color: white;
             font-size: 18px;
             cursor: pointer;
-            padding: 10px; /* As per original */
+            padding: 10px;
         }
 
         .save-load-button:hover {
@@ -169,7 +159,7 @@
             border-radius: 8px;
         }
 
-          /* Position elements according to your layout */
+        /* Position elements according to your layout */
         .channel.sky {
             left: calc(28% - 47.5px);
             top: calc(58% - 120px);
@@ -204,41 +194,32 @@
             left: calc(50% - 87.5px);
             top: calc(64% - 87.5px);
         }
-
         
-        /* Corrected flex order for earth & sea */
-        .channel.earth .channel-content,
-        .channel.sea .channel-content {
-            display: flex;
-            flex-direction: column; /* Spinner first, then knob area, then readout */
-        }
-         .channel.earth .channel-content > .channel-spinner { order: 1; }
-         .channel.earth .channel-content > .knob-container { order: 2; }
-         .channel.earth .channel-content > .knob-readout { order: 3; }
-
-         .channel.sea .channel-content > .channel-spinner { order: 1; }
-         .channel.sea .channel-content > .knob-container { order: 2; }
-         .channel.sea .channel-content > .knob-readout { order: 3; }
-
-
-        /* Sky and Fire channels have knob at top */
-         .channel.sky .channel-content > .knob-container { order: 1; }
-         .channel.sky .channel-content > .knob-readout { order: 2; }
-         .channel.sky .channel-content > .channel-spinner { order: 3; }
-
-         .channel.fire .channel-content > .knob-container { order: 1; }
-         .channel.fire .channel-content > .knob-readout { order: 2; }
-         .channel.fire .channel-content > .channel-spinner { order: 3; }
-
-
         .channel-content {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px; /* As per original */
+            justify-content: space-between; 
+            gap: 8px; /* Increased gap slightly for better separation */
             height: 100%;
-            justify-content: space-around; /* Helps distribute items */
+            width: 100%;
         }
+
+        /* Flex order for channel items */
+        .channel.earth .channel-content > .channel-spinner,
+        .channel.sea .channel-content > .channel-spinner { order: 1; }
+        .channel.earth .channel-content > .knob-container,
+        .channel.sea .channel-content > .knob-container { order: 2; }
+        .channel.earth .channel-content > .knob-readout,
+        .channel.sea .channel-content > .knob-readout { order: 3; }
+
+        .channel.sky .channel-content > .knob-container,
+        .channel.fire .channel-content > .knob-container { order: 1; }
+        .channel.sky .channel-content > .knob-readout,
+        .channel.fire .channel-content > .knob-readout { order: 2; }
+        .channel.sky .channel-content > .channel-spinner,
+        .channel.fire .channel-content > .channel-spinner { order: 3; }
+
 
         .loading-indicator {
             position: absolute;
@@ -248,28 +229,20 @@
             color: white;
             font-size: 18px;
             text-align: center;
+            padding: 20px;
+            background-color: rgba(0,0,0,0.5);
+            border-radius: 8px;
         }
 
-        @media (max-width: 600px) { /* Original was 600px, should be less than app width */
+        @media (max-width: 560px) { 
             .app-container {
-                /* Adjust scale and origin to better fit smaller screens */
-                width: 100%; /* Make it responsive within reason */
-                max-width: 540px; /* Keep max size */
-                height: auto; /* Adjust height proportionally */
-                padding-bottom: 154.63%; /* Aspect ratio 835/540 */
-                margin: 10px auto;
-                transform: none; /* Remove fixed scaling if width is handled */
+                width: 100%;
+                height: auto;
+                padding-bottom: 154.63%; 
+                margin: 5px auto; 
+                border: none;
             }
         }
-         @media (max-height: 850px) and (min-width: 541px) { /* If height is constrained on desktop-like views */
-            .app-container {
-                height: 100vh; /* Full viewport height */
-                width: calc(100vh * (540 / 835)); /* Maintain aspect ratio based on height */
-                padding-bottom: 0;
-            }
-        }
-
-
     </style>
 </head>
 <body>
@@ -389,15 +362,14 @@
             constructor() {
                 this.audioContext = null;
                 this.isInitialized = false;
-                this.channels = {}; // Will store gain nodes, sources, LFO controls etc.
+                this.channels = {};
                 this.masterGain = null;
                 this.limiter = null;
                 
-                this.lucidLFOComponents = {}; // For Lucid amplitude LFOs
-                this.astralLFOs = {};         // For Astral filter frequency LFOs
-                this.astralFilters = {};      // Storing BiquadFilterNodes for Astral
+                this.lucidLFOComponents = {}; 
+                this.astralLFOs = {};        
+                this.astralFilters = {};     
 
-                // Initial values matching Python (used if no saved state)
                 this.INITIAL_SETTINGS = {
                     master: 0.77, sky: 0.53, fire: 0.59, earth: 0.50, sea: 0.55,
                     astral: 0.82, lucid: 0.92
@@ -426,339 +398,337 @@
                     }
                 };
                 this.orderedChannelNames = ['sky', 'fire', 'earth', 'sea'];
-
-
                 this.initializeEventListeners();
             }
 
             async initialize() {
                 if (this.isInitialized) return;
-                if (this.audioContext) { // Resume if suspended
-                    if (this.audioContext.state === 'suspended') {
-                        await this.audioContext.resume();
-                    }
-                    // If already running, no need to re-init fully, but this path shouldn't be common here
-                    return; 
-                }
+                if (this.audioContext && this.audioContext.state === 'running') return;
 
-
+                const loadingIndicator = document.getElementById('loadingIndicator');
                 try {
-                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    await this.setupAudioGraph(); // Sets up master, limiter, and calls setupChannelAudio
-                    this.startLFOs();             // Initializes and starts LFOs after graph is ready
-                    await this.loadAllSounds();   // Loads sounds and starts initial playback
+                    if (!this.audioContext) {
+                        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        console.log("AudioContext created. State:", this.audioContext.state);
+                    }
+                    
+                    if (this.audioContext.state === 'suspended') {
+                        console.log("AudioContext is suspended, attempting to resume...");
+                        await this.audioContext.resume();
+                        console.log("AudioContext resumed. State:", this.audioContext.state);
+                    }
+                    
+                    if (this.audioContext.state !== 'running') {
+                        loadingIndicator.textContent = 'AudioContext not running. Click again.';
+                        console.warn('AudioContext not running after attempt to resume. State:', this.audioContext.state);
+                        const clickListener = async () => {
+                           if (!this.isInitialized && this.audioContext && this.audioContext.state !== 'running') {
+                               console.log("Retrying AudioContext resume/start on click...");
+                               await this.initialize(); 
+                           }
+                        };
+                        if (this.boundInitializeListener) { // Remove previous if it exists
+                            document.removeEventListener('click', this.boundInitializeListener);
+                        }
+                        this.boundInitializeListener = clickListener; 
+                        document.addEventListener('click', this.boundInitializeListener, { once: true });
+                        return;
+                    }
+
+                    this.setupAudioGraph(); 
+                    this.startLFOs(); 
+                    await this.loadAllSounds(); 
                     
                     this.isInitialized = true;
-                    document.getElementById('loadingIndicator').style.display = 'none';
-                    this.loadState(); // Load saved state or apply initial defaults
-                    console.log('SLUMBR initialized successfully');
+                    loadingIndicator.style.display = 'none';
+                    this.loadState(); 
+                    console.log('SLUMBR initialized successfully. AudioContext State:', this.audioContext.state);
+
                 } catch (error) {
                     console.error('Failed to initialize SLUMBR:', error);
-                    const indicator = document.getElementById('loadingIndicator');
-                    indicator.textContent = 'Error initializing audio. Please try refreshing.';
-                    indicator.style.color = 'red';
+                    loadingIndicator.textContent = `Error: ${error.message}. Try refreshing.`;
+                    loadingIndicator.style.color = 'red';
                 }
             }
 
-            async setupAudioGraph() {
-                // Master gain
+            setupAudioGraph() { 
+                if (!this.audioContext) { console.error("setupAudioGraph called without audioContext."); return; }
+                console.log("Setting up audio graph...");
+
                 this.masterGain = this.audioContext.createGain();
                 this.masterGain.gain.value = this.INITIAL_SETTINGS.master;
 
-                // Master limiter
                 this.limiter = this.audioContext.createDynamicsCompressor();
-                this.limiter.threshold.value = -0.1;
-                this.limiter.knee.value = 0;
-                this.limiter.ratio.value = 20;
-                this.limiter.attack.value = 0.001;
+                this.limiter.threshold.value = -0.1; this.limiter.knee.value = 0;
+                this.limiter.ratio.value = 20; this.limiter.attack.value = 0.001;
                 this.limiter.release.value = 0.05;
 
                 this.masterGain.connect(this.limiter);
                 this.limiter.connect(this.audioContext.destination);
 
-                // Setup channel audio graphs
                 for (const channelName of this.orderedChannelNames) {
                      this.setupChannelAudio(channelName);
                 }
+                console.log("Audio graph setup complete.");
             }
 
             setupChannelAudio(channelName) {
                 const channel = {};
                 this.channels[channelName] = channel;
 
-                // 1. Main Volume Gain for this channel (controlled by its slider)
                 channel.gain = this.audioContext.createGain();
                 channel.gain.gain.value = this.channelData[channelName].initialVolume;
 
-
-                // 2. Lucid Effect Gain Node (its .gain param is modulated by Lucid logic)
                 channel.lucidEffectGainNode = this.audioContext.createGain();
                 channel.gain.connect(channel.lucidEffectGainNode);
 
-
-                // 3. Astral Filter and Wet Gain
                 channel.astralFilter = this.audioContext.createBiquadFilter();
-                channel.astralFilter.type = 'bandpass'; // Pyo Biquadx type=2 is bandpass
-                channel.astralFilter.frequency.value = 7000; // Base, will be LFO modulated
-                channel.astralFilter.Q.value = 1.2;    // Pyo default Q
+                channel.astralFilter.type = 'bandpass';
+                channel.astralFilter.frequency.value = 7000; 
+                channel.astralFilter.Q.value = 1.2;    
 
                 channel.astralWetGain = this.audioContext.createGain();
-                channel.astralWetGain.gain.value = this.INITIAL_SETTINGS.astral; // Initial gain from Astral knob
+                // Initial astral knob value will be applied via loadState or HTML default + event listener
+                const astralSliderElement = document.getElementById('astralSlider');
+                channel.astralWetGain.gain.value = astralSliderElement ? parseFloat(astralSliderElement.value) / 100 : this.INITIAL_SETTINGS.astral;
 
-                // Routing: Lucid output feeds both master directly AND astral filter
-                channel.lucidEffectGainNode.connect(this.masterGain); // Path 1 (env part)
-                channel.lucidEffectGainNode.connect(channel.astralFilter); // Path 2 (input to astral filter)
+
+                channel.lucidEffectGainNode.connect(this.masterGain); 
+                channel.lucidEffectGainNode.connect(channel.astralFilter); 
                 
                 channel.astralFilter.connect(channel.astralWetGain);
-                channel.astralWetGain.connect(this.masterGain); // Astral wet signal summed at master
+                channel.astralWetGain.connect(this.masterGain); 
 
-                this.astralFilters[channelName] = channel.astralFilter; // For LFO connection
+                this.astralFilters[channelName] = channel.astralFilter;
 
-                // --- Components for controlling lucidEffectGainNode.gain ---
-                // These create the (1-L)*1 + L*LFO_ENV effect
-                const dcOneNode = this.audioContext.createConstantSource();
+                const dcOneNode = this.audioContext.createConstantSource(); 
                 dcOneNode.offset.value = 1.0;
                 dcOneNode.start();
 
-                const dryMixGain = this.audioContext.createGain();
-                dryMixGain.gain.value = 1.0 - this.INITIAL_SETTINGS.lucid; // Initial L=INITIAL_SETTINGS.lucid
+                const lucidSliderElement = document.getElementById('lucidSlider');
+                const initialLucidValue = lucidSliderElement ? parseFloat(lucidSliderElement.value) / 100 : this.INITIAL_SETTINGS.lucid;
 
-                const wetMixGain = this.audioContext.createGain();
-                wetMixGain.gain.value = this.INITIAL_SETTINGS.lucid;   // Initial L
+                const dryMixGain = this.audioContext.createGain(); 
+                dryMixGain.gain.value = 1.0 - initialLucidValue; 
+
+                const wetMixGain = this.audioContext.createGain(); 
+                wetMixGain.gain.value = initialLucidValue;   
 
                 dcOneNode.connect(dryMixGain);
                 dryMixGain.connect(channel.lucidEffectGainNode.gain);
-                wetMixGain.connect(channel.lucidEffectGainNode.gain);
+                wetMixGain.connect(channel.lucidEffectGainNode.gain); 
 
                 channel.lucidControls = { dryMixGain, wetMixGain };
-                
-                // LFO connection to wetMixGain happens in startLFOs after LFOs are created
             }
 
 
             async loadAllSounds() {
-                console.log("loadAllSounds started");
+                console.log("loadAllSounds started. AudioContext state:", this.audioContext ? this.audioContext.state : "N/A");
+                if (!this.audioContext || this.audioContext.state !== 'running') {
+                    console.warn("AudioContext not running, sound loading might be problematic or delayed.");
+                }
                 for (const channelName of this.orderedChannelNames) {
                     const data = this.channelData[channelName];
-                    this.channels[channelName].audioBuffers = []; // Initialize buffer array
+                    this.channels[channelName].audioBuffers = [];
                     console.log(`Loading sounds for ${channelName}`);
-                    for (const filename of data.files) {
+                    for (const filename of data.files) { // data.files now contains ['sky1.ogg', 'sky2.ogg', ...]
                         try {
-                            console.log(`Attempting to load ${filename}`);
                             const buffer = await this.loadAudioFile(`sounds/${filename}`);
                             this.channels[channelName].audioBuffers.push(buffer);
-                            console.log(`Successfully loaded and decoded ${filename}`);
                         } catch (error) {
-                            console.warn(`Failed to load or decode ${filename}:`, error);
-                            const silentBuffer = this.audioContext.createBuffer(1, this.audioContext.sampleRate * 0.1, this.audioContext.sampleRate);
+                            const silentBuffer = this.audioContext.createBuffer(1, Math.max(1, this.audioContext.sampleRate * 0.02), this.audioContext.sampleRate); 
                             this.channels[channelName].audioBuffers.push(silentBuffer);
                         }
                     }
-                    // Start playing the first sound for the channel *after* all its sounds are loaded/attempted
-                    if (this.channels[channelName].audioBuffers.length > 0) {
-                        this.switchChannelSound(channelName, 0); // Default to first sound
-                    } else {
-                        console.error(`No audio buffers loaded for channel ${channelName}`);
-                    }
                 }
-                console.log("loadAllSounds finished");
+                console.log("loadAllSounds finished. Note: Initial sound selection is triggered by loadState.");
             }
 
             async loadAudioFile(url) {
                 console.log(`Fetching: ${url}`);
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status} for ${url}`);
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        console.error(`HTTP error! status: ${response.status} for ${url}`);
+                        throw new Error(`HTTP error! status: ${response.status} for ${url}`);
+                    }
+                    const arrayBuffer = await response.arrayBuffer();
+                    if (arrayBuffer.byteLength < 100) { 
+                         console.warn(`Fetched very small or empty ArrayBuffer for ${url}. Size: ${arrayBuffer.byteLength}`);
+                    }
+                    const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                    console.log(`Successfully decoded ${url}, duration: ${audioBuffer.duration.toFixed(2)}s`);
+                    return audioBuffer;
+                } catch (error) {
+                    console.error(`Error in loadAudioFile for ${url}:`, error);
+                    throw error; 
                 }
-                const arrayBuffer = await response.arrayBuffer();
-                console.log(`Decoding: ${url}, ArrayBuffer size: ${arrayBuffer.byteLength}`);
-                const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
-                return audioBuffer;
             }
 
-            switchChannelSound(channelName, index) {
+            switchChannelSound(channelName, index) { // index is 0-6 from spinner
+                if (!this.isInitialized || !this.audioContext || this.audioContext.state !== 'running') {
+                    console.warn(`switchChannelSound for ${channelName} (idx ${index}) aborted: Not initialized or AudioContext not running. State: ${this.audioContext ? this.audioContext.state : 'N/A'}`);
+                    return;
+                }
                 const channel = this.channels[channelName];
-                console.log(`Switching ${channelName} to index ${index}. AudioContext state: ${this.audioContext.state}`);
+                const filename = this.channelData[channelName].files[index]; // e.g., sky1.ogg for index 0
+                console.log(`Attempting to switch ${channelName} to index ${index} (file: ${filename}).`);
 
-                if (!channel) {
-                    console.error(`Channel object for ${channelName} not found.`);
+                if (!channel) { console.error(`Channel object for ${channelName} not found.`); return; }
+                if (!channel.audioBuffers) { console.error(`Audio buffers for ${channelName} not initialized.`); return; }
+                
+                const bufferToPlay = channel.audioBuffers[index]; 
+                if (!bufferToPlay) {
+                    console.error(`Audio buffer at index ${index} (file: ${filename}) for ${channelName} is missing or undefined.`);
                     return;
                 }
-                if (!channel.audioBuffers) {
-                    console.error(`Audio buffers for ${channelName} not initialized.`);
+                
+                if (bufferToPlay.duration < 0.05) { 
+                    console.warn(`Buffer at index ${index} (file: ${filename}) for ${channelName} is very short (duration: ${bufferToPlay.duration.toFixed(3)}s). Likely a silent fallback. Not playing.`);
+                    if (channel.currentSource) {
+                        try { channel.currentSource.stop(); channel.currentSource.disconnect(); } catch(e){}
+                        channel.currentSource = null;
+                    }
                     return;
                 }
-                if (!channel.audioBuffers[index]) {
-                    console.error(`Audio buffer at index ${index} for ${channelName} is missing or invalid.`);
-                    console.log('Available buffers for ' + channelName + ':', channel.audioBuffers.map(b => b ? `Buffer (len: ${b.length})` : 'null/undefined'));
-                    return;
-                }
-                 if (channel.audioBuffers[index].length === 0) { // Check for empty/failed buffer
-                    console.warn(`Buffer at index ${index} for ${channelName} is empty or invalid. Not playing.`);
-                    return;
-                }
-
 
                 if (channel.currentSource) {
-                    try {
-                        channel.currentSource.stop();
-                        channel.currentSource.disconnect(); // Clean up old source
-                         console.log(`Stopped previous source for ${channelName}`);
-                    } catch (e) {
-                        console.warn(`Error stopping previous source for ${channelName}: ${e.message}`);
-                    }
+                    try { channel.currentSource.stop(); channel.currentSource.disconnect(); } 
+                    catch (e) { console.warn(`Error stopping previous source for ${channelName}: ${e.message}`); }
                 }
 
                 const source = this.audioContext.createBufferSource();
-                source.buffer = channel.audioBuffers[index];
+                source.buffer = bufferToPlay;
                 source.loop = true;
-                source.connect(channel.gain); // Connect to the channel's main volume gain
+                source.connect(channel.gain); 
                 try {
                     source.start();
-                    console.log(`Started new source for ${channelName}, index ${index}, buffer duration: ${source.buffer.duration.toFixed(2)}s`);
+                    console.log(`Successfully STARTED new source for ${channelName}, index ${index} (file: ${filename}), buffer duration: ${source.buffer.duration.toFixed(2)}s`);
                 } catch(e) {
-                    console.error(`Error starting source for ${channelName}: ${e.message}`);
-                    return; // Don't update currentSource if start failed
+                    console.error(`Error starting source for ${channelName} (index ${index}, file: ${filename}): ${e.message}. Buffer state:`, source.buffer);
+                    return; 
                 }
-                
-
                 channel.currentSource = source;
                 channel.currentIndex = index;
             }
 
             startLFOs() {
-                if (!this.audioContext) return;
-                 if (!this.lucidLFOComponents) this.lucidLFOComponents = {};
+                if (!this.audioContext) { console.error("startLFOs called without audioContext."); return; }
+                console.log("Starting LFOs...");
+                if (!this.lucidLFOComponents) this.lucidLFOComponents = {};
 
-
-                // --- Lucid LFOs ---
                 const floorVal = 0.1;
-                const lfoRange = 1.0 - floorVal; // 0.9
+                const lfoRange = 1.0 - floorVal; 
 
-                // LFO for Group A (sky, fire)
-                const freqA = 1/160;
-                const oscA = this.audioContext.createOscillator(); oscA.frequency.value = freqA; oscA.type = 'sine';
-                const scaleGainA = this.audioContext.createGain(); scaleGainA.gain.value = lfoRange / 2;
-                const dcOffsetForScaleA = this.audioContext.createConstantSource(); dcOffsetForScaleA.offset.value = lfoRange / 2;
-                const floorOffsetA = this.audioContext.createConstantSource(); floorOffsetA.offset.value = floorVal;
-                oscA.connect(scaleGainA);
-                this.lucidLFOComponents.groupA = { osc: oscA, scaleGain: scaleGainA, dcOffsetForScale: dcOffsetForScaleA, floorOffset: floorOffsetA };
-                oscA.start(); dcOffsetForScaleA.start(); floorOffsetA.start();
+                const createLFOEnvelope = (freq) => {
+                    const osc = this.audioContext.createOscillator();
+                    osc.frequency.value = freq;
+                    osc.type = 'sine'; 
 
-                // LFO for Group B (earth, sea)
-                const freqB = 1/245;
-                const oscB = this.audioContext.createOscillator(); oscB.frequency.value = freqB; oscB.type = 'sine';
-                const scaleGainB = this.audioContext.createGain(); scaleGainB.gain.value = lfoRange / 2;
-                const dcOffsetForScaleB = this.audioContext.createConstantSource(); dcOffsetForScaleB.offset.value = lfoRange / 2;
-                const floorOffsetB = this.audioContext.createConstantSource(); floorOffsetB.offset.value = floorVal;
-                oscB.connect(scaleGainB);
-                this.lucidLFOComponents.groupB = { osc: oscB, scaleGain: scaleGainB, dcOffsetForScale: dcOffsetForScaleB, floorOffset: floorOffsetB };
-                oscB.start(); dcOffsetForScaleB.start(); floorOffsetB.start();
+                    const modulationGain = this.audioContext.createGain();
+                    modulationGain.gain.value = lfoRange / 2; 
+                    osc.connect(modulationGain);
 
-                // Connect these LFOs to the respective channel's wetMixGain for Lucid effect
+                    const baseOffset = this.audioContext.createConstantSource();
+                    baseOffset.offset.value = (lfoRange / 2) + floorVal; 
+                    
+                    osc.start();
+                    baseOffset.start();
+                    
+                    return { modulationGainNode: modulationGain, baseOffsetNode: baseOffset };
+                };
+
+                this.lucidLFOComponents.groupA = createLFOEnvelope(1/160); 
+                this.lucidLFOComponents.groupB = createLFOEnvelope(1/245); 
+                
                 this.orderedChannelNames.forEach(channelName => {
                     const channel = this.channels[channelName];
                     if (channel && channel.lucidControls && channel.lucidControls.wetMixGain) {
-                        const lfoSourceGroup = (channelName === 'sky' || channelName === 'fire') ?
+                        const lfoGroup = (channelName === 'sky' || channelName === 'fire') ?
                             this.lucidLFOComponents.groupA : this.lucidLFOComponents.groupB;
                         
-                        if(lfoSourceGroup) {
-                            // The LFO_ENV signal (0.1 to 1.0) is formed by summing these three:
-                            lfoSourceGroup.scaleGain.connect(channel.lucidControls.wetMixGain);
-                            lfoSourceGroup.dcOffsetForScale.connect(channel.lucidControls.wetMixGain);
-                            lfoSourceGroup.floorOffset.connect(channel.lucidControls.wetMixGain);
+                        if(lfoGroup) {
+                            lfoGroup.modulationGainNode.connect(channel.lucidControls.wetMixGain);
+                            lfoGroup.baseOffsetNode.connect(channel.lucidControls.wetMixGain);
+                             console.log(`Connected Lucid LFO Group to ${channelName}'s wetMixGain input.`);
                         }
+                    } else {
+                        console.warn(`Lucid controls or wetMixGain not found for ${channelName} during LFO connection.`);
                     }
                 });
 
-
-                // --- Astral LFOs (Filter Frequency Modulation) ---
-                const astralFreqs = [1/160, 1/140, 1/180, 1/120]; // From Python
-                // const astralPhases = [0, 90, 180, 270]; // Phase is harder with WA, use different freqs mainly
-
+                const astralFreqs = [1/160, 1/140, 1/180, 1/120];
                 this.orderedChannelNames.forEach((channelName, index) => {
                     const lfo = this.audioContext.createOscillator();
-                    const lfoGain = this.audioContext.createGain(); // Modulation depth
-                    const baseFreqNode = this.audioContext.createConstantSource(); // Base frequency for the filter
+                    const lfoGain = this.audioContext.createGain(); 
+                    const baseFreqNode = this.audioContext.createConstantSource(); 
 
                     lfo.frequency.value = astralFreqs[index % astralFreqs.length];
                     lfo.type = 'sine';
-                    
-                    lfoGain.gain.value = 6000; // Pyo: mul=6000
-                    baseFreqNode.offset.value = 7000; // Pyo: add=7000
+                    lfoGain.gain.value = 6000; 
+                    baseFreqNode.offset.value = 7000; 
                     
                     lfo.connect(lfoGain);
                     if (this.astralFilters[channelName] && this.astralFilters[channelName].frequency) {
                         lfoGain.connect(this.astralFilters[channelName].frequency);
                         baseFreqNode.connect(this.astralFilters[channelName].frequency);
+                    } else {
+                        console.warn(`Astral filter or its frequency param not found for ${channelName} during Astral LFO setup.`);
                     }
-                    
-                    lfo.start();
-                    baseFreqNode.start();
+                    lfo.start(); baseFreqNode.start();
                     this.astralLFOs[channelName] = { lfo, lfoGain, baseFreqNode };
                 });
+                console.log("LFOs started and connected.");
             }
 
-            updateKnobColor(elementId, percentage) { // percentage is 0-100
+            updateKnobColor(elementId, percentage) { 
                 const knobImage = document.getElementById(elementId);
                 if (!knobImage) return;
-                const value = percentage / 100; // Normalize to 0-1
-
-                // Hue calculation from Kivy: HUE_MIN + (HUE_MAX - HUE_MIN) * v
-                // Original CSS filter: hue-rotate(180deg) saturate(1.5);
-                // Kivy HSV to RGB: colorsys.hsv_to_rgb(h, 1, 1)
-                // Let's stick to a simple hue rotation based on value for now, can be refined
-                const hueMin = 0.50; // Cyanish-Blue in HSV
-                const hueMax = 0.80; // Purplish-Blue/Violet in HSV
-                
-                let h = hueMin + (hueMax - hueMin) * value; // h is 0-1 for HSV
-                
-                // Convert HSV to an angle for hue-rotate. CSS hue-rotate starts at red=0deg.
-                // HSV 0.5 (cyan) is ~180deg. HSV 0.8 (violet/purple) is ~280-300deg.
-                // Let's map our Python HSV range to a degree range for filter.
-                // If value=0 (Python h=0.50) -> ~180deg (original CSS was 180deg)
-                // If value=1 (Python h=0.80) -> ~280deg
-                const baseHueRotate = 180; // Original base offset
-                const additionalHueRotate = value * 100; // Rotate further up to 100deg more (180 to 280)
-                
-                knobImage.style.filter = `hue-rotate(${baseHueRotate + additionalHueRotate}deg) saturate(1.5) brightness(${0.8 + 0.4 * value})`;
+                const value = parseFloat(percentage) / 100; 
+                const hueMinDeg = 180; 
+                const hueMaxDeg = 280; 
+                const targetHue = hueMinDeg + (hueMaxDeg - hueMinDeg) * value;
+                const brightness = 0.8 + 0.4 * value;
+                knobImage.style.filter = `hue-rotate(${targetHue}deg) saturate(1.5) brightness(${brightness})`;
             }
 
             initializeEventListeners() {
-                document.addEventListener('click', async () => { // Make async for audioContext.resume()
-                    if (!this.isInitialized && !this.audioContext) { // Check if context not created yet
+                this.boundInitializeListener = async () => { 
+                    if (!this.isInitialized) {
                         await this.initialize();
                     } else if (this.audioContext && this.audioContext.state === 'suspended') {
-                        await this.audioContext.resume();
-                        console.log("AudioContext resumed.");
+                         console.log("AudioContext suspended, resuming from click listener...");
+                         await this.audioContext.resume();
                     }
-                }, { once: this.audioContext ? false : true }); // 'once' only if audioContext doesn't exist
+                };
+                document.addEventListener('click', this.boundInitializeListener, { once: true });
 
-                // Master volume
+
                 const masterSlider = document.getElementById('masterSlider');
                 const masterReadout = document.getElementById('masterReadout');
                 masterSlider.addEventListener('input', (e) => {
+                    if (!this.isInitialized || !this.masterGain) return;
                     const value = parseFloat(e.target.value) / 100;
-                    if (this.masterGain) this.masterGain.gain.setTargetAtTime(value, this.audioContext.currentTime, 0.015);
+                    this.masterGain.gain.setTargetAtTime(value, this.audioContext.currentTime, 0.015);
                     masterReadout.textContent = e.target.value;
                     this.updateKnobColor('masterKnob', parseFloat(e.target.value));
                 });
 
-                // Astral control
                 const astralSlider = document.getElementById('astralSlider');
                 const astralReadout = document.getElementById('astralReadout');
                 astralSlider.addEventListener('input', (e) => {
+                    if (!this.isInitialized) return;
                     const value = parseFloat(e.target.value) / 100;
-                    Object.values(this.channels).forEach(channel => {
-                        if (channel.astralWetGain) {
-                            channel.astralWetGain.gain.setTargetAtTime(value, this.audioContext.currentTime, 0.015);
+                    this.orderedChannelNames.forEach(chName => {
+                        const channel = this.channels[chName];
+                        if (channel && channel.astralWetGain) {
+                           channel.astralWetGain.gain.setTargetAtTime(value, this.audioContext.currentTime, 0.015);
                         }
                     });
                     astralReadout.textContent = e.target.value;
                     this.updateKnobColor('astralKnob', parseFloat(e.target.value));
                 });
 
-                // Lucid control
                 const lucidSlider = document.getElementById('lucidSlider');
                 const lucidReadout = document.getElementById('lucidReadout');
                 lucidSlider.addEventListener('input', (e) => {
@@ -775,13 +745,13 @@
                     this.updateKnobColor('lucidKnob', parseFloat(e.target.value));
                 });
 
-                // Channel controls
                 this.orderedChannelNames.forEach(channelName => {
                     const slider = document.getElementById(`${channelName}Slider`);
                     const readout = document.getElementById(`${channelName}Readout`);
                     const spinner = document.getElementById(`${channelName}Spinner`);
 
                     slider.addEventListener('input', (e) => {
+                        if (!this.isInitialized) return;
                         const value = parseFloat(e.target.value) / 100;
                         if (this.channels[channelName] && this.channels[channelName].gain) {
                             this.channels[channelName].gain.gain.setTargetAtTime(value, this.audioContext.currentTime, 0.015);
@@ -791,8 +761,12 @@
                     });
 
                     spinner.addEventListener('change', (e) => {
-                        if (!this.isInitialized) return;
-                        const index = parseInt(e.target.value);
+                        if (!this.isInitialized) {
+                            console.warn(`Spinner change for ${channelName} ignored: not initialized.`);
+                            return;
+                        }
+                        const index = parseInt(e.target.value); // This index is 0-6
+                        console.log(`Spinner changed for ${channelName}: new index ${index}`);
                         this.switchChannelSound(channelName, index);
                     });
                 });
@@ -802,7 +776,7 @@
             }
 
             saveState() {
-                if (!this.isInitialized) return;
+                if (!this.isInitialized) { console.warn("Cannot save state: Not initialized."); return; }
                 const state = {
                     master: document.getElementById('masterSlider').value,
                     astral: document.getElementById('astralSlider').value,
@@ -815,43 +789,42 @@
                         selection: document.getElementById(`${channelName}Spinner`).value
                     };
                 });
-                localStorage.setItem('slumbr_state_v2', JSON.stringify(state)); // New key for new state structure
-                console.log('State saved:', state);
+                localStorage.setItem('slumbr_state_v5', JSON.stringify(state)); 
+                console.log('State saved (v5):', state);
             }
 
             loadState() {
                 if (!this.isInitialized) {
-                    console.log("Not initialized, cannot load state yet. Will apply when ready.");
+                    console.warn("Cannot load state yet: Not initialized. Will be called after init.");
                     return;
                 }
-                console.log("Attempting to load state...");
+                console.log("Attempting to load state (v5)...");
+                
                 try {
-                    const saved = localStorage.getItem('slumbr_state_v2');
+                    const saved = localStorage.getItem('slumbr_state_v5');
                     let stateToApply = {};
-                    let stateSource = "initial defaults";
+                    let source = "initial defaults from HTML attributes";
 
                     if (saved) {
                         stateToApply = JSON.parse(saved);
-                        stateSource = "localStorage";
+                        source = "localStorage (v5)";
                         console.log('State loaded from localStorage:', stateToApply);
                     } else {
-                         console.log('No saved state found in localStorage, applying HTML/INITIAL_SETTINGS defaults.');
-                         // Populate stateToApply with values from HTML or INITIAL_SETTINGS if no localStorage
-                        stateToApply.master = document.getElementById('masterSlider').value || (this.INITIAL_SETTINGS.master * 100).toString();
-                        stateToApply.astral = document.getElementById('astralSlider').value || (this.INITIAL_SETTINGS.astral * 100).toString();
-                        stateToApply.lucid  = document.getElementById('lucidSlider').value  || (this.INITIAL_SETTINGS.lucid * 100).toString();
+                        console.log('No saved state (v5) found, applying HTML/INITIAL_SETTINGS defaults.');
+                        stateToApply.master = document.getElementById('masterSlider').value;
+                        stateToApply.astral = document.getElementById('astralSlider').value;
+                        stateToApply.lucid  = document.getElementById('lucidSlider').value;
                         stateToApply.channels = {};
                         this.orderedChannelNames.forEach(channelName => {
                             stateToApply.channels[channelName] = {
-                                volume: document.getElementById(`${channelName}Slider`).value || (this.channelData[channelName].initialVolume * 100).toString(),
-                                selection: document.getElementById(`${channelName}Spinner`).value || "0"
+                                volume: document.getElementById(`${channelName}Slider`).value,
+                                selection: document.getElementById(`${channelName}Spinner`).value 
                             };
                         });
                     }
                     
-                    console.log(`Applying state from ${stateSource}:`, stateToApply);
+                    console.log(`Applying state from ${source}:`, stateToApply);
 
-                    // Master controls
                     document.getElementById('masterSlider').value = stateToApply.master;
                     document.getElementById('masterSlider').dispatchEvent(new Event('input', { bubbles: true }));
                     
@@ -861,7 +834,6 @@
                     document.getElementById('lucidSlider').value = stateToApply.lucid;
                     document.getElementById('lucidSlider').dispatchEvent(new Event('input', { bubbles: true }));
 
-                    // Channel states
                     if (stateToApply.channels) {
                         this.orderedChannelNames.forEach(channelName => {
                             const channelState = stateToApply.channels[channelName];
@@ -871,16 +843,15 @@
                                     document.getElementById(`${channelName}Slider`).dispatchEvent(new Event('input', { bubbles: true }));
                                 }
                                 if (channelState.selection !== undefined) {
-                                    // Ensure sound is loaded before changing spinner, or that switchChannelSound handles it
                                     document.getElementById(`${channelName}Spinner`).value = channelState.selection;
-                                    // switchChannelSound will be called by the 'change' event if sound already loaded
-                                    // If sounds are still loading, this might select an option for which sound isn't ready.
-                                    // This is generally fine as switchChannelSound should pick it up.
                                     document.getElementById(`${channelName}Spinner`).dispatchEvent(new Event('change', { bubbles: true }));
+                                } else {
+                                     document.getElementById(`${channelName}Spinner`).dispatchEvent(new Event('change', { bubbles: true }));
                                 }
                             }
                         });
                     }
+                     console.log("Finished applying state.");
                 } catch (error) {
                     console.error('Failed to load or apply state:', error);
                 }
