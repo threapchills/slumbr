@@ -13,7 +13,7 @@
 
         body {
             font-family: Arial, sans-serif;
-            background: #1a1a2e; /* Base background for the page */
+            background: #1a1a2e; 
             overflow: hidden;
             user-select: none;
             color: white; 
@@ -37,8 +37,7 @@
             align-items: center;
             width: 95px;
             height: 240px; 
-            padding: 4px; /* Keep outer padding for the channel block */
-            /* gap: 4px; This gap is for items *within* .channel, if it had direct children other than .channel-content */
+            padding: 4px; /* Padding for the channel block itself */
         }
 
         .knob-container {
@@ -76,15 +75,16 @@
             font-size: 12px;
             color: white;
             line-height: 24px;
+            margin-top: 2px; /* Nudge closer to the knob container above it */
         }
 
         .channel-spinner {
             width: 90px;
             height: 36px;
-            background: transparent; /* The select box itself */
+            background: transparent; 
             border: 1.5px solid rgba(58, 137, 255, 0.4);
             border-radius: 8px;
-            color: white; /* Text color of the selected item shown in the box */
+            color: white; 
             font-size: 18px;
             text-align: center; 
             text-align-last: center;
@@ -100,25 +100,15 @@
             border-color: rgba(58, 137, 255, 0.8);
         }
 
-        /* Styling for the dropdown list options */
         select.channel-spinner option {
-            background-color: #1f1f3d; /* Dark background for options */
-            color: white; /* White text for options */
-            font-size: 16px; /* Slightly smaller font for dropdown if needed */
+            background-color: #1f1f3d; 
+            color: white; 
+            font-size: 16px; 
         }
         
-        /* Optional: Style for hovered option, though browser usually handles this */
         select.channel-spinner option:hover {
             background-color: #3c3c5d; 
         }
-
-        /* Optional: Style for the selected option within the opened dropdown */
-        /* This is often controlled by browser/OS default highlighting */
-        select.channel-spinner option:checked {
-             /* background-color: #00375e; /* Example: a different background for checked in dropdown */
-             /* font-weight: bold; */ /* Already usually bolded by browser */
-        }
-
 
         .control-knob {
             position: absolute;
@@ -131,7 +121,7 @@
         .control-knob.small .knob-readout { width: 50px; font-size: 10px; height: 18px; line-height: 18px; margin-top: 2px;}
 
         .control-knob.large .knob-container { width: 175px; height: 175px; }
-        .control-knob.large .knob-readout { width: 175px; font-size: 14px; height: 24px; line-height: 24px; margin-top: 5px;}
+        .control-knob.large .knob-readout { width: 175px; font-size: 14px; height: 24px; line-height: 24px; margin-top: 2px;}
 
 
         .save-load-buttons {
@@ -159,7 +149,7 @@
             border-radius: 8px;
         }
 
-        /* Position elements according to your layout */
+         /* Position elements according to your layout */
         .channel.sky {
             left: calc(28% - 47.5px);
             top: calc(58% - 120px);
@@ -194,15 +184,26 @@
             left: calc(50% - 87.5px);
             top: calc(64% - 87.5px);
         }
+
+
+        .control-knob.lucid {
+            left: calc(62% - 25px);
+            top: calc(28% - 25px);
+        }
+
+        .control-knob.master {
+            left: calc(50% - 87.5px);
+            top: calc(64% - 87.5px);
+        }
         
         .channel-content {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between; 
-            gap: 4px; /* Increased gap slightly for better separation */
-            height: 100%;
+            justify-content: center; /* Center items to pack them together */
+            gap: 4px; /* Reduced gap for closer packing */
             width: 100%;
+            /* Removed explicit height: 100%; to allow natural packing */
         }
 
         /* Flex order for channel items */
@@ -248,7 +249,7 @@
 <body>
     <div class="app-container">
         <div class="loading-indicator" id="loadingIndicator">
-            .
+            Click anywhere to start SLUMBR...
         </div>
 
         <div class="control-knob astral small">
@@ -427,7 +428,7 @@
                                await this.initialize(); 
                            }
                         };
-                        if (this.boundInitializeListener) { // Remove previous if it exists
+                        if (this.boundInitializeListener) { 
                             document.removeEventListener('click', this.boundInitializeListener);
                         }
                         this.boundInitializeListener = clickListener; 
@@ -488,7 +489,6 @@
                 channel.astralFilter.Q.value = 1.2;    
 
                 channel.astralWetGain = this.audioContext.createGain();
-                // Initial astral knob value will be applied via loadState or HTML default + event listener
                 const astralSliderElement = document.getElementById('astralSlider');
                 channel.astralWetGain.gain.value = astralSliderElement ? parseFloat(astralSliderElement.value) / 100 : this.INITIAL_SETTINGS.astral;
 
@@ -531,7 +531,7 @@
                     const data = this.channelData[channelName];
                     this.channels[channelName].audioBuffers = [];
                     console.log(`Loading sounds for ${channelName}`);
-                    for (const filename of data.files) { // data.files now contains ['sky1.ogg', 'sky2.ogg', ...]
+                    for (const filename of data.files) { 
                         try {
                             const buffer = await this.loadAudioFile(`sounds/${filename}`);
                             this.channels[channelName].audioBuffers.push(buffer);
@@ -541,7 +541,7 @@
                         }
                     }
                 }
-                console.log("loadAllSounds finished. Note: Initial sound selection is triggered by loadState.");
+                console.log("loadAllSounds finished. Initial sound selection is triggered by loadState.");
             }
 
             async loadAudioFile(url) {
@@ -565,13 +565,13 @@
                 }
             }
 
-            switchChannelSound(channelName, index) { // index is 0-6 from spinner
+            switchChannelSound(channelName, index) { 
                 if (!this.isInitialized || !this.audioContext || this.audioContext.state !== 'running') {
                     console.warn(`switchChannelSound for ${channelName} (idx ${index}) aborted: Not initialized or AudioContext not running. State: ${this.audioContext ? this.audioContext.state : 'N/A'}`);
                     return;
                 }
                 const channel = this.channels[channelName];
-                const filename = this.channelData[channelName].files[index]; // e.g., sky1.ogg for index 0
+                const filename = this.channelData[channelName].files[index]; 
                 console.log(`Attempting to switch ${channelName} to index ${index} (file: ${filename}).`);
 
                 if (!channel) { console.error(`Channel object for ${channelName} not found.`); return; }
