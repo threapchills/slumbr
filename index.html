@@ -685,8 +685,8 @@
                 const knobImage = document.getElementById(elementId);
                 if (!knobImage) return;
                 const value = parseFloat(percentage) / 100; 
-                const hueMinDeg = 180; 
-                const hueMaxDeg = 0; 
+                const hueMinDeg = 0; 
+                const hueMaxDeg = 180; 
                 const targetHue = hueMinDeg + (hueMaxDeg - hueMinDeg) * value;
                 const brightness = 0.8 + 0.4 * value;
                 knobImage.style.filter = `hue-rotate(${targetHue}deg) saturate(1.5) brightness(${brightness})`;
