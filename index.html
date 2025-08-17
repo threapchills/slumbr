@@ -24,7 +24,7 @@
       position:absolute; inset:0; pointer-events:none;
       background:rgba(0,0,0,0);
       transition:background-color 0.6s ease;
-      mix-blend-mode: color;
+      mix-blend-mode: overlay;
     }
 
     .channel{
@@ -233,11 +233,11 @@
 
       this.eqMode = 'white';
       this.eqTintMap = {
-        white:{ r:255, g:255, b:255, weight:0.10 },
-        pink: { r:255, g:120, b:200, weight:0.28 },
-        green:{ r:46,  g:204, b:113, weight:0.28 },
-        brown:{ r:165, g:94,  b:41,  weight:0.28 },
-        black:{ r:24,  g:28,  b:36,  weight:0.30 }
+        white:{ r:255, g:255, b:255, weight:0.18 },
+        pink: { r:255, g:120, b:200, weight:0.42 },
+        green:{ r:46,  g:204, b:113, weight:0.42 },
+        brown:{ r:165, g:94,  b:41,  weight:0.42 },
+        black:{ r:24,  g:28,  b:36,  weight:0.55 }
       };
 
       this.INITIAL_SETTINGS = {
@@ -442,8 +442,9 @@
       channel.astralFilter.connect(channel.astralWetGain);
       channel.astralWetGain.connect(this.masterGain);
 
-      // connect sum into lucid envelope input
-      channel.sum.connect(channel.lucidEffectGainNode);
+      // connect sum into channel fader, then into lucid envelope input  <-- FIX
+      channel.sum.connect(channel.gain);                 // was: channel.sum.connect(channel.lucidEffectGainNode);
+      // channel.gain already connected to channel.lucidEffectGainNode above
 
       this.astralFilters[channelName] = channel.astralFilter;
 
@@ -677,10 +678,10 @@
       const knobImage = document.getElementById(elementId);
       if(!knobImage) return;
       const value = parseFloat(percentage)/100;
-      const hueMinDeg = 0, hueMaxDeg = 180;
+      const hueMinDeg = 60, hueMaxDeg = 320;
       const targetHue = hueMinDeg + (hueMaxDeg - hueMinDeg)*value;
-      const brightness = 0.8 + 0.4*value;
-      knobImage.style.filter = `hue-rotate(${targetHue}deg) saturate(1.5) brightness(${brightness})`;
+      const brightness = 0.65 + 0.8*value;
+      knobImage.style.filter = `hue-rotate(${targetHue}deg) saturate(1.77) brightness(${brightness})`;
     }
 
     /* global tint: blend channel mix colour with EQ mode tint */
@@ -711,7 +712,7 @@
         b: chanCol.b*(1-t) + bias.b*t
       };
 
-      const alpha = Math.min(0.75, 0.10 + 0.14 * ((wSum - 1e-6) / 4));
+      const alpha = Math.min(0.92, 0.30 + 0.50 * ((wSum - 1e-6) / 4));
       const overlay = document.getElementById('tintOverlay');
       overlay.style.backgroundColor = `rgba(${final.r.toFixed(0)}, ${final.g.toFixed(0)}, ${final.b.toFixed(0)}, ${alpha.toFixed(3)})`;
     }
