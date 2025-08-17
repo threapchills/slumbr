@@ -678,10 +678,11 @@
       const knobImage = document.getElementById(elementId);
       if(!knobImage) return;
       const value = parseFloat(percentage)/100;
-      const hueMinDeg = 60, hueMaxDeg = 320;
+      const hueMinDeg = 0, hueMaxDeg = 180;
       const targetHue = hueMinDeg + (hueMaxDeg - hueMinDeg)*value;
-      const brightness = 0.65 + 0.8*value;
-      knobImage.style.filter = `hue-rotate(${targetHue}deg) saturate(1.77) brightness(${brightness})`;
+      const brightness = 0.8 + 0.4*value;
+      knobImage.style.filter = `hue-rotate(${targetHue}deg) saturate(1.5) brightness(${brightness})`;
+
     }
 
     /* global tint: blend channel mix colour with EQ mode tint */
