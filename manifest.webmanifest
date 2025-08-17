@@ -1,0 +1,11 @@
+{
+  "name": "SLUMBR",
+  "short_name": "SLUMBR",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#101020",
+  "theme_color": "#101020",
+  "icons": [
+    { "src": "astral_knob.png", "sizes": "192x192", "type": "image/png" }
+  ]
+}
