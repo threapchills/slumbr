@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SLUMBR</title>
 
-  <!-- PWA -->
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#101020">
   <link rel="icon" type="image/png" href="astral_knob.png"/>
@@ -16,22 +15,53 @@
 
     .app-container{
       width:540px; height:835px; position:relative; margin:20px auto;
+    }
+
+    .layer-switcher{
+      position:absolute; top:18px; left:50%; transform:translateX(-50%);
+      display:flex; gap:10px; z-index:25;
+    }
+    .layer-dot{
+      width:14px; height:14px; border-radius:50%; border:1px solid rgba(255,255,255,0.5);
+      background:rgba(0,0,0,0.7); cursor:pointer; transition:transform 0.1s ease, box-shadow 0.2s ease;
+      position:relative;
+    }
+    .layer-dot::after{
+      content:""; position:absolute; inset:3px; border-radius:50%; background:rgba(255,255,255,0.2);
+      transition:opacity 0.2s ease, background 0.25s ease;
+      opacity:0;
+    }
+    .layer-dot.active{ box-shadow:0 0 6px rgba(120,180,255,0.7); transform:scale(1.08); }
+    .layer-dot.active::after{ opacity:1; background:rgba(255,255,255,0.7); }
+    .layer-dot:hover{ transform:scale(1.08); }
+
+    .layer-stack{ position:absolute; inset:0; border-radius:12px; overflow:hidden; }
+    .slumbr-layer{ position:absolute; inset:0; display:none; }
+    .slumbr-layer.is-active{ display:block; }
+
+    .layer-surface{
+      position:relative; width:100%; height:100%;
       background-image:url('background.png'); background-size:cover; background-position:center; background-repeat:no-repeat;
     }
 
-    /* global tint overlay: recolours the whole app (incl. background.png) */
-    #tintOverlay{
+    .layer-surface::after{
+      content:""; position:absolute; inset:0; pointer-events:none; border:1px solid rgba(255,255,255,0.08); border-radius:12px;
+    }
+
+    .layer-badge{
+      position:absolute; top:20px; left:26px; background:rgba(0,0,0,0.55); padding:6px 12px; border-radius:999px;
+      font-size:12px; letter-spacing:0.08em; text-transform:uppercase; opacity:0.8; pointer-events:none;
+    }
+
+    .tintOverlay{
       position:absolute; inset:0; pointer-events:none;
       background:rgba(0,0,0,0);
       transition:background-color 0.6s ease;
       mix-blend-mode: overlay;
+      border-radius:12px;
     }
 
-    .channel{
-      position:absolute; display:flex; flex-direction:column; align-items:center;
-      width:95px; height:240px; padding:4px;
-    }
-
+    .channel{ position:absolute; display:flex; flex-direction:column; align-items:center; width:95px; height:240px; padding:4px; }
     .knob-container{ position:relative; width:75px; height:75px; }
     .knob-slider{ position:absolute; width:100%; height:100%; opacity:0; cursor:pointer; z-index:2; margin:0; }
     .knob-image{
@@ -59,15 +89,11 @@
     .save-load-button{ width:120px; height:80px; background:transparent; border:none; color:white; font-size:18px; cursor:pointer; padding:10px; }
     .save-load-button:hover{ background:rgba(255,255,255,0.1); border-radius:8px; }
 
-    /* EQ buttons: smaller, subtly colour-coded */
-    .eq-buttons{
-      position:absolute; bottom:100px; left:50%; transform:translateX(-50%);
-      display:flex; gap:6px; align-items:center; justify-content:center;
-    }
+    .eq-buttons{ position:absolute; bottom:100px; left:50%; transform:translateX(-50%); display:flex; gap:6px; align-items:center; justify-content:center; }
     .eq-button{
       width:16px; height:16px; border-radius:50%;
       border:1px solid rgba(255,255,255,0.5); background:transparent; cursor:pointer;
-      box-shadow: 0 0 0 0 rgba(0,0,0,0) inset;
+      box-shadow:0 0 0 0 rgba(0,0,0,0) inset;
       transition: box-shadow 0.2s ease, transform 0.05s ease;
     }
     .eq-button:active{ transform: scale(0.96); }
@@ -79,7 +105,6 @@
     .eq-brown{ background: rgba(165,94,41,0.32); }
     .eq-black{ background: rgba(20,24,30,0.55); }
 
-    /* Layout anchors preserved */
     .channel.sky{ left:calc(28% - 47.5px); top:calc(58% - 120px); }
     .channel.fire{ left:calc(74% - 47.5px); top:calc(58% - 120px); }
     .channel.earth{ left:calc(27% - 47.5px); top:calc(78% - 120px); }
@@ -95,7 +120,6 @@
     .channel.sea  .channel-content > .knob-container{ order:2; }
     .channel.earth .channel-content > .knob-readout,
     .channel.sea  .channel-content > .knob-readout{ order:3; }
-
     .channel.sky .channel-content > .knob-container,
     .channel.fire .channel-content > .knob-container{ order:1; }
     .channel.sky .channel-content > .knob-readout,
@@ -107,133 +131,145 @@
       position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
       color:white; font-size:18px; text-align:center; padding:20px; background-color:rgba(0,0,0,0.5); border-radius:8px;
     }
-    /* progress bar for loading */
-    .progress{
-      margin-top:12px; width:260px; height:6px;
-      background:rgba(255,255,255,0.15);
-      border-radius:3px; overflow:hidden;
-    }
-    .progress-bar{
-      height:100%; width:0%;
-      background:#2ecc71;
-      transition:width 0.2s ease;
-    }
+    .progress{ margin-top:12px; width:260px; height:6px; background:rgba(255,255,255,0.15); border-radius:3px; overflow:hidden; }
+    .progress-bar{ height:100%; width:0%; background:#2ecc71; transition:width 0.2s ease; }
+
+    .layer-theme-blue .layer-surface{ filter:hue-rotate(-12deg) saturate(1.08); }
+    .layer-theme-green .layer-surface{ filter:hue-rotate(28deg) saturate(1.05); }
+    .layer-theme-red .layer-surface{ filter:hue-rotate(-58deg) saturate(1.12); }
 
     @media (max-width:560px){
       .app-container{ width:100%; height:auto; padding-bottom:154.63%; margin:5px auto; border:none; }
+      .layer-stack{ position:absolute; inset:0; }
     }
   </style>
 </head>
 <body>
   <div class="app-container">
-    <div id="tintOverlay" aria-hidden="true"></div>
-
-    <!-- Loading UI (updated) -->
-    <div class="loading-indicator" id="loadingIndicator" aria-live="polite">
-      <div id="loadingText">Start SLUMBR</div>
-      <div class="progress" aria-hidden="true">
-        <div class="progress-bar" id="progressBar" style="width:0%"></div>
-      </div>
+    <div class="layer-switcher" role="tablist" aria-label="Sound layer selector">
+      <button class="layer-dot active" data-index="0" aria-label="Aurora layer"></button>
+      <button class="layer-dot" data-index="1" aria-label="Verdant layer"></button>
+      <button class="layer-dot" data-index="2" aria-label="Crimson layer"></button>
     </div>
-
-    <div class="control-knob astral small">
-      <div class="knob-container small">
-        <input type="range" min="0" max="100" value="82" class="knob-slider small" id="astralSlider" aria-label="Astral wet amount">
-        <div class="knob-image small" id="astralKnob" style="background-image:url('astral_knob.png');" role="img" aria-label="Astral control"></div>
-      </div>
-      <div class="knob-readout" id="astralReadout" aria-live="polite">82</div>
-    </div>
-
-    <div class="control-knob lucid small">
-      <div class="knob-container small">
-        <input type="range" min="0" max="100" value="92" class="knob-slider small" id="lucidSlider" aria-label="Lucid modulation depth">
-        <div class="knob-image small" id="lucidKnob" style="background-image:url('lucid_knob.png');" role="img" aria-label="Lucid control"></div>
-      </div>
-      <div class="knob-readout" id="lucidReadout" aria-live="polite">92</div>
-    </div>
-
-    <div class="channel sky">
-      <div class="channel-content">
-        <div class="knob-container">
-          <input type="range" min="0" max="100" value="53" class="knob-slider" id="skySlider" aria-label="Sky channel volume">
-          <div class="knob-image" id="skyKnob" style="background-image:url('sky_knob.png');" role="img" aria-label="Sky channel knob"></div>
-        </div>
-        <div class="knob-readout" id="skyReadout" aria-live="polite">53</div>
-        <select class="channel-spinner" id="skySpinner" aria-label="Sky sound">
-          <option value="0">Tempest</option><option value="1">Breeze</option><option value="2">Balmy</option>
-          <option value="3">Temple</option><option value="4">Rain</option><option value="5">Mountains</option><option value="6">Spring</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="channel fire">
-      <div class="channel-content">
-        <div class="knob-container">
-          <input type="range" min="0" max="100" value="59" class="knob-slider" id="fireSlider" aria-label="Fire channel volume">
-          <div class="knob-image" id="fireKnob" style="background-image:url('fire_knob.png');" role="img" aria-label="Fire channel knob"></div>
-        </div>
-        <div class="knob-readout" id="fireReadout" aria-live="polite">59</div>
-        <select class="channel-spinner" id="fireSpinner" aria-label="Fire sound">
-          <option value="0">Hearth</option><option value="1">Forge</option><option value="2">Ember</option>
-          <option value="3">Crackle</option><option value="4">Campfire</option><option value="5">Summer</option><option value="6">Desert</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="control-knob master large">
-      <div class="knob-container large">
-        <input type="range" min="0" max="100" value="77" class="knob-slider large" id="masterSlider" aria-label="Master volume">
-        <div class="knob-image large" id="masterKnob" style="background-image:url('master_knob.png');" role="img" aria-label="Master knob"></div>
-      </div>
-      <div class="knob-readout" id="masterReadout" aria-live="polite">77</div>
-    </div>
-
-    <div class="channel earth">
-      <div class="channel-content">
-        <select class="channel-spinner" id="earthSpinner" aria-label="Earth sound">
-          <option value="0">Kiln</option><option value="1">Magma</option><option value="2">Crevasse</option>
-          <option value="3">Core</option><option value="4">Forest</option><option value="5">Autumn</option><option value="6">Cave</option>
-        </select>
-        <div class="knob-container">
-          <input type="range" min="0" max="100" value="50" class="knob-slider" id="earthSlider" aria-label="Earth channel volume">
-          <div class="knob-image" id="earthKnob" style="background-image:url('earth_knob.png');" role="img" aria-label="Earth channel knob"></div>
-        </div>
-        <div class="knob-readout" id="earthReadout" aria-live="polite">50</div>
-      </div>
-    </div>
-
-    <div class="channel sea">
-      <div class="channel-content">
-        <select class="channel-spinner" id="seaSpinner" aria-label="Sea sound">
-          <option value="0">Stormy</option><option value="1">Brook</option><option value="2">Winter</option>
-          <option value="3">Lake</option><option value="4">Deep</option><option value="5">Glade</option><option value="6">Creek</option>
-        </select>
-        <div class="knob-container">
-          <input type="range" min="0" max="100" value="55" class="knob-slider" id="seaSlider" aria-label="Sea channel volume">
-          <div class="knob-image" id="seaKnob" style="background-image:url('sea_knob.png');" role="img" aria-label="Sea channel knob"></div>
-        </div>
-        <div class="knob-readout" id="seaReadout" aria-live="polite">55</div>
-      </div>
-    </div>
-
-    <!-- tiny EQ preset buttons -->
-    <div class="eq-buttons" aria-label="EQ presets">
-      <button class="eq-button eq-white active" id="eqWhite" title="White EQ" aria-label="White EQ"></button>
-      <button class="eq-button eq-pink"  id="eqPink"  title="Pink EQ"  aria-label="Pink EQ"></button>
-      <button class="eq-button eq-green" id="eqGreen" title="Green EQ" aria-label="Green EQ"></button>
-      <button class="eq-button eq-brown" id="eqBrown" title="Brown EQ" aria-label="Brown EQ"></button>
-      <button class="eq-button eq-black" id="eqBlack" title="Black EQ" aria-label="Black EQ"></button>
-    </div>
-
-    <div class="save-load-buttons">
-      <button class="save-load-button" id="saveButton" aria-label="Save preset"></button>
-      <button class="save-load-button" id="loadButton" aria-label="Load preset"></button>
-    </div>
+    <div id="layerStack" class="layer-stack"></div>
   </div>
 
+  <template id="slumbrLayerTemplate">
+    <div class="slumbr-layer">
+      <div class="layer-surface">
+        <div class="layer-badge" data-id="layerBadge">Layer</div>
+        <div class="tintOverlay" data-id="tintOverlay" aria-hidden="true"></div>
+
+        <div class="loading-indicator" data-id="loadingIndicator" aria-live="polite">
+          <div data-id="loadingText">Start SLUMBR</div>
+          <div class="progress" aria-hidden="true">
+            <div class="progress-bar" data-id="progressBar" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="control-knob astral small">
+          <div class="knob-container small">
+            <input type="range" min="0" max="100" value="82" class="knob-slider small" data-id="astralSlider" aria-label="Astral wet amount">
+            <div class="knob-image small" data-id="astralKnob" style="background-image:url('astral_knob.png');" role="img" aria-label="Astral control"></div>
+          </div>
+          <div class="knob-readout" data-id="astralReadout" aria-live="polite">82</div>
+        </div>
+
+        <div class="control-knob lucid small">
+          <div class="knob-container small">
+            <input type="range" min="0" max="100" value="92" class="knob-slider small" data-id="lucidSlider" aria-label="Lucid modulation depth">
+            <div class="knob-image small" data-id="lucidKnob" style="background-image:url('lucid_knob.png');" role="img" aria-label="Lucid control"></div>
+          </div>
+          <div class="knob-readout" data-id="lucidReadout" aria-live="polite">92</div>
+        </div>
+
+        <div class="channel sky">
+          <div class="channel-content">
+            <div class="knob-container">
+              <input type="range" min="0" max="100" value="53" class="knob-slider" data-id="skySlider" aria-label="Sky channel volume">
+              <div class="knob-image" data-id="skyKnob" style="background-image:url('sky_knob.png');" role="img" aria-label="Sky channel knob"></div>
+            </div>
+            <div class="knob-readout" data-id="skyReadout" aria-live="polite">53</div>
+            <select class="channel-spinner" data-id="skySpinner" aria-label="Sky sound">
+              <option value="0">Tempest</option><option value="1">Breeze</option><option value="2">Balmy</option>
+              <option value="3">Temple</option><option value="4">Rain</option><option value="5">Mountains</option><option value="6">Spring</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="channel fire">
+          <div class="channel-content">
+            <div class="knob-container">
+              <input type="range" min="0" max="100" value="59" class="knob-slider" data-id="fireSlider" aria-label="Fire channel volume">
+              <div class="knob-image" data-id="fireKnob" style="background-image:url('fire_knob.png');" role="img" aria-label="Fire channel knob"></div>
+            </div>
+            <div class="knob-readout" data-id="fireReadout" aria-live="polite">59</div>
+            <select class="channel-spinner" data-id="fireSpinner" aria-label="Fire sound">
+              <option value="0">Hearth</option><option value="1">Forge</option><option value="2">Ember</option>
+              <option value="3">Crackle</option><option value="4">Campfire</option><option value="5">Summer</option><option value="6">Desert</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="control-knob master large">
+          <div class="knob-container large">
+            <input type="range" min="0" max="100" value="77" class="knob-slider large" data-id="masterSlider" aria-label="Master volume">
+            <div class="knob-image large" data-id="masterKnob" style="background-image:url('master_knob.png');" role="img" aria-label="Master knob"></div>
+          </div>
+          <div class="knob-readout" data-id="masterReadout" aria-live="polite">77</div>
+        </div>
+
+        <div class="channel earth">
+          <div class="channel-content">
+            <select class="channel-spinner" data-id="earthSpinner" aria-label="Earth sound">
+              <option value="0">Kiln</option><option value="1">Magma</option><option value="2">Crevasse</option>
+              <option value="3">Core</option><option value="4">Forest</option><option value="5">Autumn</option><option value="6">Cave</option>
+            </select>
+            <div class="knob-container">
+              <input type="range" min="0" max="100" value="50" class="knob-slider" data-id="earthSlider" aria-label="Earth channel volume">
+              <div class="knob-image" data-id="earthKnob" style="background-image:url('earth_knob.png');" role="img" aria-label="Earth channel knob"></div>
+            </div>
+            <div class="knob-readout" data-id="earthReadout" aria-live="polite">50</div>
+          </div>
+        </div>
+
+        <div class="channel sea">
+          <div class="channel-content">
+            <select class="channel-spinner" data-id="seaSpinner" aria-label="Sea sound">
+              <option value="0">Stormy</option><option value="1">Brook</option><option value="2">Winter</option>
+              <option value="3">Lake</option><option value="4">Deep</option><option value="5">Glade</option><option value="6">Creek</option>
+            </select>
+            <div class="knob-container">
+              <input type="range" min="0" max="100" value="55" class="knob-slider" data-id="seaSlider" aria-label="Sea channel volume">
+              <div class="knob-image" data-id="seaKnob" style="background-image:url('sea_knob.png');" role="img" aria-label="Sea channel knob"></div>
+            </div>
+            <div class="knob-readout" data-id="seaReadout" aria-live="polite">55</div>
+          </div>
+        </div>
+
+        <div class="eq-buttons" aria-label="EQ presets">
+          <button class="eq-button eq-white active" data-id="eqWhite" title="White EQ" aria-label="White EQ"></button>
+          <button class="eq-button eq-pink"  data-id="eqPink"  title="Pink EQ"  aria-label="Pink EQ"></button>
+          <button class="eq-button eq-green" data-id="eqGreen" title="Green EQ" aria-label="Green EQ"></button>
+          <button class="eq-button eq-brown" data-id="eqBrown" title="Brown EQ" aria-label="Brown EQ"></button>
+          <button class="eq-button eq-black" data-id="eqBlack" title="Black EQ" aria-label="Black EQ"></button>
+        </div>
+
+        <div class="save-load-buttons">
+          <button class="save-load-button" data-id="saveButton" aria-label="Save preset"></button>
+          <button class="save-load-button" data-id="loadButton" aria-label="Load preset"></button>
+        </div>
+      </div>
+    </div>
+  </template>
+
   <script>
-  class SlumbrApp {
-    constructor(){
+
+  class SlumbrLayer {
+    constructor(root, index, options={}){
+      this.root = root;
+      this.index = index;
+      this.options = options;
       this.audioContext = null;
       this.isInitialized = false;
 
@@ -290,8 +326,17 @@
       };
       this.orderedChannelNames = ['sky','fire','earth','sea'];
 
+      this.layerTintBias = options.baseTint || null;
+      this.layerTintBiasWeight = options.baseTintWeight ?? 0.2;
+
       this.initializeEventListeners();
+      if(this.el('layerBadge') && options.label){ this.el('layerBadge').textContent = options.label; }
+      if(this.el('loadingText') && options.startText){ this.el('loadingText').textContent = options.startText; }
+      this.refreshInitialKnobColours();
     }
+
+    el(id){ return this.root.querySelector(`[data-id="${id}"]`); }
+    els(selector){ return Array.from(this.root.querySelectorAll(selector)); }
 
     gainFromSlider(v){ return Math.pow(v/100, 2.2); }
     randBetween(min,max){ return min + Math.random()*(max-min); }
@@ -300,7 +345,7 @@
       if(this.isInitialized) return;
       if(this.audioContext && this.audioContext.state === 'running') return;
 
-      const loadingIndicator = document.getElementById('loadingIndicator');
+      const loadingIndicator = this.el('loadingIndicator');
       try{
         if(!this.audioContext){
           this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -311,9 +356,9 @@
           const clickListener = async ()=>{
             if(!this.isInitialized && this.audioContext && this.audioContext.state !== 'running'){ await this.initialize(); }
           };
-          if(this.boundInitializeListener){ document.removeEventListener('click', this.boundInitializeListener); }
+          if(this.boundInitializeListener){ this.root.removeEventListener('click', this.boundInitializeListener); }
           this.boundInitializeListener = clickListener;
-          document.addEventListener('click', this.boundInitializeListener, { once:true });
+          this.root.addEventListener('click', this.boundInitializeListener, { once:true });
           return;
         }
 
@@ -397,7 +442,7 @@
       } // white = flat
 
       ['White','Pink','Green','Brown','Black'].forEach(n=>{
-        const el = document.getElementById('eq'+n);
+        const el = this.el('eq'+n);
         if(el) el.classList.toggle('active', n.toLowerCase() === mode);
       });
       this.eqMode = mode;
@@ -421,7 +466,7 @@
       channel.astralFilter.Q.value = 1.2;
 
       channel.astralWetGain = this.audioContext.createGain();
-      const astralSliderElement = document.getElementById('astralSlider');
+      const astralSliderElement = this.el('astralSlider');
       channel.astralWetGain.gain.value = astralSliderElement ? parseFloat(astralSliderElement.value)/100 : this.INITIAL_SETTINGS.astral;
 
       /* per-channel summing bus after per-source panners */
@@ -474,7 +519,7 @@
 
       // lucid DC mixing remains unchanged
       const dcOneNode = this.audioContext.createConstantSource(); dcOneNode.offset.value = 1.0; dcOneNode.start();
-      const lucidSliderElement = document.getElementById('lucidSlider');
+      const lucidSliderElement = this.el('lucidSlider');
       const initialLucidValue = lucidSliderElement ? parseFloat(lucidSliderElement.value)/100 : this.INITIAL_SETTINGS.lucid;
 
       const dryMixGain = this.audioContext.createGain(); dryMixGain.gain.value = 1.0 - initialLucidValue;
@@ -494,8 +539,8 @@
 
     /* NEW: loader progress updater */
     updateLoadingProgress(done, total){
-      const text = document.getElementById('loadingText');
-      const bar  = document.getElementById('progressBar');
+      const text = this.el('loadingText');
+      const bar  = this.el('progressBar');
       const pct  = total > 0 ? Math.round((done/total)*100) : 0;
       if(text) text.textContent = `Loading ${pct}%`;
       if(bar)  bar.style.width   = `${pct}%`;
@@ -616,7 +661,7 @@
     updateABDepthForChannel(channelName){
       const ch = this.channels[channelName];
       if(!ch) return;
-      const L = parseFloat(document.getElementById('lucidSlider').value)/100;
+      const L = parseFloat(this.el('lucidSlider').value)/100;
       const depth = 0.5 * Math.pow(L, 2.0);
       ch.abDepth = depth;
     }
@@ -648,7 +693,7 @@
 
     /* Astral knob also controls stereo spread per source via LFO depth */
     updatePanWidthFromAstral(){
-      const L = parseFloat(document.getElementById('astralSlider').value)/100;
+      const L = parseFloat(this.el('astralSlider').value)/100;
       // non-linear so small Astral gives near-centre, full Astral gives wide spread
       const widthMax = 0.75; // ~75% perceived width
       const depth = widthMax * Math.pow(L, 1.6);
@@ -715,7 +760,7 @@
     }
 
     updateKnobColor(elementId, percentage){
-      const knobImage = document.getElementById(elementId);
+      const knobImage = this.el(elementId);
       if(!knobImage) return;
       const value = parseFloat(percentage)/100;
       const hueMinDeg = 0, hueMaxDeg = 180;
@@ -725,12 +770,20 @@
 
     }
 
+    refreshInitialKnobColours(){
+      ['astral','lucid','master','sky','fire','earth','sea'].forEach(name=>{
+        const slider = this.el(`${name}Slider`);
+        if(slider){ this.updateKnobColor(`${name}Knob`, parseFloat(slider.value)); }
+      });
+      this.updateTintOverlay();
+    }
+
     /* global tint: blend channel mix colour with EQ mode tint */
     updateTintOverlay(){
-      const vSky   = parseFloat(document.getElementById('skySlider').value)/100;
-      const vFire  = parseFloat(document.getElementById('fireSlider').value)/100;
-      const vEarth = parseFloat(document.getElementById('earthSlider').value)/100;
-      const vSea   = parseFloat(document.getElementById('seaSlider').value)/100;
+      const vSky   = parseFloat(this.el('skySlider').value)/100;
+      const vFire  = parseFloat(this.el('fireSlider').value)/100;
+      const vEarth = parseFloat(this.el('earthSlider').value)/100;
+      const vSea   = parseFloat(this.el('seaSlider').value)/100;
 
       const col = (r,g,b)=>({r,g,b});
       const skyPink = col(255,105,180);
@@ -747,14 +800,23 @@
 
       const bias = this.eqTintMap[this.eqMode] || this.eqTintMap.white;
       const t = bias.weight;
-      const final = {
+      let final = {
         r: chanCol.r*(1-t) + bias.r*t,
         g: chanCol.g*(1-t) + bias.g*t,
         b: chanCol.b*(1-t) + bias.b*t
       };
 
+      if(this.layerTintBias){
+        const weight = Math.min(0.45, Math.max(0, this.layerTintBiasWeight));
+        final = {
+          r: final.r*(1-weight) + this.layerTintBias.r*weight,
+          g: final.g*(1-weight) + this.layerTintBias.g*weight,
+          b: final.b*(1-weight) + this.layerTintBias.b*weight
+        };
+      }
+
       const alpha = Math.min(0.92, 0.30 + 0.50 * ((wSum - 1e-6) / 4));
-      const overlay = document.getElementById('tintOverlay');
+      const overlay = this.el('tintOverlay');
       overlay.style.backgroundColor = `rgba(${final.r.toFixed(0)}, ${final.g.toFixed(0)}, ${final.b.toFixed(0)}, ${alpha.toFixed(3)})`;
     }
 
@@ -774,10 +836,10 @@
         if(!this.isInitialized){ await this.initialize(); }
         else if(this.audioContext && this.audioContext.state === 'suspended'){ await this.audioContext.resume(); }
       };
-      document.addEventListener('click', this.boundInitializeListener, { once:true });
+      this.root.addEventListener('click', this.boundInitializeListener, { once:true });
 
-      const masterSlider = document.getElementById('masterSlider');
-      const masterReadout = document.getElementById('masterReadout');
+      const masterSlider = this.el('masterSlider');
+      const masterReadout = this.el('masterReadout');
       masterSlider.addEventListener('input', (e)=>{
         if(!this.isInitialized || !this.masterGain) return;
         const t = this.audioContext.currentTime;
@@ -788,8 +850,8 @@
         this.updateTintOverlay();
       });
 
-      const astralSlider = document.getElementById('astralSlider');
-      const astralReadout = document.getElementById('astralReadout');
+      const astralSlider = this.el('astralSlider');
+      const astralReadout = this.el('astralReadout');
       astralSlider.addEventListener('input', (e)=>{
         if(!this.isInitialized) return;
         const value = parseFloat(e.target.value)/100;
@@ -804,8 +866,8 @@
         this.updateKnobColor('astralKnob', parseFloat(e.target.value));
       });
 
-      const lucidSlider = document.getElementById('lucidSlider');
-      const lucidReadout = document.getElementById('lucidReadout');
+      const lucidSlider = this.el('lucidSlider');
+      const lucidReadout = this.el('lucidReadout');
       lucidSlider.addEventListener('input', (e)=>{
         if(!this.isInitialized) return;
         const L = parseFloat(e.target.value)/100;
@@ -822,9 +884,9 @@
       });
 
       this.orderedChannelNames.forEach(channelName=>{
-        const slider  = document.getElementById(`${channelName}Slider`);
-        const readout = document.getElementById(`${channelName}Readout`);
-        const spinner = document.getElementById(`${channelName}Spinner`);
+        const slider  = this.el(`${channelName}Slider`);
+        const readout = this.el(`${channelName}Readout`);
+        const spinner = this.el(`${channelName}Spinner`);
 
         slider.addEventListener('input', (e)=>{
           if(!this.isInitialized) return;
@@ -847,77 +909,90 @@
       const eqMap = { eqWhite:'white', eqPink:'pink', eqGreen:'green', eqBrown:'brown', eqBlack:'black' };
       Object.keys(eqMap).forEach(id=>{
         const mode = eqMap[id];
-        const el = document.getElementById(id);
+        const el = this.el(id);
         el.addEventListener('click', ()=> this.setEQMode(mode));
       });
 
-      document.getElementById('saveButton').addEventListener('click', ()=> this.saveState());
-      document.getElementById('loadButton').addEventListener('click', ()=> this.loadState());
+      this.el('saveButton').addEventListener('click', ()=> this.saveState());
+      this.el('loadButton').addEventListener('click', ()=> this.loadState());
     }
 
     saveState(){
       if(!this.isInitialized){ return; }
       const state = {
-        master: document.getElementById('masterSlider').value,
-        astral: document.getElementById('astralSlider').value,
-        lucid: document.getElementById('lucidSlider').value,
+        master: this.el('masterSlider').value,
+        astral: this.el('astralSlider').value,
+        lucid: this.el('lucidSlider').value,
         eq: this.eqMode || 'white',
         channels: {}
       };
       this.orderedChannelNames.forEach(n=>{
         state.channels[n] = {
-          volume: document.getElementById(`${n}Slider`).value,
-          selection: document.getElementById(`${n}Spinner`).value
+          volume: this.el(`${n}Slider`).value,
+          selection: this.el(`${n}Spinner`).value
         };
       });
-      localStorage.setItem('slumbr_state_v6', JSON.stringify(state));
+      localStorage.setItem(this.storageKey(), JSON.stringify(state));
     }
 
     loadState(){
       if(!this.isInitialized){ return; }
       let s = null;
-      const saved = localStorage.getItem('slumbr_state_v6') || localStorage.getItem('slumbr_state_v5');
+      const saved = this.loadStoredState();
       if(saved){ try{ s = JSON.parse(saved);}catch{} }
 
       if(!s){
         s = {
-          master: document.getElementById('masterSlider').value,
-          astral: document.getElementById('astralSlider').value,
-          lucid: document.getElementById('lucidSlider').value,
+          master: this.el('masterSlider').value,
+          astral: this.el('astralSlider').value,
+          lucid: this.el('lucidSlider').value,
           eq: 'white',
           channels: {}
         };
         this.orderedChannelNames.forEach(n=>{
           s.channels[n] = {
-            volume: document.getElementById(`${n}Slider`).value,
-            selection: document.getElementById(`${n}Spinner`).value
+            volume: this.el(`${n}Slider`).value,
+            selection: this.el(`${n}Spinner`).value
           };
         });
       }
 
-      document.getElementById('masterSlider').value = s.master;
-      document.getElementById('masterSlider').dispatchEvent(new Event('input', { bubbles:true }));
+      this.el('masterSlider').value = s.master;
+      this.el('masterSlider').dispatchEvent(new Event('input', { bubbles:true }));
 
-      document.getElementById('astralSlider').value = s.astral;
-      document.getElementById('astralSlider').dispatchEvent(new Event('input', { bubbles:true }));
+      this.el('astralSlider').value = s.astral;
+      this.el('astralSlider').dispatchEvent(new Event('input', { bubbles:true }));
 
-      document.getElementById('lucidSlider').value = s.lucid;
-      document.getElementById('lucidSlider').dispatchEvent(new Event('input', { bubbles:true }));
+      this.el('lucidSlider').value = s.lucid;
+      this.el('lucidSlider').dispatchEvent(new Event('input', { bubbles:true }));
 
       if(s.channels){
         this.orderedChannelNames.forEach(n=>{
           const cs = s.channels[n];
           if(!cs) return;
-          document.getElementById(`${n}Slider`).value = cs.volume;
-          document.getElementById(`${n}Slider`).dispatchEvent(new Event('input', { bubbles:true }));
+          this.el(`${n}Slider`).value = cs.volume;
+          this.el(`${n}Slider`).dispatchEvent(new Event('input', { bubbles:true }));
 
-          document.getElementById(`${n}Spinner`).value = cs.selection;
-          document.getElementById(`${n}Spinner`).dispatchEvent(new Event('change', { bubbles:true }));
+          this.el(`${n}Spinner`).value = cs.selection;
+          this.el(`${n}Spinner`).dispatchEvent(new Event('change', { bubbles:true }));
         });
       }
 
       this.setEQMode(s.eq || 'white');
       this.updatePanWidthFromAstral();
+    }
+
+    storageKey(){
+      return `slumbr_state_v7_layer_${this.index}`;
+    }
+
+    loadStoredState(){
+      const primary = localStorage.getItem(this.storageKey());
+      if(primary) return primary;
+      if(this.index === 0){
+        return localStorage.getItem('slumbr_state_v6') || localStorage.getItem('slumbr_state_v5');
+      }
+      return null;
     }
 
     async requestWakeLock(){
@@ -933,17 +1008,70 @@
         }catch{}
       }
     }
+
+    setVisible(isVisible){
+      const active = !!isVisible;
+      this.root.classList.toggle('is-active', active);
+      this.root.style.display = active ? 'block' : 'none';
+      if(active){ this.updateTintOverlay(); }
+    }
   }
 
-  const slumbr = new SlumbrApp();
+  class SlumbrLayersManager {
+    constructor(){
+      this.layerStack = document.getElementById('layerStack');
+      this.template = document.getElementById('slumbrLayerTemplate');
+      this.layerButtons = Array.from(document.querySelectorAll('.layer-dot'));
+      this.layers = [];
+      this.activeIndex = 0;
 
-  window.addEventListener('beforeunload', ()=>{
-    if(slumbr.isInitialized){ slumbr.saveState(); }
-  });
+      this.layerConfigs = [
+        { label:'Aurora', baseTint:{ r:120, g:180, b:255 }, baseTintWeight:0.30, theme:'layer-theme-blue', startText:'Start Aurora' },
+        { label:'Verdant', baseTint:{ r:110, g:240, b:170 }, baseTintWeight:0.28, theme:'layer-theme-green', startText:'Start Verdant' },
+        { label:'Crimson', baseTint:{ r:255, g:150, b:160 }, baseTintWeight:0.32, theme:'layer-theme-red', startText:'Start Crimson' }
+      ];
+
+      this.layerButtons.forEach((button, idx)=>{
+        button.addEventListener('click', ()=> this.activateLayer(idx));
+      });
+
+      this.ensureLayer(0);
+      this.activateLayer(0);
+    }
+
+    ensureLayer(index){
+      if(this.layers[index]) return this.layers[index];
+      const config = this.layerConfigs[index] || {};
+      const fragment = this.template.content.firstElementChild.cloneNode(true);
+      if(config.theme){ fragment.classList.add(config.theme); }
+      fragment.style.display = 'none';
+      this.layerStack.appendChild(fragment);
+      const layer = new SlumbrLayer(fragment, index, config);
+      this.layers[index] = layer;
+      return layer;
+    }
+
+    activateLayer(index){
+      const layer = this.ensureLayer(index);
+      if(!layer) return;
+      this.layers.forEach((l, idx)=>{ if(l){ l.setVisible(idx === index); } });
+      this.layerButtons.forEach((btn, idx)=> btn.classList.toggle('active', idx === index));
+      this.activeIndex = index;
+    }
+
+    saveAll(){
+      this.layers.forEach(layer=>{ if(layer && layer.isInitialized){ layer.saveState(); } });
+    }
+  }
+
+  const slumbrLayers = new SlumbrLayersManager();
+
+  window.addEventListener('beforeunload', ()=> slumbrLayers.saveAll());
 
   if('serviceWorker' in navigator){
     window.addEventListener('load', ()=>{ navigator.serviceWorker.register('./sw.js').catch(()=>{}); });
   }
+
   </script>
 
   <div style="text-align:center; margin-top:20px;">
@@ -953,3 +1081,9 @@
   </div>
 </body>
 </html>
+  
+
+  
+
+  
+  
