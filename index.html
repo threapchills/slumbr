@@ -11,10 +11,27 @@
 
   <style>
     *{ margin:0; padding:0; box-sizing:border-box; }
-    body{ font-family:Arial, sans-serif; background:#1a1a2e; overflow:hidden; user-select:none; color:white; }
+    body{
+      font-family:Arial, sans-serif;
+      background:#1a1a2e;
+      color:white;
+      user-select:none;
+      overflow-x:hidden;
+      overflow-y:auto;
+      min-height:100vh;
+      padding:0 12px 32px;
+    }
 
     .app-container{
-      width:540px; height:835px; position:relative; margin:20px auto;
+      position:relative;
+      width:min(540px, 92vw);
+      aspect-ratio:540 / 835;
+      height:auto;
+      margin:clamp(12px, 4vh, 28px) auto;
+      max-height:calc(100vh - 80px);
+    }
+    @supports not (aspect-ratio: 1){
+      .app-container{ height:835px; }
     }
 
     .layer-switcher{
@@ -85,9 +102,48 @@
     .control-knob.large .knob-container{ width:150px; height:150px; }
     .control-knob.large .knob-readout{ width:150px; font-size:14px; height:24px; line-height:24px; margin-top:2px; }
 
-    .save-load-buttons{ position:absolute; bottom:8px; left:50%; transform:translateX(-50%); display:flex; gap:20px; }
-    .save-load-button{ width:120px; height:80px; background:transparent; border:none; color:white; font-size:18px; cursor:pointer; padding:10px; }
-    .save-load-button:hover{ background:rgba(255,255,255,0.1); border-radius:8px; }
+    .save-load-buttons{
+      position:absolute;
+      bottom:8px;
+      left:50%;
+      transform:translateX(-50%);
+      display:flex;
+      gap:16px;
+      align-items:center;
+      justify-content:center;
+    }
+    .save-load-button{
+      width:80px;
+      height:80px;
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.18);
+      box-shadow:0 4px 14px rgba(0,0,0,0.25);
+      color:white;
+      font-size:14px;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      cursor:pointer;
+      padding:10px;
+      border-radius:12px;
+      transition:background-color 0.2s ease, transform 0.12s ease;
+      touch-action:manipulation;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .save-load-button:hover{ background:rgba(255,255,255,0.12); transform:translateY(-2px); }
+    .save-load-button:active{ transform:translateY(0); }
+    .save-load-button.randomize{
+      background:rgba(255,255,255,0.05) url('random.png') center/40px 40px no-repeat;
+      border:1px solid rgba(255,255,255,0.22);
+      box-shadow:0 4px 14px rgba(0,0,0,0.25);
+    }
+    .save-load-button.randomize:hover{
+      background:rgba(255,255,255,0.16) url('random.png') center/40px 40px no-repeat;
+    }
+    .save-load-button.randomize:active{
+      transform:scale(0.97);
+    }
 
     .eq-buttons{ position:absolute; bottom:100px; left:50%; transform:translateX(-50%); display:flex; gap:6px; align-items:center; justify-content:center; }
     .eq-button{
@@ -130,6 +186,8 @@
     .loading-indicator{
       position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
       color:white; font-size:18px; text-align:center; padding:20px; background-color:rgba(0,0,0,0.5); border-radius:8px;
+      cursor:pointer;
+      touch-action:manipulation;
     }
     .progress{ margin-top:12px; width:260px; height:6px; background:rgba(255,255,255,0.15); border-radius:3px; overflow:hidden; }
     .progress-bar{ height:100%; width:0%; background:#2ecc71; transition:width 0.2s ease; }
@@ -139,8 +197,14 @@
     .layer-theme-red .layer-surface{ filter:hue-rotate(-58deg) saturate(1.12); }
 
     @media (max-width:560px){
-      .app-container{ width:100%; height:auto; padding-bottom:154.63%; margin:5px auto; border:none; }
-      .layer-stack{ position:absolute; inset:0; }
+      body{ padding:0 6px 24px; }
+      .app-container{
+        width:100%;
+        max-width:420px;
+        margin:clamp(8px, 4vh, 20px) auto;
+        max-height:none;
+      }
+      .layer-switcher{ top:12px; }
     }
   </style>
 </head>
@@ -169,27 +233,27 @@
 
         <div class="control-knob astral small">
           <div class="knob-container small">
-            <input type="range" min="0" max="100" value="82" class="knob-slider small" data-id="astralSlider" aria-label="Astral wet amount">
+            <input type="range" min="0" max="100" value="60" class="knob-slider small" data-id="astralSlider" aria-label="Astral wet amount">
             <div class="knob-image small" data-id="astralKnob" style="background-image:url('astral_knob.png');" role="img" aria-label="Astral control"></div>
           </div>
-          <div class="knob-readout" data-id="astralReadout" aria-live="polite">82</div>
+          <div class="knob-readout" data-id="astralReadout" aria-live="polite">60</div>
         </div>
 
         <div class="control-knob lucid small">
           <div class="knob-container small">
-            <input type="range" min="0" max="100" value="92" class="knob-slider small" data-id="lucidSlider" aria-label="Lucid modulation depth">
+            <input type="range" min="0" max="100" value="60" class="knob-slider small" data-id="lucidSlider" aria-label="Lucid modulation depth">
             <div class="knob-image small" data-id="lucidKnob" style="background-image:url('lucid_knob.png');" role="img" aria-label="Lucid control"></div>
           </div>
-          <div class="knob-readout" data-id="lucidReadout" aria-live="polite">92</div>
+          <div class="knob-readout" data-id="lucidReadout" aria-live="polite">60</div>
         </div>
 
         <div class="channel sky">
           <div class="channel-content">
             <div class="knob-container">
-              <input type="range" min="0" max="100" value="53" class="knob-slider" data-id="skySlider" aria-label="Sky channel volume">
+              <input type="range" min="0" max="100" value="50" class="knob-slider" data-id="skySlider" aria-label="Sky channel volume">
               <div class="knob-image" data-id="skyKnob" style="background-image:url('sky_knob.png');" role="img" aria-label="Sky channel knob"></div>
             </div>
-            <div class="knob-readout" data-id="skyReadout" aria-live="polite">53</div>
+            <div class="knob-readout" data-id="skyReadout" aria-live="polite">50</div>
             <select class="channel-spinner" data-id="skySpinner" aria-label="Sky sound">
               <option value="0">Tempest</option><option value="1">Breeze</option><option value="2">Balmy</option>
               <option value="3">Temple</option><option value="4">Rain</option><option value="5">Mountains</option><option value="6">Spring</option>
@@ -200,10 +264,10 @@
         <div class="channel fire">
           <div class="channel-content">
             <div class="knob-container">
-              <input type="range" min="0" max="100" value="59" class="knob-slider" data-id="fireSlider" aria-label="Fire channel volume">
+              <input type="range" min="0" max="100" value="50" class="knob-slider" data-id="fireSlider" aria-label="Fire channel volume">
               <div class="knob-image" data-id="fireKnob" style="background-image:url('fire_knob.png');" role="img" aria-label="Fire channel knob"></div>
             </div>
-            <div class="knob-readout" data-id="fireReadout" aria-live="polite">59</div>
+            <div class="knob-readout" data-id="fireReadout" aria-live="polite">50</div>
             <select class="channel-spinner" data-id="fireSpinner" aria-label="Fire sound">
               <option value="0">Hearth</option><option value="1">Forge</option><option value="2">Ember</option>
               <option value="3">Crackle</option><option value="4">Campfire</option><option value="5">Summer</option><option value="6">Desert</option>
@@ -213,10 +277,10 @@
 
         <div class="control-knob master large">
           <div class="knob-container large">
-            <input type="range" min="0" max="100" value="77" class="knob-slider large" data-id="masterSlider" aria-label="Master volume">
+            <input type="range" min="0" max="100" value="40" class="knob-slider large" data-id="masterSlider" aria-label="Master volume">
             <div class="knob-image large" data-id="masterKnob" style="background-image:url('master_knob.png');" role="img" aria-label="Master knob"></div>
           </div>
-          <div class="knob-readout" data-id="masterReadout" aria-live="polite">77</div>
+          <div class="knob-readout" data-id="masterReadout" aria-live="polite">40</div>
         </div>
 
         <div class="channel earth">
@@ -240,10 +304,10 @@
               <option value="3">Lake</option><option value="4">Deep</option><option value="5">Glade</option><option value="6">Creek</option>
             </select>
             <div class="knob-container">
-              <input type="range" min="0" max="100" value="55" class="knob-slider" data-id="seaSlider" aria-label="Sea channel volume">
+              <input type="range" min="0" max="100" value="50" class="knob-slider" data-id="seaSlider" aria-label="Sea channel volume">
               <div class="knob-image" data-id="seaKnob" style="background-image:url('sea_knob.png');" role="img" aria-label="Sea channel knob"></div>
             </div>
-            <div class="knob-readout" data-id="seaReadout" aria-live="polite">55</div>
+            <div class="knob-readout" data-id="seaReadout" aria-live="polite">50</div>
           </div>
         </div>
 
@@ -256,8 +320,9 @@
         </div>
 
         <div class="save-load-buttons">
-          <button class="save-load-button" data-id="saveButton" aria-label="Save preset"></button>
-          <button class="save-load-button" data-id="loadButton" aria-label="Load preset"></button>
+          <button class="save-load-button" data-id="saveButton" aria-label="Save preset" type="button"></button>
+          <button class="save-load-button randomize" data-id="randomizeButton" aria-label="Randomize preset" type="button"></button>
+          <button class="save-load-button" data-id="loadButton" aria-label="Load preset" type="button"></button>
         </div>
       </div>
     </div>
@@ -285,6 +350,9 @@
       this.wakeLock = null;
 
       this.eqMode = 'white';
+      this.startEvents = ['pointerdown','touchstart','click'];
+      this.suppressUserStartCallback = false;
+      this.initializingPromise = null;
       this.eqTintMap = {
         white:{ r:255, g:255, b:255, weight:0.18 },
         pink: { r:255, g:120, b:200, weight:0.42 },
@@ -294,7 +362,13 @@
       };
 
       this.INITIAL_SETTINGS = {
-        master: 0.77, sky: 0.53, fire: 0.59, earth: 0.50, sea: 0.55, astral: 0.82, lucid: 0.92
+        master: 0.40,
+        sky: 0.50,
+        fire: 0.50,
+        earth: 0.50,
+        sea: 0.50,
+        astral: 0.60,
+        lucid: 0.60
       };
 
       /* A/B pairing maps: per channel, index -> paired index. Fallback to next if missing. */
@@ -340,51 +414,83 @@
 
     gainFromSlider(v){ return Math.pow(v/100, 2.2); }
     randBetween(min,max){ return min + Math.random()*(max-min); }
+    randomInt(min, max){ return Math.floor(Math.random()*(max - min + 1)) + min; }
+
+    removeStartListeners(){
+      if(!this.startEvents || !this.boundInitializeListener) return;
+      this.startEvents.forEach(evt=>{
+        this.root.removeEventListener(evt, this.boundInitializeListener);
+      });
+    }
+
+    addStartListeners(){
+      if(!this.startEvents || !this.boundInitializeListener) return;
+      this.startEvents.forEach(evt=>{
+        const options = evt === 'click' ? false : { passive:true };
+        this.root.addEventListener(evt, this.boundInitializeListener, options);
+      });
+    }
+
+    async externalInitialize(){
+      if(this.isInitialized) return;
+      this.suppressUserStartCallback = true;
+      this.removeStartListeners();
+      try{
+        await this.initialize();
+      }catch(err){
+        console.error(`Failed to initialize layer ${this.index}:`, err);
+      }finally{
+        this.suppressUserStartCallback = false;
+      }
+    }
 
     async initialize(){
       if(this.isInitialized) return;
-      if(this.audioContext && this.audioContext.state === 'running') return;
+      if(this.initializingPromise){ return this.initializingPromise; }
 
       const loadingIndicator = this.el('loadingIndicator');
-      try{
-        if(!this.audioContext){
-          this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const runInitialization = async ()=>{
+        try{
+          if(!this.audioContext){
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          }
+          if(this.audioContext.state === 'suspended'){ await this.audioContext.resume(); }
+          if(this.audioContext.state !== 'running'){
+            if(loadingIndicator){ loadingIndicator.textContent = 'AudioContext not running. Tap again.'; }
+            this.addStartListeners();
+            return;
+          }
+
+          this.setupAudioGraph();
+          this.startLFOs();
+
+          this.updateLoadingProgress(
+            0,
+            this.orderedChannelNames.reduce((a,n)=>a + this.channelData[n].files.length, 0)
+          );
+
+          await this.loadAllSounds();
+
+          this.isInitialized = true;
+          if(loadingIndicator){ loadingIndicator.style.display = 'none'; loadingIndicator.style.color = ''; }
+          this.loadState();
+
+          this.requestWakeLock();
+          this.updateTintOverlay();
+          this.updatePanWidthFromAstral();
+        }catch(err){
+          console.error('Failed to initialize SLUMBR:', err);
+          if(loadingIndicator){
+            loadingIndicator.textContent = `Error: ${err.message}. Try refreshing.`;
+            loadingIndicator.style.color = 'red';
+          }
+        }finally{
+          this.initializingPromise = null;
         }
-        if(this.audioContext.state === 'suspended'){ await this.audioContext.resume(); }
-        if(this.audioContext.state !== 'running'){
-          loadingIndicator.textContent = 'AudioContext not running. Click again.';
-          const clickListener = async ()=>{
-            if(!this.isInitialized && this.audioContext && this.audioContext.state !== 'running'){ await this.initialize(); }
-          };
-          if(this.boundInitializeListener){ this.root.removeEventListener('click', this.boundInitializeListener); }
-          this.boundInitializeListener = clickListener;
-          this.root.addEventListener('click', this.boundInitializeListener, { once:true });
-          return;
-        }
+      };
 
-        this.setupAudioGraph();
-        this.startLFOs();
-
-        // prime the loader at 0%
-        this.updateLoadingProgress(
-          0,
-          this.orderedChannelNames.reduce((a,n)=>a + this.channelData[n].files.length, 0)
-        );
-
-        await this.loadAllSounds();
-
-        this.isInitialized = true;
-        loadingIndicator.style.display = 'none';
-        this.loadState();
-
-        this.requestWakeLock();
-        this.updateTintOverlay();
-        this.updatePanWidthFromAstral(); // set initial pan width
-      }catch(err){
-        console.error('Failed to initialize SLUMBR:', err);
-        loadingIndicator.textContent = `Error: ${err.message}. Try refreshing.`;
-        loadingIndicator.style.color = 'red';
-      }
+      this.initializingPromise = runInitialization();
+      return this.initializingPromise;
     }
 
     setupAudioGraph(){
@@ -833,10 +939,15 @@
 
     initializeEventListeners(){
       this.boundInitializeListener = async ()=>{
+        this.removeStartListeners();
+        if(!this.suppressUserStartCallback && typeof this.options.onUserStart === 'function'){
+          try{ this.options.onUserStart(this); }
+          catch(err){ console.error('SLUMBR start handler error:', err); }
+        }
         if(!this.isInitialized){ await this.initialize(); }
         else if(this.audioContext && this.audioContext.state === 'suspended'){ await this.audioContext.resume(); }
       };
-      this.root.addEventListener('click', this.boundInitializeListener, { once:true });
+      this.addStartListeners();
 
       const masterSlider = this.el('masterSlider');
       const masterReadout = this.el('masterReadout');
@@ -915,6 +1026,78 @@
 
       this.el('saveButton').addEventListener('click', ()=> this.saveState());
       this.el('loadButton').addEventListener('click', ()=> this.loadState());
+      const randomizeButton = this.el('randomizeButton');
+      if(randomizeButton){
+        randomizeButton.addEventListener('click', (event)=>{
+          event.preventDefault();
+          if(!this.isInitialized) return;
+          const state = this.generateRandomState();
+          this.applyState(state);
+        });
+      }
+    }
+
+    generateRandomState(){
+      const eqModes = Object.keys(this.eqTintMap);
+      const pickEq = eqModes[this.randomInt(0, Math.max(0, eqModes.length - 1))] || 'white';
+      const randomSliderValue = (min, max)=> String(this.randomInt(min, max));
+      const state = {
+        master: '40',
+        astral: randomSliderValue(30, 90),
+        lucid: randomSliderValue(20, 85),
+        eq: pickEq,
+        channels: {}
+      };
+      this.orderedChannelNames.forEach(name=>{
+        const spinner = this.el(`${name}Spinner`);
+        const optionCount = spinner ? spinner.options.length : (this.channelData[name]?.files?.length || 1);
+        const selectionIndex = this.randomInt(0, Math.max(0, optionCount - 1));
+        state.channels[name] = {
+          volume: randomSliderValue(35, 85),
+          selection: String(selectionIndex)
+        };
+      });
+      return state;
+    }
+
+    applyState(state){
+      if(!this.isInitialized || !state) return;
+      const applySlider = (id, value)=>{
+        const el = this.el(id);
+        if(!el || value === undefined || value === null) return;
+        const v = Math.max(0, Math.min(100, parseInt(value, 10)));
+        el.value = String(Number.isFinite(v) ? v : 0);
+        el.dispatchEvent(new Event('input', { bubbles:true }));
+      };
+      const applySpinner = (id, value)=>{
+        const el = this.el(id);
+        if(!el || value === undefined || value === null) return;
+        const desired = String(value);
+        const options = Array.from(el.options || []);
+        if(!options.some(opt=> opt.value === desired)){
+          if(options.length){ el.value = options[0].value; }
+        }else{
+          el.value = desired;
+        }
+        el.dispatchEvent(new Event('change', { bubbles:true }));
+      };
+
+      applySlider('masterSlider', state.master ?? '40');
+      applySlider('astralSlider', state.astral ?? this.el('astralSlider').value);
+      applySlider('lucidSlider', state.lucid ?? this.el('lucidSlider').value);
+
+      if(state.channels){
+        this.orderedChannelNames.forEach(name=>{
+          const channelState = state.channels[name];
+          if(!channelState) return;
+          applySlider(`${name}Slider`, channelState.volume);
+          applySpinner(`${name}Spinner`, channelState.selection);
+        });
+      }
+
+      const eqMode = typeof state.eq === 'string' ? state.eq : 'white';
+      this.setEQMode(this.eqTintMap[eqMode] ? eqMode : 'white');
+      this.updatePanWidthFromAstral();
     }
 
     saveState(){
@@ -937,49 +1120,18 @@
 
     loadState(){
       if(!this.isInitialized){ return; }
-      let s = null;
+      let state = null;
       const saved = this.loadStoredState();
-      if(saved){ try{ s = JSON.parse(saved);}catch{} }
-
-      if(!s){
-        s = {
-          master: this.el('masterSlider').value,
-          astral: this.el('astralSlider').value,
-          lucid: this.el('lucidSlider').value,
-          eq: 'white',
-          channels: {}
-        };
-        this.orderedChannelNames.forEach(n=>{
-          s.channels[n] = {
-            volume: this.el(`${n}Slider`).value,
-            selection: this.el(`${n}Spinner`).value
-          };
-        });
+      if(saved){
+        try{
+          const parsed = JSON.parse(saved);
+          if(parsed && typeof parsed === 'object'){ state = parsed; }
+        }catch(err){
+          console.warn('Failed to parse saved SLUMBR state:', err);
+        }
       }
-
-      this.el('masterSlider').value = s.master;
-      this.el('masterSlider').dispatchEvent(new Event('input', { bubbles:true }));
-
-      this.el('astralSlider').value = s.astral;
-      this.el('astralSlider').dispatchEvent(new Event('input', { bubbles:true }));
-
-      this.el('lucidSlider').value = s.lucid;
-      this.el('lucidSlider').dispatchEvent(new Event('input', { bubbles:true }));
-
-      if(s.channels){
-        this.orderedChannelNames.forEach(n=>{
-          const cs = s.channels[n];
-          if(!cs) return;
-          this.el(`${n}Slider`).value = cs.volume;
-          this.el(`${n}Slider`).dispatchEvent(new Event('input', { bubbles:true }));
-
-          this.el(`${n}Spinner`).value = cs.selection;
-          this.el(`${n}Spinner`).dispatchEvent(new Event('change', { bubbles:true }));
-        });
-      }
-
-      this.setEQMode(s.eq || 'white');
-      this.updatePanWidthFromAstral();
+      if(!state){ state = this.generateRandomState(); }
+      this.applyState(state);
     }
 
     storageKey(){
@@ -1035,7 +1187,7 @@
         button.addEventListener('click', ()=> this.activateLayer(idx));
       });
 
-      this.ensureLayer(0);
+      this.layerConfigs.forEach((_, idx)=> this.ensureLayer(idx));
       this.activateLayer(0);
     }
 
@@ -1046,7 +1198,8 @@
       if(config.theme){ fragment.classList.add(config.theme); }
       fragment.style.display = 'none';
       this.layerStack.appendChild(fragment);
-      const layer = new SlumbrLayer(fragment, index, config);
+      const layerOptions = { ...config, onUserStart: (layerInstance)=> this.handleLayerUserStart(layerInstance) };
+      const layer = new SlumbrLayer(fragment, index, layerOptions);
       this.layers[index] = layer;
       return layer;
     }
@@ -1061,6 +1214,14 @@
 
     saveAll(){
       this.layers.forEach(layer=>{ if(layer && layer.isInitialized){ layer.saveState(); } });
+    }
+
+    handleLayerUserStart(originLayer){
+      this.layers.forEach(layer=>{
+        if(layer && layer !== originLayer && !layer.isInitialized){
+          layer.externalInitialize().catch(err=> console.error('Failed to auto-start layer', err));
+        }
+      });
     }
   }
 
