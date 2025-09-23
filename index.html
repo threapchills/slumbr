@@ -329,7 +329,6 @@
   </template>
 
   <script>
-
   class SlumbrLayer {
     constructor(root, index, options={}){
       this.root = root;
@@ -371,31 +370,31 @@
         lucid: 0.60
       };
 
-      /* A/B pairing maps: per channel, index -> paired index. Fallback to next if missing. */
+      /* A/B pairing maps */
       this.channelData = {
         sky: {
           files:['sky1.ogg','sky2.ogg','sky3.ogg','sky4.ogg','sky5.ogg','sky6.ogg','sky7.ogg'],
           labels:['Tempest','Breeze','Balmy','Temple','Rain','Mountains','Spring'],
           initialVolume:this.INITIAL_SETTINGS.sky, pan:+0.40,
-          abMap:{ 0:3, 1:4, 2:5, 3:0, 4:1, 5:6, 6:2 }  // UPDATED
+          abMap:{ 0:3, 1:4, 2:5, 3:0, 4:1, 5:6, 6:2 }
         },
         fire:{
           files:['fire1.ogg','fire2.ogg','fire3.ogg','fire4.ogg','fire5.ogg','fire6.ogg','fire7.ogg'],
           labels:['Hearth','Forge','Ember','Crackle','Campfire','Summer','Desert'],
           initialVolume:this.INITIAL_SETTINGS.fire, pan:-0.50,
-          abMap:{ 0:6, 1:2, 2:5, 3:0, 4:1, 5:3, 6:4 }  // UPDATED
+          abMap:{ 0:6, 1:2, 2:5, 3:0, 4:1, 5:3, 6:4 }
         },
         earth:{
           files:['earth1.ogg','earth2.ogg','earth3.ogg','earth4.ogg','earth5.ogg','earth6.ogg','earth7.ogg'],
           labels:['Kiln','Magma','Crevasse','Core','Forest','Autumn','Cave'],
           initialVolume:this.INITIAL_SETTINGS.earth, pan:-0.30,
-          abMap:{ 0:6, 1:4, 2:5, 3:1, 4:2, 5:0, 6:3 }  // UPDATED
+          abMap:{ 0:6, 1:4, 2:5, 3:1, 4:2, 5:0, 6:3 }
         },
         sea:{
           files:['sea1.ogg','sea2.ogg','sea3.ogg','sea4.ogg','sea5.ogg','sea6.ogg','sea7.ogg'],
           labels:['Stormy','Brook','Winter','Lake','Deep','Glade','Creek'],
           initialVolume:this.INITIAL_SETTINGS.sea, pan:+0.60,
-          abMap:{ 0:3, 1:4, 2:6, 3:0, 4:1, 5:2, 6:5 }  // UPDATED
+          abMap:{ 0:3, 1:4, 2:6, 3:0, 4:1, 5:2, 6:5 }
         }
       };
       this.orderedChannelNames = ['sky','fire','earth','sea'];
@@ -499,7 +498,6 @@
       this.masterGain = this.audioContext.createGain();
       this.masterGain.gain.value = this.gainFromSlider(this.INITIAL_SETTINGS.master*100);
 
-      /* Global EQ chain */
       const low = this.audioContext.createBiquadFilter(); low.type='lowshelf'; low.frequency.value = 200; low.gain.value = 0;
       const mid = this.audioContext.createBiquadFilter(); mid.type='peaking';  mid.frequency.value = 500; mid.Q.value = 0.7; mid.gain.value = 0;
       const high= this.audioContext.createBiquadFilter(); high.type='highshelf'; high.frequency.value = 2000; high.gain.value = 0;
@@ -507,7 +505,6 @@
 
       this.eq = { low, mid, high, dark };
 
-      /* Soft limiter */
       this.limiter = this.audioContext.createDynamicsCompressor();
       this.limiter.threshold.value = -1.0;
       this.limiter.knee.value = 12;
@@ -515,15 +512,12 @@
       this.limiter.attack.value = 0.003;
       this.limiter.release.value = 0.08;
 
-      /* connect: master -> EQ -> limiter -> destination */
       this.masterGain.connect(low);
       low.connect(mid); mid.connect(high); high.connect(dark); dark.connect(this.limiter);
       this.limiter.connect(this.audioContext.destination);
 
-      /* per channel setup */
       for(const channelName of this.orderedChannelNames){ this.setupChannelAudio(channelName); }
 
-      /* default EQ mode */
       this.setEQMode('white');
     }
 
@@ -531,7 +525,6 @@
       if(!this.eq) return;
       const { low, mid, high, dark } = this.eq;
 
-      // reset
       low.gain.setValueAtTime(0, this.audioContext.currentTime);
       mid.gain.setValueAtTime(0, this.audioContext.currentTime);
       high.gain.setValueAtTime(0, this.audioContext.currentTime);
@@ -545,7 +538,7 @@
         low.gain.value = +6; high.gain.value = -6; dark.frequency.value = 15000;
       } else if(mode === 'black'){
         low.gain.value = +4; high.gain.value = -10; dark.frequency.value = 6000;
-      } // white = flat
+      }
 
       ['White','Pink','Green','Brown','Black'].forEach(n=>{
         const el = this.el('eq'+n);
@@ -575,16 +568,13 @@
       const astralSliderElement = this.el('astralSlider');
       channel.astralWetGain.gain.value = astralSliderElement ? parseFloat(astralSliderElement.value)/100 : this.INITIAL_SETTINGS.astral;
 
-      /* per-channel summing bus after per-source panners */
       channel.sum = this.audioContext.createGain();
 
-      /* two stereo panners, one for A and one for B, each driven by its own slow LFO */
       channel.pannerA = this.audioContext.createStereoPanner();
       channel.pannerB = this.audioContext.createStereoPanner();
       channel.pannerA.pan.value = 0;
       channel.pannerB.pan.value = 0;
 
-      // LFOs: 10–30 s cycles, unsynchronised
       channel.panLFOfreqA = this.randBetween(1/30, 1/12);
       channel.panLFOfreqB = this.randBetween(1/30, 1/12);
 
@@ -596,7 +586,6 @@
       channel.panLFOB.type = 'sine';
       channel.panLFOB.frequency.value = channel.panLFOfreqB;
 
-      // depth gains scaled later by Astral
       channel.panDepthA = this.audioContext.createGain();
       channel.panDepthB = this.audioContext.createGain();
       channel.panDepthA.gain.value = 0;
@@ -607,23 +596,20 @@
       channel.panLFOA.start();
       channel.panLFOB.start();
 
-      // route to sum
+      srcConnect = (src, pre, cross, panner) => src.connect(pre).connect(cross).connect(panner);
+
       channel.pannerA.connect(channel.sum);
       channel.pannerB.connect(channel.sum);
 
-      // sum goes to lucid branch and astral branch as before
       channel.lucidEffectGainNode.connect(this.masterGain);
       channel.lucidEffectGainNode.connect(channel.astralFilter);
       channel.astralFilter.connect(channel.astralWetGain);
       channel.astralWetGain.connect(this.masterGain);
 
-      // connect sum into channel fader, then into lucid envelope input
       channel.sum.connect(channel.gain);
-      // channel.gain already connected to channel.lucidEffectGainNode above
 
       this.astralFilters[channelName] = channel.astralFilter;
 
-      // lucid DC mixing remains unchanged
       const dcOneNode = this.audioContext.createConstantSource(); dcOneNode.offset.value = 1.0; dcOneNode.start();
       const lucidSliderElement = this.el('lucidSlider');
       const initialLucidValue = lucidSliderElement ? parseFloat(lucidSliderElement.value)/100 : this.INITIAL_SETTINGS.lucid;
@@ -635,7 +621,6 @@
       wetMixGain.connect(channel.lucidEffectGainNode.gain);
       channel.lucidControls = { dryMixGain, wetMixGain };
 
-      // A/B pair state
       channel.pair = null;
       channel.abDepth = 0;
       channel.abPhase = Math.random()*Math.PI*2;
@@ -643,7 +628,6 @@
       channel.abTimer = null;
     }
 
-    /* NEW: loader progress updater */
     updateLoadingProgress(done, total){
       const text = this.el('loadingText');
       const bar  = this.el('progressBar');
@@ -652,7 +636,6 @@
       if(bar)  bar.style.width   = `${pct}%`;
     }
 
-    /* UPDATED: loadAllSounds with progress */
     async loadAllSounds(){
       const total = this.orderedChannelNames.reduce((acc, name) => acc + this.channelData[name].files.length, 0);
       let done = 0;
@@ -698,10 +681,9 @@
       const map = data && data.abMap ? data.abMap : null;
       if(map && typeof map[index] !== 'undefined'){ return map[index]; }
       const len = data.files.length;
-      return (index + 1) % len; // fallback: next in list
+      return (index + 1) % len;
     }
 
-    /* spinner change now sets a two-sample A/B pair per channel with mapped pairing */
     switchChannelSound(channelName, index){
       if(!this.isInitialized || !this.audioContext || this.audioContext.state !== 'running'){ return; }
       const ch = this.channels[channelName];
@@ -724,7 +706,6 @@
       const preB = this.audioContext.createGain(); preB.gain.value = metaB.pregain;
       const crossB = this.audioContext.createGain(); crossB.gain.value = 0;
 
-      // route each source through its own panner, then sum
       srcA.connect(preA).connect(crossA).connect(ch.pannerA);
       srcB.connect(preB).connect(crossB).connect(ch.pannerB);
 
@@ -744,7 +725,6 @@
 
       ch.pair = { srcA, srcB, preA, preB, crossA, crossB, indexA:index, indexB:Bindex };
 
-      // ensure pan width matches current Astral
       this.updatePanWidthFromAstral();
       this.updateABDepthForChannel(channelName);
       this.startABTimer(channelName);
@@ -797,17 +777,14 @@
       }, step*1000);
     }
 
-    /* Astral knob also controls stereo spread per source via LFO depth */
     updatePanWidthFromAstral(){
       const L = parseFloat(this.el('astralSlider').value)/100;
-      // non-linear so small Astral gives near-centre, full Astral gives wide spread
-      const widthMax = 0.75; // ~75% perceived width
+      const widthMax = 0.75;
       const depth = widthMax * Math.pow(L, 1.6);
 
       this.orderedChannelNames.forEach(name=>{
         const ch = this.channels[name];
         if(!ch) return;
-        // set LFO depths
         ch.panDepthA.gain.setTargetAtTime(depth, this.audioContext.currentTime, 0.2);
         ch.panDepthB.gain.setTargetAtTime(depth, this.audioContext.currentTime, 0.2);
         if(depth < 0.001){
@@ -873,7 +850,6 @@
       const targetHue = hueMinDeg + (hueMaxDeg - hueMinDeg)*value;
       const brightness = 0.8 + 0.4*value;
       knobImage.style.filter = `hue-rotate(${targetHue}deg) saturate(1.5) brightness(${brightness})`;
-
     }
 
     refreshInitialKnobColours(){
@@ -884,7 +860,6 @@
       this.updateTintOverlay();
     }
 
-    /* global tint: blend channel mix colour with EQ mode tint */
     updateTintOverlay(){
       const vSky   = parseFloat(this.el('skySlider').value)/100;
       const vFire  = parseFloat(this.el('fireSlider').value)/100;
@@ -972,7 +947,7 @@
             ch.astralWetGain.gain.setTargetAtTime(value, this.audioContext.currentTime, 0.015);
           }
         });
-        this.updatePanWidthFromAstral(); // tie stereo spread to Astral
+        this.updatePanWidthFromAstral();
         astralReadout.textContent = e.target.value;
         this.updateKnobColor('astralKnob', parseFloat(e.target.value));
       });
@@ -1224,6 +1199,7 @@
       if(config.theme){ fragment.classList.add(config.theme); }
       fragment.style.display = 'none';
       this.layerStack.appendChild(fragment);
+
       const layerOptions = {
         ...config,
         onUserStart: (layerInstance)=> this.handleLayerUserStart(layerInstance),
@@ -1231,6 +1207,7 @@
         onRequestLoadAll: ()=> this.loadAll(),
         onRequestRandomizeAll: ()=> this.randomizeAll()
       };
+
       const layer = new SlumbrLayer(fragment, index, layerOptions);
       this.layers[index] = layer;
       return layer;
@@ -1303,7 +1280,6 @@
   if('serviceWorker' in navigator){
     window.addEventListener('load', ()=>{ navigator.serviceWorker.register('./sw.js').catch(()=>{}); });
   }
-
   </script>
 
   <div style="text-align:center; margin-top:20px;">
@@ -1313,9 +1289,3 @@
   </div>
 </body>
 </html>
-  
-
-  
-
-  
-  
