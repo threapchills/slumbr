@@ -596,8 +596,6 @@
       channel.panLFOA.start();
       channel.panLFOB.start();
 
-      srcConnect = (src, pre, cross, panner) => src.connect(pre).connect(cross).connect(panner);
-
       channel.pannerA.connect(channel.sum);
       channel.pannerB.connect(channel.sum);
 
