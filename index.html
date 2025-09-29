@@ -277,14 +277,15 @@
     .hint-overlay__controls{ position:absolute; right:14px; bottom:12px; display:flex; gap:8px; }
     .hint-overlay__controls button{ background:rgba(255,255,255,0.08); color:#f5f7ff; border:1px solid rgba(255,255,255,0.15); border-radius:999px; padding:6px 14px; font-size:12px; letter-spacing:0.05em; text-transform:uppercase; cursor:pointer; }
     .hint-overlay__controls button:hover{ background:rgba(255,255,255,0.18); }
-    .hint-replay-button{ position:fixed; top:14px; right:14px; width:26px; height:26px; border-radius:50%; border:0; background:rgba(255,255,255,0.82); color:#05060a; font-weight:700; font-size:15px; line-height:26px; text-align:center; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.25); opacity:0.65; transition:opacity 0.2s ease, transform 0.2s ease; z-index:310; }
+    .hint-overlay__progress{ position:absolute; top:14px; right:18px; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; opacity:0.72; }
+    .hint-replay-button{ position:absolute; top:14px; right:14px; width:26px; height:26px; border-radius:50%; border:0; background:rgba(255,255,255,0.82); color:#05060a; font-weight:700; font-size:15px; line-height:26px; text-align:center; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.25); opacity:0.65; transition:opacity 0.2s ease, transform 0.2s ease; z-index:310; }
     .hint-replay-button:hover{ opacity:1; transform:translateY(-1px); }
     .hint-replay-button:focus-visible{ outline:2px solid rgba(70,130,255,0.8); outline-offset:3px; opacity:1; }
-  </style></style>
+</style></style>
 </head>
 <body>
-  <button type="button" class="hint-replay-button" data-action="show-hints" aria-label="Show SLUMBR guide">?</button>
   <div class="app-container">
+    <button type="button" class="hint-replay-button" data-action="show-hints" aria-label="Show SLUMBR guide">?</button>
     <div class="layer-switcher" role="tablist" aria-label="Sound layer selector">
       <button class="layer-dot active" data-index="0" aria-label="Aurora layer"></button>
       <button class="layer-dot" data-index="1" aria-label="Verdant layer"></button>
@@ -404,6 +405,20 @@
       </div>
     </div>
   </template>
+
+  <div id="hintOverlay" class="hint-overlay" aria-hidden="true">
+    <div class="hint-overlay__backdrop" data-role="backdrop"></div>
+    <div class="hint-overlay__bubble" role="dialog" aria-modal="true" aria-labelledby="hintOverlayTitle" aria-describedby="hintOverlayBody">
+      <div class="hint-overlay__progress" id="hintOverlayProgress"></div>
+      <div class="hint-overlay__title" id="hintOverlayTitle"></div>
+      <div class="hint-overlay__body" id="hintOverlayBody"></div>
+      <div class="hint-overlay__controls">
+        <button type="button" data-action="prev">Prev</button>
+        <button type="button" data-action="next">Next</button>
+        <button type="button" data-action="dismiss">Close</button>
+      </div>
+    </div>
+  </div>
 
   <script>
   class SlumbrLayer {
@@ -1636,6 +1651,7 @@
 
       this.titleEl = document.getElementById('hintOverlayTitle');
       this.bodyEl = document.getElementById('hintOverlayBody');
+      this.progressEl = document.getElementById('hintOverlayProgress');
       this.prevBtn = this.overlay.querySelector('[data-action="prev"]');
       this.nextBtn = this.overlay.querySelector('[data-action="next"]');
       this.dismissBtn = this.overlay.querySelector('[data-action="dismiss"]');
@@ -1648,6 +1664,7 @@
       this.boundReposition = ()=> this.positionBubble();
       this.replayButton = document.querySelector('[data-action="show-hints"]');
       this.isOverlayActive = false;
+      this.pendingShowHandle = null;
 
       this.safeStorage = {
         get:()=>{
@@ -1662,33 +1679,33 @@
 
       this.hints = [
         {
-          title:'Master Control',
-          body:'Press Start to wake SLUMBR, then ride the large master dial to command global volume and force.',
+          title:'Main Volume',
+          body:'Tap Start to wake SLUMBR, then sweep this master dial to command overall volume and force.',
           target:()=> this.queryActive('.control-knob.master'),
           placement:'top'
         },
         {
           title:'Element Mixers',
-          body:'Each elemental lane pairs a volume wheel with a sound picker. Twist for level and tap the dropdown to choose new textures.',
+          body:'Each elemental lane pairs a volume wheel with a sound picker—twist for level and open the dropdown to choose the ambience.',
           target:()=> this.queryActive('.channel.sky'),
           placement:'bottom'
         },
         {
           title:'Astral & Lucid',
-          body:'Blend in Astral shimmer for width and dial Lucid for movement—the duo shapes depth and dreamy drift.',
+          body:'Blend Astral for shimmer and width, then dial Lucid to add motion—together they sculpt depth and dreamy movement.',
           target:()=> this.queryActive('.control-knob.astral'),
           extras:()=> [this.queryActive('.control-knob.lucid')].filter(Boolean),
           placement:'bottom'
         },
         {
           title:'Triplets Mode',
-          body:'Run up to three realms at once. Use these dots to engage triplets mode and layer richer motion.',
+          body:'Use these orbit dots to run up to three realms at once—triplets mode layers richer, more nuanced textures.',
           target:()=> document.querySelector('.layer-switcher'),
           placement:'bottom'
         },
         {
           title:'Save, Load & Random',
-          body:'Bank tonight\'s blend, reload favourites, or randomize the full rig whenever inspiration hits.',
+          body:'Save tonight\'s blend, reload favourites, or randomise the full rig whenever you crave something new.',
           target:()=> this.queryActive('.save-load-buttons'),
           placement:'top'
         }
@@ -1728,16 +1745,18 @@
       if(!force && this.safeStorage.get()) return;
       window.addEventListener('resize', this.boundReposition, { passive:true });
       window.addEventListener('scroll', this.boundReposition, true);
+      this.clearPendingShow();
       this.show(0, force);
     }
 
     show(index, force = false){
+      this.clearPendingShow();
       if(index < 0 || index >= this.hints.length){ this.complete(); return; }
       const hint = this.hints[index];
       this.clearHighlight();
       const target = typeof hint.target === 'function' ? hint.target() : null;
       if(!target){
-        this.next();
+        this.pendingShowHandle = window.setTimeout(()=> this.show(index, force), 120);
         return;
       }
       this.currentIndex = index;
@@ -1757,6 +1776,7 @@
       if(this.titleEl) this.titleEl.textContent = hint.title;
       if(this.bodyEl) this.bodyEl.textContent = hint.body;
       this.updateControls();
+      this.updateProgress();
       this.positionBubble(hint.placement);
       if(force){
         this.safeStorage.set();
@@ -1798,6 +1818,19 @@
       if(this.nextBtn){ this.nextBtn.textContent = this.currentIndex === this.hints.length - 1 ? 'Finish' : 'Next'; }
     }
 
+    updateProgress(){
+      if(this.progressEl){
+        this.progressEl.textContent = `${this.currentIndex + 1}/${this.hints.length}`;
+      }
+    }
+
+    clearPendingShow(){
+      if(this.pendingShowHandle !== null){
+        window.clearTimeout(this.pendingShowHandle);
+        this.pendingShowHandle = null;
+      }
+    }
+
     clearHighlight(){
       if(this.activeTarget){
         this.activeTarget.classList.remove('hint-target-highlight');
@@ -1835,6 +1868,7 @@
       this.isOverlayActive = false;
       window.removeEventListener('resize', this.boundReposition);
       window.removeEventListener('scroll', this.boundReposition, true);
+      this.clearPendingShow();
     }
   }
 
@@ -1847,19 +1881,6 @@
     window.addEventListener('load', ()=>{ navigator.serviceWorker.register('./sw.js').catch(()=>{}); });
   }
   </script>
-
-  <div id="hintOverlay" class="hint-overlay" aria-hidden="true">
-    <div class="hint-overlay__backdrop" data-role="backdrop"></div>
-    <div class="hint-overlay__bubble" role="dialog" aria-modal="true" aria-labelledby="hintOverlayTitle" aria-describedby="hintOverlayBody">
-      <div class="hint-overlay__title" id="hintOverlayTitle"></div>
-      <div class="hint-overlay__body" id="hintOverlayBody"></div>
-      <div class="hint-overlay__controls">
-        <button type="button" data-action="prev">Prev</button>
-        <button type="button" data-action="next">Next</button>
-        <button type="button" data-action="dismiss">Close</button>
-      </div>
-    </div>
-  </div>
 
   <div style="text-align:center; margin-top:20px;">
     <a href="https://mikewhyle.com/ai/" target="_blank" rel="noopener">
