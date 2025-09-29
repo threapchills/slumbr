@@ -270,16 +270,20 @@
     .hint-overlay{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; pointer-events:none; z-index:300; }
     .hint-overlay.is-visible{ display:flex; }
     .hint-overlay__backdrop{ position:absolute; inset:0; background:rgba(8,10,22,0.72); backdrop-filter:blur(2px); }
-    .hint-overlay__bubble{ position:absolute; max-width:min(320px, 80vw); background:rgba(18,20,38,0.9); border:1px solid rgba(255,255,255,0.25); border-radius:14px; padding:16px 18px 48px; color:#f4f6ff; box-shadow:0 12px 40px rgba(0,0,0,0.35); pointer-events:auto; }
+    .hint-overlay__bubble{ position:absolute; max-width:min(320px, 80vw); background:rgba(18,20,38,0.82); border:1px solid rgba(255,255,255,0.25); border-radius:14px; padding:16px 18px 48px; color:#f4f6ff; box-shadow:0 12px 40px rgba(0,0,0,0.35); pointer-events:auto; backdrop-filter:blur(4px); }
     .hint-overlay__bubble::after{ content:""; position:absolute; width:18px; height:18px; background:inherit; border:inherit; border-radius:4px; transform:rotate(45deg); top:100%; left:50%; margin-top:-2px; }
     .hint-overlay__title{ font-size:16px; font-weight:600; margin-bottom:6px; letter-spacing:0.03em; }
     .hint-overlay__body{ font-size:13px; line-height:1.5; opacity:0.9; }
     .hint-overlay__controls{ position:absolute; right:14px; bottom:12px; display:flex; gap:8px; }
     .hint-overlay__controls button{ background:rgba(255,255,255,0.08); color:#f5f7ff; border:1px solid rgba(255,255,255,0.15); border-radius:999px; padding:6px 14px; font-size:12px; letter-spacing:0.05em; text-transform:uppercase; cursor:pointer; }
     .hint-overlay__controls button:hover{ background:rgba(255,255,255,0.18); }
+    .hint-replay-button{ position:fixed; top:14px; right:14px; width:26px; height:26px; border-radius:50%; border:0; background:rgba(255,255,255,0.82); color:#05060a; font-weight:700; font-size:15px; line-height:26px; text-align:center; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.25); opacity:0.65; transition:opacity 0.2s ease, transform 0.2s ease; z-index:310; }
+    .hint-replay-button:hover{ opacity:1; transform:translateY(-1px); }
+    .hint-replay-button:focus-visible{ outline:2px solid rgba(70,130,255,0.8); outline-offset:3px; opacity:1; }
   </style></style>
 </head>
 <body>
+  <button type="button" class="hint-replay-button" data-action="show-hints" aria-label="Show SLUMBR guide">?</button>
   <div class="app-container">
     <div class="layer-switcher" role="tablist" aria-label="Sound layer selector">
       <button class="layer-dot active" data-index="0" aria-label="Aurora layer"></button>
@@ -1637,39 +1641,54 @@
       this.dismissBtn = this.overlay.querySelector('[data-action="dismiss"]');
       this.backdrop = this.overlay.querySelector('[data-role="backdrop"]');
 
-      this.storageKey = 'slumbr_hints_v1';
+      this.storageKey = 'slumbr_hints_v2';
       this.currentIndex = 0;
       this.activeTarget = null;
+      this.extraHighlights = [];
       this.boundReposition = ()=> this.positionBubble();
+      this.replayButton = document.querySelector('[data-action="show-hints"]');
+      this.isOverlayActive = false;
+
+      this.safeStorage = {
+        get:()=>{
+          try{ return localStorage.getItem(this.storageKey); }
+          catch(err){ return null; }
+        },
+        set:()=>{
+          try{ localStorage.setItem(this.storageKey, '1'); }
+          catch(err){ /* ignore */ }
+        }
+      };
 
       this.hints = [
         {
           title:'Master Control',
-          body:'Tap to start SLUMBR, then spin the large master knob to set overall volume and force for every layer.',
+          body:'Press Start to wake SLUMBR, then ride the large master dial to command global volume and force.',
           target:()=> this.queryActive('.control-knob.master'),
           placement:'top'
         },
         {
           title:'Element Mixers',
-          body:'Each elemental strip has its own volume knob and selector. Choose different textures from the dropdowns and mix the levels to taste.',
+          body:'Each elemental lane pairs a volume wheel with a sound picker. Twist for level and tap the dropdown to choose new textures.',
           target:()=> this.queryActive('.channel.sky'),
           placement:'bottom'
         },
         {
           title:'Astral & Lucid',
-          body:'Use the Astral and Lucid micro knobs to add width, motion and dreamy modulation to the soundscape.',
+          body:'Blend in Astral shimmer for width and dial Lucid for movement—the duo shapes depth and dreamy drift.',
           target:()=> this.queryActive('.control-knob.astral'),
+          extras:()=> [this.queryActive('.control-knob.lucid')].filter(Boolean),
           placement:'bottom'
         },
         {
           title:'Triplets Mode',
-          body:'Three layers can run together. Switch or stack them with these dots for richer, nuanced textures.',
+          body:'Run up to three realms at once. Use these dots to engage triplets mode and layer richer motion.',
           target:()=> document.querySelector('.layer-switcher'),
           placement:'bottom'
         },
         {
           title:'Save, Load & Random',
-          body:'Load yesterday\'s vibe, lock in tonight\'s preset, or roll the dice for something new anytime.',
+          body:'Bank tonight\'s blend, reload favourites, or randomize the full rig whenever inspiration hits.',
           target:()=> this.queryActive('.save-load-buttons'),
           placement:'top'
         }
@@ -1677,7 +1696,7 @@
 
       this.attachEvents();
 
-      if(!localStorage.getItem(this.storageKey)){
+      if(!this.safeStorage.get()){
         window.setTimeout(()=> this.start(), 1400);
       }
     }
@@ -1693,17 +1712,26 @@
       if(this.nextBtn){ this.nextBtn.addEventListener('click', ()=> this.next()); }
       if(this.dismissBtn){ this.dismissBtn.addEventListener('click', ()=> this.complete()); }
       if(this.backdrop){ this.backdrop.addEventListener('click', ()=> this.next()); }
-    }
-
-    start(){
-      if(this.overlay && !localStorage.getItem(this.storageKey)){
-        this.show(0);
-        window.addEventListener('resize', this.boundReposition, { passive:true });
-        window.addEventListener('scroll', this.boundReposition, true);
+      if(this.replayButton){
+        this.replayButton.addEventListener('click', ()=>{
+          this.start(true);
+        });
       }
     }
 
-    show(index){
+    start(force = false){
+      if(!this.overlay) return;
+      if(this.isOverlayActive){
+        this.show(0, force);
+        return;
+      }
+      if(!force && this.safeStorage.get()) return;
+      window.addEventListener('resize', this.boundReposition, { passive:true });
+      window.addEventListener('scroll', this.boundReposition, true);
+      this.show(0, force);
+    }
+
+    show(index, force = false){
       if(index < 0 || index >= this.hints.length){ this.complete(); return; }
       const hint = this.hints[index];
       this.clearHighlight();
@@ -1715,12 +1743,24 @@
       this.currentIndex = index;
       this.activeTarget = target;
       target.classList.add('hint-target-highlight');
+      this.extraHighlights = [];
+      const extras = typeof hint.extras === 'function' ? hint.extras() : [];
+      extras.forEach(el=>{
+        if(el){
+          el.classList.add('hint-target-highlight');
+          this.extraHighlights.push(el);
+        }
+      });
       this.overlay.classList.add('is-visible');
       this.overlay.setAttribute('aria-hidden', 'false');
+      this.isOverlayActive = true;
       if(this.titleEl) this.titleEl.textContent = hint.title;
       if(this.bodyEl) this.bodyEl.textContent = hint.body;
       this.updateControls();
       this.positionBubble(hint.placement);
+      if(force){
+        this.safeStorage.set();
+      }
     }
 
     positionBubble(preferred){
@@ -1763,6 +1803,10 @@
         this.activeTarget.classList.remove('hint-target-highlight');
         this.activeTarget = null;
       }
+      if(Array.isArray(this.extraHighlights)){
+        this.extraHighlights.forEach(el=> el.classList.remove('hint-target-highlight'));
+      }
+      this.extraHighlights = [];
     }
 
     next(){
@@ -1780,7 +1824,7 @@
     }
 
     complete(){
-      localStorage.setItem(this.storageKey, '1');
+      this.safeStorage.set();
       this.hide();
     }
 
@@ -1788,6 +1832,7 @@
       this.clearHighlight();
       this.overlay.classList.remove('is-visible');
       this.overlay.setAttribute('aria-hidden', 'true');
+      this.isOverlayActive = false;
       window.removeEventListener('resize', this.boundReposition);
       window.removeEventListener('scroll', this.boundReposition, true);
     }
