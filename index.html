@@ -13,18 +13,19 @@
     *{ margin:0; padding:0; box-sizing:border-box; }
     body{
       font-family:Arial, sans-serif;
-      background:#1a1a2e;
+      background:#0f1220;
       color:white;
       user-select:none;
       overflow-x:hidden;
       overflow-y:auto;
       min-height:100vh;
       padding:0 12px 32px;
+      position:relative;
     }
 
     .app-container{
       position:relative;
-      width:min(540px, 92vw);
+      width:min(580px, 94vw);
       aspect-ratio:540 / 835;
       height:auto;
       margin:clamp(12px, 4vh, 28px) auto;
@@ -35,8 +36,13 @@
     }
 
     .layer-switcher{
-      position:absolute; top:18px; left:50%; transform:translateX(-50%);
-      display:flex; gap:10px; z-index:25;
+      position:absolute;
+      top:10%;
+      left:50%;
+      transform:translate(-50%, -50%);
+      display:flex;
+      gap:10px;
+      z-index:25;
     }
     .layer-dot{
       width:14px; height:14px; border-radius:50%; border:1px solid rgba(255,255,255,0.5);
@@ -58,7 +64,8 @@
 
     .layer-surface{
       position:relative; width:100%; height:100%;
-      background-image:url('background.png'); background-size:cover; background-position:center; background-repeat:no-repeat;
+      background-image:url('background.png'); background-size:100% 100%; background-position:center top; background-repeat:no-repeat;
+      background-color:#070912;
     }
 
     .layer-surface::after{
@@ -66,8 +73,8 @@
     }
 
     .layer-badge{
-      position:absolute; top:20px; left:26px; background:rgba(0,0,0,0.55); padding:6px 12px; border-radius:999px;
-      font-size:12px; letter-spacing:0.08em; text-transform:uppercase; opacity:0.8; pointer-events:none;
+      position:absolute; top:22px; left:26px; background:rgba(0,0,0,0.45); padding:4px 10px; border-radius:999px;
+      font-size:10px; letter-spacing:0.08em; text-transform:uppercase; opacity:0.7; pointer-events:none;
     }
 
     .tintOverlay{
@@ -78,12 +85,24 @@
       border-radius:12px;
     }
 
-    .channel{ position:absolute; display:flex; flex-direction:column; align-items:center; width:95px; height:240px; padding:4px; }
-    .knob-container{ position:relative; width:75px; height:75px; }
+    .channel{
+      position:absolute;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      width:min(19vw, 110px);
+      max-width:110px;
+      height:240px;
+      padding:4px;
+      transform:translate(-50%, -50%);
+    }
+    .knob-container{ position:relative; width:75px; height:75px; cursor:grab; }
+    .knob-container.dragging{ cursor:grabbing; }
     .knob-slider{ position:absolute; width:100%; height:100%; opacity:0; cursor:pointer; z-index:2; margin:0; }
     .knob-image{
       position:absolute; width:100%; height:100%; background-size:contain; background-repeat:no-repeat; background-position:center;
-      pointer-events:none; filter:hue-rotate(180deg) saturate(1.5); transition:filter 0.1s ease;
+      pointer-events:none; filter:hue-rotate(180deg) saturate(1.5); transition:filter 0.1s ease, transform 0.08s ease-out;
+      transform:rotate(-135deg);
     }
     .knob-readout{ width:75px; height:24px; text-align:center; font-size:12px; color:white; line-height:24px; margin-top:2px; }
 
@@ -96,10 +115,10 @@
     select.channel-spinner option{ background:#1f1f3d; color:white; font-size:16px; }
     select.channel-spinner option:hover{ background:#3c3c5d; }
 
-    .control-knob{ position:absolute; display:flex; flex-direction:column; align-items:center; }
+    .control-knob{ position:absolute; display:flex; flex-direction:column; align-items:center; transform:translate(-50%, -50%); }
     .control-knob.small .knob-container{ width:50px; height:50px; }
     .control-knob.small .knob-readout{ width:50px; font-size:10px; height:18px; line-height:18px; margin-top:2px; }
-    .control-knob.large .knob-container{ width:150px; height:150px; }
+    .control-knob.large .knob-container{ width:150px; height:150px; cursor:grab; }
     .control-knob.large .knob-readout{ width:150px; font-size:14px; height:24px; line-height:24px; margin-top:2px; }
 
     .save-load-buttons{
@@ -130,6 +149,9 @@
       display:flex;
       align-items:center;
       justify-content:center;
+      background-size:40px 40px;
+      background-position:center;
+      background-repeat:no-repeat;
     }
     .save-load-button:hover{ background:rgba(255,255,255,0.12); transform:translateY(-2px); }
     .save-load-button:active{ transform:translateY(0); }
@@ -144,6 +166,8 @@
     .save-load-button.randomize:active{
       transform:scale(0.97);
     }
+    .save-load-button.load{ background-image:url('load.png'); }
+    .save-load-button.save{ background-image:url('save.png'); }
 
     .eq-buttons{ position:absolute; bottom:100px; left:50%; transform:translateX(-50%); display:flex; gap:6px; align-items:center; justify-content:center; }
     .eq-button{
@@ -161,13 +185,13 @@
     .eq-brown{ background: rgba(165,94,41,0.32); }
     .eq-black{ background: rgba(20,24,30,0.55); }
 
-    .channel.sky{ left:calc(28% - 47.5px); top:calc(58% - 120px); }
-    .channel.fire{ left:calc(74% - 47.5px); top:calc(58% - 120px); }
-    .channel.earth{ left:calc(27% - 47.5px); top:calc(78% - 120px); }
-    .channel.sea{ left:calc(73% - 47.5px); top:calc(78% - 120px); }
-    .control-knob.astral{ left:calc(38% - 25px); top:calc(28% - 25px); }
-    .control-knob.lucid{ left:calc(62% - 25px); top:calc(28% - 25px); }
-    .control-knob.master{ left:calc(50% - 75px); top:calc(64% - 75px); }
+    .channel.sky{ left:28%; top:56%; }
+    .channel.fire{ left:72%; top:56%; }
+    .channel.earth{ left:28%; top:83%; }
+    .channel.sea{ left:72%; top:83%; }
+    .control-knob.astral{ left:38%; top:30%; }
+    .control-knob.lucid{ left:62%; top:30%; }
+    .control-knob.master{ left:50%; top:66%; }
 
     .channel-content{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; width:100%; }
     .channel.earth .channel-content > .channel-spinner,
@@ -192,6 +216,26 @@
     .progress{ margin-top:12px; width:260px; height:6px; background:rgba(255,255,255,0.15); border-radius:3px; overflow:hidden; }
     .progress-bar{ height:100%; width:0%; background:#2ecc71; transition:width 0.2s ease; }
 
+    .lazy-loading-status{
+      position:absolute;
+      bottom:160px;
+      left:50%;
+      transform:translateX(-50%);
+      padding:8px 14px;
+      background:rgba(0,0,0,0.45);
+      border:1px solid rgba(255,255,255,0.18);
+      border-radius:999px;
+      font-size:12px;
+      letter-spacing:0.05em;
+      display:none;
+    }
+
+    .channel-spinner.loading{ opacity:0.65; }
+    .hint-target-highlight{ z-index:260; outline:2px solid rgba(126,188,255,0.65); box-shadow:0 0 18px rgba(70,130,255,0.45); border-radius:12px; transition:box-shadow 0.3s ease; }
+    .hint-overlay__bubble{ --hint-arrow-offset:50%; }
+    .hint-overlay__bubble[data-placement="top"]::after{ top:100%; bottom:auto; transform:translateX(calc(var(--hint-arrow-offset) * -1 + 50%)) rotate(45deg); }
+    .hint-overlay__bubble[data-placement="bottom"]::after{ bottom:100%; top:auto; transform:translateX(calc(var(--hint-arrow-offset) * -1 + 50%)) rotate(45deg); }
+    .hint-overlay__bubble::after{ left:var(--hint-arrow-offset); }
     .layer-theme-blue .layer-surface{ filter:hue-rotate(-12deg) saturate(1.08); }
     .layer-theme-green .layer-surface{ filter:hue-rotate(28deg) saturate(1.05); }
     .layer-theme-red .layer-surface{ filter:hue-rotate(-58deg) saturate(1.12); }
@@ -204,9 +248,26 @@
         margin:clamp(8px, 4vh, 20px) auto;
         max-height:none;
       }
-      .layer-switcher{ top:12px; }
+      .layer-switcher{ top:12%; }
+      .channel{ width:min(24vw, 110px); }
+      .channel.sky{ left:27%; top:58%; }
+      .channel.fire{ left:73%; top:58%; }
+      .channel.earth{ left:27%; top:86%; }
+      .channel.sea{ left:73%; top:86%; }
+      .control-knob.master{ top:70%; }
     }
-  </style>
+
+    .hint-overlay{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; pointer-events:none; z-index:300; }
+    .hint-overlay.is-visible{ display:flex; }
+    .hint-overlay__backdrop{ position:absolute; inset:0; background:rgba(8,10,22,0.72); backdrop-filter:blur(2px); }
+    .hint-overlay__bubble{ position:absolute; max-width:min(320px, 80vw); background:rgba(18,20,38,0.9); border:1px solid rgba(255,255,255,0.25); border-radius:14px; padding:16px 18px 48px; color:#f4f6ff; box-shadow:0 12px 40px rgba(0,0,0,0.35); pointer-events:auto; }
+    .hint-overlay__bubble::after{ content:""; position:absolute; width:18px; height:18px; background:inherit; border:inherit; border-radius:4px; transform:rotate(45deg); top:100%; left:50%; margin-top:-2px; }
+    .hint-overlay__title{ font-size:16px; font-weight:600; margin-bottom:6px; letter-spacing:0.03em; }
+    .hint-overlay__body{ font-size:13px; line-height:1.5; opacity:0.9; }
+    .hint-overlay__controls{ position:absolute; right:14px; bottom:12px; display:flex; gap:8px; }
+    .hint-overlay__controls button{ background:rgba(255,255,255,0.08); color:#f5f7ff; border:1px solid rgba(255,255,255,0.15); border-radius:999px; padding:6px 14px; font-size:12px; letter-spacing:0.05em; text-transform:uppercase; cursor:pointer; }
+    .hint-overlay__controls button:hover{ background:rgba(255,255,255,0.18); }
+  </style></style>
 </head>
 <body>
   <div class="app-container">
@@ -230,6 +291,8 @@
             <div class="progress-bar" data-id="progressBar" style="width:0%"></div>
           </div>
         </div>
+
+        <div class="lazy-loading-status" data-id="lazyStatus" aria-live="polite" hidden>Loading extended library…</div>
 
         <div class="control-knob astral small">
           <div class="knob-container small">
@@ -320,9 +383,9 @@
         </div>
 
         <div class="save-load-buttons">
-          <button class="save-load-button" data-id="saveButton" aria-label="Save preset" type="button"></button>
+          <button class="save-load-button load" data-id="loadButton" aria-label="Load preset" type="button"></button>
           <button class="save-load-button randomize" data-id="randomizeButton" aria-label="Randomize preset" type="button"></button>
-          <button class="save-load-button" data-id="loadButton" aria-label="Load preset" type="button"></button>
+          <button class="save-load-button save" data-id="saveButton" aria-label="Save preset" type="button"></button>
         </div>
       </div>
     </div>
@@ -352,6 +415,13 @@
       this.startEvents = ['pointerdown','touchstart','click'];
       this.suppressUserStartCallback = false;
       this.initializingPromise = null;
+
+      this.corePreloadCount = 3;
+      this.channelLoadStatus = {};
+      this.pendingSpinnerSelections = {};
+      this.lazyLoadingPromise = null;
+      this.lazyLoadTotal = 0;
+      this.lazyLoadDone = 0;
       this.eqTintMap = {
         white:{ r:255, g:255, b:255, weight:0.18 },
         pink: { r:255, g:120, b:200, weight:0.42 },
@@ -402,7 +472,9 @@
       this.layerTintBias = options.baseTint || null;
       this.layerTintBiasWeight = options.baseTintWeight ?? 0.2;
 
+      this.decorateSpinnerOptions();
       this.initializeEventListeners();
+      this.setupKnobGestures();
       if(this.el('layerBadge') && options.label){ this.el('layerBadge').textContent = options.label; }
       if(this.el('loadingText') && options.startText){ this.el('loadingText').textContent = options.startText; }
       this.refreshInitialKnobColours();
@@ -410,6 +482,91 @@
 
     el(id){ return this.root.querySelector(`[data-id="${id}"]`); }
     els(selector){ return Array.from(this.root.querySelectorAll(selector)); }
+
+    decorateSpinnerOptions(){
+      this.orderedChannelNames.forEach(name=>{
+        const spinner = this.el(`${name}Spinner`);
+        if(!spinner) return;
+        Array.from(spinner.options || []).forEach(opt=>{
+          opt.dataset.index = opt.value;
+        });
+        spinner.classList.add('loading');
+      });
+    }
+
+    setupKnobGestures(){
+      const bindDrag = (slider, container)=>{
+        const getRange = ()=>({ min: parseFloat(slider.min || '0'), max: parseFloat(slider.max || '100') });
+        const clamp = (val)=>{
+          const { min, max } = getRange();
+          return Math.min(max, Math.max(min, val));
+        };
+        const stepValue = ()=>{
+          const step = slider.step && slider.step !== 'any' ? parseFloat(slider.step) : 1;
+          return Number.isFinite(step) && step > 0 ? step : 1;
+        };
+
+        slider.addEventListener('pointerdown', (event)=>{
+          if(event.pointerType === 'mouse' && event.button !== 0) return;
+          event.preventDefault();
+          slider.focus({ preventScroll:true });
+          const pointerId = event.pointerId;
+          const startY = event.clientY;
+          const startX = event.clientX;
+          const startValue = parseFloat(slider.value);
+          const { min, max } = getRange();
+          const range = max - min;
+          const isLarge = container.classList.contains('large');
+          const sensitivity = isLarge ? 170 : 120;
+          container.classList.add('dragging');
+          slider.setPointerCapture(pointerId);
+
+          const handleMove = (ev)=>{
+            if(ev.pointerId !== pointerId) return;
+            const deltaY = startY - ev.clientY;
+            const deltaX = ev.clientX - startX;
+            const delta = deltaY + deltaX*0.25;
+            let next = startValue + (delta / sensitivity) * range;
+            next = clamp(next);
+            next = Math.round(next);
+            if(next !== parseFloat(slider.value)){
+              slider.value = String(next);
+              slider.dispatchEvent(new Event('input', { bubbles:true }));
+            }
+          };
+
+          const handleEnd = (ev)=>{
+            if(ev.pointerId !== pointerId) return;
+            container.classList.remove('dragging');
+            slider.releasePointerCapture(pointerId);
+            container.removeEventListener('pointermove', handleMove);
+            container.removeEventListener('pointerup', handleEnd);
+            container.removeEventListener('pointercancel', handleEnd);
+          };
+
+          container.addEventListener('pointermove', handleMove);
+          container.addEventListener('pointerup', handleEnd);
+          container.addEventListener('pointercancel', handleEnd);
+        });
+
+        container.addEventListener('wheel', (event)=>{
+          if(event.ctrlKey) return;
+          event.preventDefault();
+          const direction = event.deltaY < 0 ? 1 : -1;
+          const next = clamp(parseFloat(slider.value) + direction * stepValue());
+          if(next !== parseFloat(slider.value)){
+            slider.value = String(Math.round(next));
+            slider.dispatchEvent(new Event('input', { bubbles:true }));
+          }
+        }, { passive:false });
+      };
+
+      this.els('.knob-container').forEach(container=>{
+        const slider = container.querySelector('.knob-slider');
+        if(!slider) return;
+        bindDrag(slider, container);
+      });
+    }
 
     gainFromSlider(v){ return Math.pow(v/100, 2.2); }
     randBetween(min,max){ return min + Math.random()*(max-min); }
@@ -450,9 +607,7 @@
       const loadingIndicator = this.el('loadingIndicator');
       const runInitialization = async ()=>{
         try{
-          if(!this.audioContext){
-            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-          }
+          this.audioContext = SlumbrLayer.getAudioContext();
           if(this.audioContext.state === 'suspended'){ await this.audioContext.resume(); }
           if(this.audioContext.state !== 'running'){
             if(loadingIndicator){ loadingIndicator.textContent = 'AudioContext not running. Tap again.'; }
@@ -462,11 +617,6 @@
 
           this.setupAudioGraph();
           this.startLFOs();
-
-          this.updateLoadingProgress(
-            0,
-            this.orderedChannelNames.reduce((a,n)=>a + this.channelData[n].files.length, 0)
-          );
 
           await this.loadAllSounds();
 
@@ -630,33 +780,190 @@
       const text = this.el('loadingText');
       const bar  = this.el('progressBar');
       const pct  = total > 0 ? Math.round((done/total)*100) : 0;
-      if(text) text.textContent = `Loading ${pct}%`;
+      if(text){
+        text.textContent = done >= total ? 'Ready' : `Loading essentials ${pct}%`;
+      }
       if(bar)  bar.style.width   = `${pct}%`;
     }
 
     async loadAllSounds(){
-      const total = this.orderedChannelNames.reduce((acc, name) => acc + this.channelData[name].files.length, 0);
+      if(!this.audioContext) return;
+      const totalCore = this.orderedChannelNames.reduce((acc, name)=>{
+        const files = this.channelData[name]?.files?.length || 0;
+        return acc + Math.min(this.corePreloadCount, files);
+      }, 0);
       let done = 0;
-      const bump = () => { done++; this.updateLoadingProgress(done, total); };
+      this.updateLoadingProgress(0, totalCore);
 
       for(const channelName of this.orderedChannelNames){
         const data = this.channelData[channelName];
-        this.channels[channelName].audioBuffers = [];
-        for(const filename of data.files){
+        if(!data) continue;
+        const totalFiles = data.files.length;
+        const preloadCount = Math.min(this.corePreloadCount, totalFiles);
+        const channel = this.channels[channelName];
+        channel.audioBuffers = new Array(totalFiles).fill(null);
+        channel.loadedCount = 0;
+        this.channelLoadStatus[channelName] = { loaded:0, total:totalFiles };
+
+        for(let i=0; i<preloadCount; i++){
+          const filename = data.files[i];
           try{
             const loaded = await this.loadAudioFile(`sounds/${filename}`);
-            this.channels[channelName].audioBuffers.push(loaded);
-            bump();
-          }catch{
-            const silent = this.audioContext.createBuffer(1, Math.max(1, this.audioContext.sampleRate*0.02), this.audioContext.sampleRate);
-            this.channels[channelName].audioBuffers.push({ buffer:silent, pregain:1 });
-            bump();
+            this.markSoundLoaded(channelName, i, loaded);
+          }catch(err){
+            console.warn(`Failed to load core sound ${filename}:`, err);
+            this.markSoundLoaded(channelName, i, this.createSilentMeta());
+          }finally{
+            done++;
+            this.updateLoadingProgress(done, totalCore);
           }
         }
       }
+
+      this.updateLoadingProgress(totalCore, totalCore);
+
+      this.lazyLoadTotal = this.orderedChannelNames.reduce((acc, name)=>{
+        const totalFiles = this.channelData[name]?.files?.length || 0;
+        const loaded = this.getLoadedCount(name);
+        return acc + Math.max(0, totalFiles - loaded);
+      }, 0);
+      this.lazyLoadDone = 0;
+
+      if(this.lazyLoadTotal > 0){
+        this.toggleLazyStatus(true, this.lazyLoadDone, this.lazyLoadTotal);
+        this.lazyLoadingPromise = this.loadRemainingSounds();
+      }else{
+        this.toggleLazyStatus(false);
+      }
     }
 
-    computeRMS(buf){
+    async loadRemainingSounds(){
+      if(!this.audioContext || this.lazyLoadTotal <= 0) return;
+      for(const channelName of this.orderedChannelNames){
+        const data = this.channelData[channelName];
+        if(!data) continue;
+        const startIndex = this.getLoadedCount(channelName);
+        const totalFiles = data.files.length;
+        for(let i=startIndex; i<totalFiles; i++){
+          const filename = data.files[i];
+          try{
+            const loaded = await this.loadAudioFile(`sounds/${filename}`);
+            this.markSoundLoaded(channelName, i, loaded);
+          }catch(err){
+            console.warn(`Failed to lazy load ${filename}:`, err);
+            this.markSoundLoaded(channelName, i, this.createSilentMeta());
+          }finally{
+            this.lazyLoadDone = Math.min(this.lazyLoadTotal, this.lazyLoadDone + 1);
+            this.toggleLazyStatus(true, this.lazyLoadDone, this.lazyLoadTotal);
+          }
+        }
+      }
+      this.toggleLazyStatus(false);
+    }
+
+    createSilentMeta(){
+      const frames = Math.max(1, this.audioContext.sampleRate * 0.02);
+      const buffer = this.audioContext.createBuffer(1, frames, this.audioContext.sampleRate);
+      return { buffer, pregain:1 };
+    }
+
+    toggleLazyStatus(show, done=0, total=0){
+      const status = this.el('lazyStatus');
+      if(!status) return;
+      if(!show || total <= 0){
+        status.hidden = true;
+        status.style.display = 'none';
+        return;
+      }
+      const pct = Math.min(100, Math.round((done/Math.max(1,total))*100));
+      status.hidden = false;
+      status.style.display = 'inline-flex';
+      status.textContent = `Loading extended library… ${done}/${total} (${pct}%)`;
+    }
+
+    markSoundLoaded(channelName, index, meta){
+      const channel = this.channels[channelName];
+      if(!channel) return;
+      if(!Array.isArray(channel.audioBuffers)){
+        channel.audioBuffers = new Array(this.channelData[channelName]?.files?.length || 0).fill(null);
+      }
+      channel.audioBuffers[index] = meta;
+      const current = typeof channel.loadedCount === 'number' ? channel.loadedCount : 0;
+      channel.loadedCount = Math.max(current, index + 1);
+      this.channelLoadStatus[channelName] = this.channelLoadStatus[channelName] || { loaded:0, total:this.channelData[channelName]?.files?.length || 0 };
+      this.channelLoadStatus[channelName].loaded = channel.loadedCount;
+      this.updateSpinnerAvailability(channelName);
+      this.processPendingSelection(channelName);
+    }
+
+    getLoadedCount(channelName){
+      const channel = this.channels[channelName];
+      return channel && typeof channel.loadedCount === 'number' ? channel.loadedCount : 0;
+    }
+
+    getTotalSounds(channelName){
+      return this.channelData[channelName]?.files?.length || 0;
+    }
+
+    isSoundLoaded(channelName, index){
+      if(index === undefined || index === null || index < 0) return false;
+      const channel = this.channels[channelName];
+      if(!channel || !Array.isArray(channel.audioBuffers)) return false;
+      const meta = channel.audioBuffers[index];
+      return !!(meta && meta.buffer && meta.buffer.duration >= 0);
+    }
+
+    updateSpinnerAvailability(channelName){
+      const spinner = this.el(`${channelName}Spinner`);
+      if(!spinner) return;
+      const loaded = this.getLoadedCount(channelName);
+      const total = this.getTotalSounds(channelName);
+      Array.from(spinner.options || []).forEach(opt=>{
+        const idx = parseInt(opt.value, 10);
+        opt.disabled = Number.isFinite(idx) ? idx >= loaded : false;
+      });
+      spinner.classList.toggle('loading', loaded < total);
+    }
+
+    processPendingSelection(channelName){
+      const pending = this.pendingSpinnerSelections[channelName];
+      if(typeof pending === 'undefined') return;
+      if(this.isSoundLoaded(channelName, pending)){
+        const spinner = this.el(`${channelName}Spinner`);
+        if(spinner){
+          spinner.value = String(pending);
+          spinner.dispatchEvent(new Event('change', { bubbles:true }));
+        }
+        delete this.pendingSpinnerSelections[channelName];
+      }
+    }
+
+    getFallbackSelection(channelName){
+      const loaded = this.getLoadedCount(channelName);
+      if(loaded > 0) return 0;
+      return 0;
+    }
+
+    setChannelSpinnerValue(channelName, value){
+      const spinner = this.el(`${channelName}Spinner`);
+      if(!spinner || value === undefined || value === null) return;
+      const numeric = parseInt(value, 10);
+      if(!Number.isFinite(numeric)) return;
+      if(this.isSoundLoaded(channelName, numeric)){
+        spinner.value = String(numeric);
+        spinner.dispatchEvent(new Event('change', { bubbles:true }));
+        delete this.pendingSpinnerSelections[channelName];
+      }else{
+        const fallback = this.getLoadedCount(channelName) > 0 ? 0 : this.getFallbackSelection(channelName);
+        if(this.getLoadedCount(channelName) > 0){
+          spinner.value = String(fallback);
+          spinner.dispatchEvent(new Event('change', { bubbles:true }));
+        }
+        this.pendingSpinnerSelections[channelName] = numeric;
+      }
+    }
+
+    static computeRMS(buf){
       const ch = buf.getChannelData(0);
       let sum = 0, n = 0, step = 128;
       for(let i=0;i<ch.length;i+=step){ const s = ch[i]; sum += s*s; n++; }
@@ -664,14 +971,8 @@
     }
 
     async loadAudioFile(url){
-      const response = await fetch(url);
-      if(!response.ok){ throw new Error(`HTTP ${response.status} for ${url}`); }
-      const arrayBuffer = await response.arrayBuffer();
-      const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
-      const rms = this.computeRMS(audioBuffer);
-      const target = 0.16;
-      const pregain = Math.min(4, Math.max(0.25, target/(rms + 1e-6)));
-      return { buffer:audioBuffer, pregain };
+      const shared = await SlumbrLayer.fetchSharedAudio(url);
+      return shared;
     }
 
     getABIndex(channelName, index){
@@ -848,6 +1149,10 @@
       const targetHue = hueMinDeg + (hueMaxDeg - hueMinDeg)*value;
       const brightness = 0.8 + 0.4*value;
       knobImage.style.filter = `hue-rotate(${targetHue}deg) saturate(1.5) brightness(${brightness})`;
+      const rotationMin = -135;
+      const rotationMax = 135;
+      const rotation = rotationMin + (rotationMax - rotationMin)*value;
+      knobImage.style.transform = `rotate(${rotation}deg)`;
     }
 
     refreshInitialKnobColours(){
@@ -986,6 +1291,11 @@
         spinner.addEventListener('change', (e)=>{
           if(!this.isInitialized) return;
           const index = parseInt(e.target.value, 10);
+          if(!Number.isFinite(index)) return;
+          if(!this.isSoundLoaded(channelName, index)){
+            this.pendingSpinnerSelections[channelName] = index;
+            return;
+          }
           this.switchChannelSound(channelName, index);
         });
       });
@@ -1048,9 +1358,8 @@
         channels: {}
       };
       this.orderedChannelNames.forEach(name=>{
-        const spinner = this.el(`${name}Spinner`);
-        const optionCount = spinner ? spinner.options.length : (this.channelData[name]?.files?.length || 1);
-        const selectionIndex = this.randomInt(0, Math.max(0, optionCount - 1));
+        const loadedCount = Math.max(1, this.getLoadedCount(name) || Math.min(this.corePreloadCount, this.getTotalSounds(name) || 1));
+        const selectionIndex = this.randomInt(0, Math.max(0, loadedCount - 1));
         state.channels[name] = {
           volume: randomSliderValue(35, 85),
           selection: String(selectionIndex)
@@ -1068,19 +1377,6 @@
         el.value = String(Number.isFinite(v) ? v : 0);
         el.dispatchEvent(new Event('input', { bubbles:true }));
       };
-      const applySpinner = (id, value)=>{
-        const el = this.el(id);
-        if(!el || value === undefined || value === null) return;
-        const desired = String(value);
-        const options = Array.from(el.options || []);
-        if(!options.some(opt=> opt.value === desired)){
-          if(options.length){ el.value = options[0].value; }
-        }else{
-          el.value = desired;
-        }
-        el.dispatchEvent(new Event('change', { bubbles:true }));
-      };
-
       applySlider('masterSlider', state.master ?? '40');
       applySlider('astralSlider', state.astral ?? this.el('astralSlider').value);
       applySlider('lucidSlider', state.lucid ?? this.el('lucidSlider').value);
@@ -1090,7 +1386,7 @@
           const channelState = state.channels[name];
           if(!channelState) return;
           applySlider(`${name}Slider`, channelState.volume);
-          applySpinner(`${name}Spinner`, channelState.selection);
+          this.setChannelSpinnerValue(name, channelState.selection);
         });
       }
 
@@ -1166,7 +1462,45 @@
       this.root.style.display = active ? 'block' : 'none';
       if(active){ this.updateTintOverlay(); }
     }
+
+    static getAudioContext(){
+      if(!SlumbrLayer.sharedAudioContext){
+        SlumbrLayer.sharedAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return SlumbrLayer.sharedAudioContext;
+    }
+
+    static async fetchSharedAudio(url){
+      if(!SlumbrLayer.sharedAudioCache){ SlumbrLayer.sharedAudioCache = new Map(); }
+      const cached = SlumbrLayer.sharedAudioCache.get(url);
+      if(cached){
+        return cached instanceof Promise ? cached : cached;
+      }
+      const ctx = SlumbrLayer.getAudioContext();
+      const promise = (async ()=>{
+        const response = await fetch(url, { cache:'force-cache' });
+        if(!response.ok){ throw new Error(`HTTP ${response.status} for ${url}`); }
+        const arrayBuffer = await response.arrayBuffer();
+        const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+        const rms = SlumbrLayer.computeRMS(audioBuffer);
+        const target = 0.16;
+        const pregain = Math.min(4, Math.max(0.25, target/(rms + 1e-6)));
+        const meta = { buffer:audioBuffer, pregain };
+        SlumbrLayer.sharedAudioCache.set(url, meta);
+        return meta;
+      })();
+      SlumbrLayer.sharedAudioCache.set(url, promise);
+      return promise.catch(err=>{
+        if(SlumbrLayer.sharedAudioCache.get(url) === promise){
+          SlumbrLayer.sharedAudioCache.delete(url);
+        }
+        throw err;
+      });
+    }
   }
+
+  SlumbrLayer.sharedAudioContext = null;
+  SlumbrLayer.sharedAudioCache = new Map();
 
   class SlumbrLayersManager {
     constructor(){
@@ -1271,7 +1605,177 @@
     }
   }
 
+  class SlumbrHintsGuide {
+    constructor(manager){
+      this.manager = manager;
+      this.overlay = document.getElementById('hintOverlay');
+      if(!this.overlay){ return; }
+
+      this.titleEl = document.getElementById('hintOverlayTitle');
+      this.bodyEl = document.getElementById('hintOverlayBody');
+      this.prevBtn = this.overlay.querySelector('[data-action="prev"]');
+      this.nextBtn = this.overlay.querySelector('[data-action="next"]');
+      this.dismissBtn = this.overlay.querySelector('[data-action="dismiss"]');
+      this.backdrop = this.overlay.querySelector('[data-role="backdrop"]');
+
+      this.storageKey = 'slumbr_hints_v1';
+      this.currentIndex = 0;
+      this.activeTarget = null;
+      this.boundReposition = ()=> this.positionBubble();
+
+      this.hints = [
+        {
+          title:'Master Control',
+          body:'Tap to start SLUMBR, then spin the large master knob to set overall volume and force for every layer.',
+          target:()=> this.queryActive('.control-knob.master'),
+          placement:'top'
+        },
+        {
+          title:'Element Mixers',
+          body:'Each elemental strip has its own volume knob and selector. Choose different textures from the dropdowns and mix the levels to taste.',
+          target:()=> this.queryActive('.channel.sky'),
+          placement:'bottom'
+        },
+        {
+          title:'Astral & Lucid',
+          body:'Use the Astral and Lucid micro knobs to add width, motion and dreamy modulation to the soundscape.',
+          target:()=> this.queryActive('.control-knob.astral'),
+          placement:'bottom'
+        },
+        {
+          title:'Triplets Mode',
+          body:'Three layers can run together. Switch or stack them with these dots for richer, nuanced textures.',
+          target:()=> document.querySelector('.layer-switcher'),
+          placement:'bottom'
+        },
+        {
+          title:'Save, Load & Random',
+          body:'Load yesterday\'s vibe, lock in tonight\'s preset, or roll the dice for something new anytime.',
+          target:()=> this.queryActive('.save-load-buttons'),
+          placement:'top'
+        }
+      ];
+
+      this.attachEvents();
+
+      if(!localStorage.getItem(this.storageKey)){
+        window.setTimeout(()=> this.start(), 1400);
+      }
+    }
+
+    queryActive(selector){
+      const layer = this.manager?.layers?.[this.manager.activeIndex];
+      if(!layer || !layer.root) return null;
+      return layer.root.querySelector(selector);
+    }
+
+    attachEvents(){
+      if(this.prevBtn){ this.prevBtn.addEventListener('click', ()=> this.prev()); }
+      if(this.nextBtn){ this.nextBtn.addEventListener('click', ()=> this.next()); }
+      if(this.dismissBtn){ this.dismissBtn.addEventListener('click', ()=> this.complete()); }
+      if(this.backdrop){ this.backdrop.addEventListener('click', ()=> this.next()); }
+    }
+
+    start(){
+      if(this.overlay && !localStorage.getItem(this.storageKey)){
+        this.show(0);
+        window.addEventListener('resize', this.boundReposition, { passive:true });
+        window.addEventListener('scroll', this.boundReposition, true);
+      }
+    }
+
+    show(index){
+      if(index < 0 || index >= this.hints.length){ this.complete(); return; }
+      const hint = this.hints[index];
+      this.clearHighlight();
+      const target = typeof hint.target === 'function' ? hint.target() : null;
+      if(!target){
+        this.next();
+        return;
+      }
+      this.currentIndex = index;
+      this.activeTarget = target;
+      target.classList.add('hint-target-highlight');
+      this.overlay.classList.add('is-visible');
+      this.overlay.setAttribute('aria-hidden', 'false');
+      if(this.titleEl) this.titleEl.textContent = hint.title;
+      if(this.bodyEl) this.bodyEl.textContent = hint.body;
+      this.updateControls();
+      this.positionBubble(hint.placement);
+    }
+
+    positionBubble(preferred){
+      if(!this.activeTarget) return;
+      const bubble = this.overlay.querySelector('.hint-overlay__bubble');
+      if(!bubble) return;
+      const rect = this.activeTarget.getBoundingClientRect();
+      const margin = 18;
+      const placementPref = preferred || this.hints[this.currentIndex]?.placement || 'top';
+      requestAnimationFrame(()=>{
+        const bubbleRect = bubble.getBoundingClientRect();
+        let placement = placementPref;
+        let top;
+        if(placement === 'top'){
+          top = rect.top - bubbleRect.height - margin;
+          if(top < margin){ placement = 'bottom'; top = rect.bottom + margin; }
+        }else{
+          top = rect.bottom + margin;
+          if(top + bubbleRect.height > window.innerHeight - margin){ placement = 'top'; top = rect.top - bubbleRect.height - margin; }
+        }
+        top = Math.max(margin, Math.min(window.innerHeight - bubbleRect.height - margin, top));
+        let left = rect.left + rect.width/2 - bubbleRect.width/2;
+        left = Math.max(margin, Math.min(window.innerWidth - bubbleRect.width - margin, left));
+        bubble.style.top = `${top}px`;
+        bubble.style.left = `${left}px`;
+        bubble.dataset.placement = placement;
+        const arrowOffset = (rect.left + rect.width/2) - left;
+        const clamped = Math.max(18, Math.min(bubbleRect.width - 18, arrowOffset));
+        bubble.style.setProperty('--hint-arrow-offset', `${clamped}px`);
+      });
+    }
+
+    updateControls(){
+      if(this.prevBtn){ this.prevBtn.disabled = this.currentIndex === 0; }
+      if(this.nextBtn){ this.nextBtn.textContent = this.currentIndex === this.hints.length - 1 ? 'Finish' : 'Next'; }
+    }
+
+    clearHighlight(){
+      if(this.activeTarget){
+        this.activeTarget.classList.remove('hint-target-highlight');
+        this.activeTarget = null;
+      }
+    }
+
+    next(){
+      if(this.currentIndex >= this.hints.length - 1){
+        this.complete();
+      }else{
+        this.show(this.currentIndex + 1);
+      }
+    }
+
+    prev(){
+      if(this.currentIndex > 0){
+        this.show(this.currentIndex - 1);
+      }
+    }
+
+    complete(){
+      localStorage.setItem(this.storageKey, '1');
+      this.hide();
+    }
+
+    hide(){
+      this.clearHighlight();
+      this.overlay.classList.remove('is-visible');
+      this.overlay.setAttribute('aria-hidden', 'true');
+      window.removeEventListener('resize', this.boundReposition);
+      window.removeEventListener('scroll', this.boundReposition, true);
+    }
+  }
+
   const slumbrLayers = new SlumbrLayersManager();
+  const slumbrHints = new SlumbrHintsGuide(slumbrLayers);
 
   window.addEventListener('beforeunload', ()=> slumbrLayers.saveAll(false));
 
@@ -1279,6 +1783,19 @@
     window.addEventListener('load', ()=>{ navigator.serviceWorker.register('./sw.js').catch(()=>{}); });
   }
   </script>
+
+  <div id="hintOverlay" class="hint-overlay" aria-hidden="true">
+    <div class="hint-overlay__backdrop" data-role="backdrop"></div>
+    <div class="hint-overlay__bubble" role="dialog" aria-modal="true" aria-labelledby="hintOverlayTitle" aria-describedby="hintOverlayBody">
+      <div class="hint-overlay__title" id="hintOverlayTitle"></div>
+      <div class="hint-overlay__body" id="hintOverlayBody"></div>
+      <div class="hint-overlay__controls">
+        <button type="button" data-action="prev">Prev</button>
+        <button type="button" data-action="next">Next</button>
+        <button type="button" data-action="dismiss">Close</button>
+      </div>
+    </div>
+  </div>
 
   <div style="text-align:center; margin-top:20px;">
     <a href="https://mikewhyle.com/ai/" target="_blank" rel="noopener">
