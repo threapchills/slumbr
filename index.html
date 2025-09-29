@@ -28,14 +28,14 @@
       aspect-ratio:540 / 835;
       height:auto;
       margin:clamp(12px, 4vh, 28px) auto;
-      max-height:calc(100vh - 80px);
+      max-height:calc(100vh - 64px);
     }
     @supports not (aspect-ratio: 1){
       .app-container{ height:835px; }
     }
 
     .layer-switcher{
-      position:absolute; top:18px; left:50%; transform:translateX(-50%);
+      position:absolute; top:clamp(36px, 10%, 72px); left:50%; transform:translateX(-50%);
       display:flex; gap:10px; z-index:25;
     }
     .layer-dot{
@@ -58,7 +58,10 @@
 
     .layer-surface{
       position:relative; width:100%; height:100%;
-      background-image:url('background.png'); background-size:cover; background-position:center; background-repeat:no-repeat;
+      background-image:url('backgroundlatest.png');
+      background-size:100% 100%;
+      background-position:center;
+      background-repeat:no-repeat;
     }
 
     .layer-surface::after{
@@ -66,8 +69,8 @@
     }
 
     .layer-badge{
-      position:absolute; top:20px; left:26px; background:rgba(0,0,0,0.55); padding:6px 12px; border-radius:999px;
-      font-size:12px; letter-spacing:0.08em; text-transform:uppercase; opacity:0.8; pointer-events:none;
+      position:absolute; top:24px; left:26px; background:rgba(0,0,0,0.48); padding:4px 10px; border-radius:999px;
+      font-size:10px; letter-spacing:0.1em; text-transform:uppercase; opacity:0.75; pointer-events:none;
     }
 
     .tintOverlay{
@@ -78,12 +81,34 @@
       border-radius:12px;
     }
 
-    .channel{ position:absolute; display:flex; flex-direction:column; align-items:center; width:95px; height:240px; padding:4px; }
-    .knob-container{ position:relative; width:75px; height:75px; }
+    .channel{
+      position:absolute;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      width:95px;
+      height:240px;
+      padding:4px;
+      transform:translate(-50%, -50%);
+    }
+    .knob-container{
+      position:relative;
+      width:75px;
+      height:75px;
+      touch-action:none;
+    }
     .knob-slider{ position:absolute; width:100%; height:100%; opacity:0; cursor:pointer; z-index:2; margin:0; }
     .knob-image{
-      position:absolute; width:100%; height:100%; background-size:contain; background-repeat:no-repeat; background-position:center;
-      pointer-events:none; filter:hue-rotate(180deg) saturate(1.5); transition:filter 0.1s ease;
+      position:absolute;
+      width:100%;
+      height:100%;
+      background-size:contain;
+      background-repeat:no-repeat;
+      background-position:center;
+      pointer-events:none;
+      filter:hue-rotate(180deg) saturate(1.5);
+      transition:filter 0.1s ease, transform 0.1s ease;
+      transform:rotate(var(--knob-angle, -135deg));
     }
     .knob-readout{ width:75px; height:24px; text-align:center; font-size:12px; color:white; line-height:24px; margin-top:2px; }
 
@@ -96,7 +121,13 @@
     select.channel-spinner option{ background:#1f1f3d; color:white; font-size:16px; }
     select.channel-spinner option:hover{ background:#3c3c5d; }
 
-    .control-knob{ position:absolute; display:flex; flex-direction:column; align-items:center; }
+    .control-knob{
+      position:absolute;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      transform:translate(-50%, -50%);
+    }
     .control-knob.small .knob-container{ width:50px; height:50px; }
     .control-knob.small .knob-readout{ width:50px; font-size:10px; height:18px; line-height:18px; margin-top:2px; }
     .control-knob.large .knob-container{ width:150px; height:150px; }
@@ -128,8 +159,9 @@
       transition:background-color 0.2s ease, transform 0.12s ease;
       touch-action:manipulation;
       display:flex;
-      align-items:center;
+      align-items:flex-end;
       justify-content:center;
+      position:relative;
     }
     .save-load-button:hover{ background:rgba(255,255,255,0.12); transform:translateY(-2px); }
     .save-load-button:active{ transform:translateY(0); }
@@ -143,6 +175,25 @@
     }
     .save-load-button.randomize:active{
       transform:scale(0.97);
+    }
+    .save-load-button::after{
+      content:attr(data-label);
+      font-size:11px;
+      letter-spacing:0.14em;
+      opacity:0.82;
+      margin-bottom:2px;
+    }
+    .save-load-button.load{
+      background:rgba(255,255,255,0.05) url('load.png') center 28px/34px 34px no-repeat;
+    }
+    .save-load-button.load:hover{
+      background:rgba(255,255,255,0.14) url('load.png') center 28px/34px 34px no-repeat;
+    }
+    .save-load-button.save{
+      background:rgba(255,255,255,0.05) url('save.png') center 28px/34px 34px no-repeat;
+    }
+    .save-load-button.save:hover{
+      background:rgba(255,255,255,0.14) url('save.png') center 28px/34px 34px no-repeat;
     }
 
     .eq-buttons{ position:absolute; bottom:100px; left:50%; transform:translateX(-50%); display:flex; gap:6px; align-items:center; justify-content:center; }
@@ -161,13 +212,13 @@
     .eq-brown{ background: rgba(165,94,41,0.32); }
     .eq-black{ background: rgba(20,24,30,0.55); }
 
-    .channel.sky{ left:calc(28% - 47.5px); top:calc(58% - 120px); }
-    .channel.fire{ left:calc(74% - 47.5px); top:calc(58% - 120px); }
-    .channel.earth{ left:calc(27% - 47.5px); top:calc(78% - 120px); }
-    .channel.sea{ left:calc(73% - 47.5px); top:calc(78% - 120px); }
-    .control-knob.astral{ left:calc(38% - 25px); top:calc(28% - 25px); }
-    .control-knob.lucid{ left:calc(62% - 25px); top:calc(28% - 25px); }
-    .control-knob.master{ left:calc(50% - 75px); top:calc(64% - 75px); }
+    .channel.sky{ left:28%; top:58%; }
+    .channel.fire{ left:74%; top:58%; }
+    .channel.earth{ left:27%; top:82%; }
+    .channel.sea{ left:73%; top:82%; }
+    .control-knob.astral{ left:38%; top:30%; }
+    .control-knob.lucid{ left:62%; top:30%; }
+    .control-knob.master{ left:50%; top:66%; }
 
     .channel-content{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; width:100%; }
     .channel.earth .channel-content > .channel-spinner,
@@ -204,7 +255,92 @@
         margin:clamp(8px, 4vh, 20px) auto;
         max-height:none;
       }
-      .layer-switcher{ top:12px; }
+      .layer-switcher{ top:clamp(24px, 11vw, 48px); }
+      .control-knob.master{ top:68%; }
+      .channel.sky{ top:56%; }
+      .channel.fire{ top:56%; }
+      .channel.earth{ top:84%; }
+      .channel.sea{ top:84%; }
+    }
+
+    .tour-overlay[hidden]{ display:none; }
+    .tour-overlay{
+      position:fixed;
+      inset:0;
+      z-index:1000;
+      background:rgba(9,12,24,0.68);
+      padding:16px;
+      backdrop-filter:blur(6px);
+    }
+    .tour-card{
+      position:absolute;
+      max-width:320px;
+      width:100%;
+      background:rgba(18,26,46,0.92);
+      border:1px solid rgba(255,255,255,0.18);
+      border-radius:16px;
+      padding:18px 20px 52px;
+      color:#f5f7ff;
+      box-shadow:0 18px 60px rgba(0,0,0,0.45);
+    }
+    .tour-card h3{
+      font-size:17px;
+      margin-bottom:8px;
+      letter-spacing:0.04em;
+    }
+    .tour-card p{
+      font-size:14px;
+      line-height:1.5;
+      color:rgba(235,240,255,0.88);
+    }
+    .tour-controls{
+      display:flex;
+      justify-content:space-between;
+      position:absolute;
+      bottom:14px;
+      left:20px;
+      right:20px;
+      gap:8px;
+    }
+    .tour-controls button{
+      flex:1;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.2);
+      background:rgba(255,255,255,0.05);
+      color:white;
+      font-size:13px;
+      letter-spacing:0.05em;
+      cursor:pointer;
+      transition:background 0.2s ease, transform 0.12s ease;
+    }
+    .tour-controls button:hover{ background:rgba(255,255,255,0.16); transform:translateY(-1px); }
+    .tour-controls button:active{ transform:translateY(0); }
+    .tour-controls button:disabled{
+      opacity:0.45;
+      cursor:default;
+      transform:none;
+      background:rgba(255,255,255,0.05);
+    }
+    .tour-pointer{
+      position:absolute;
+      width:0;
+      height:0;
+      border:14px solid transparent;
+      border-bottom-color:rgba(18,26,46,0.92);
+      top:-26px;
+      left:calc(50% - 14px);
+    }
+    .tour-pointer.bottom{
+      top:auto;
+      bottom:-26px;
+      border-bottom-color:transparent;
+      border-top-color:rgba(18,26,46,0.92);
+    }
+    .tour-highlight{
+      z-index:1100 !important;
+      box-shadow:0 0 0 2px rgba(120,180,255,0.7), 0 0 30px rgba(120,180,255,0.45);
+      border-radius:16px;
     }
   </style>
 </head>
@@ -216,6 +352,19 @@
       <button class="layer-dot" data-index="2" aria-label="Crimson layer"></button>
     </div>
     <div id="layerStack" class="layer-stack"></div>
+  </div>
+
+  <div class="tour-overlay" data-id="tourOverlay" hidden>
+    <div class="tour-card" data-id="tourCard">
+      <div class="tour-pointer" data-id="tourPointer"></div>
+      <h3 data-id="tourTitle"></h3>
+      <p data-id="tourCopy"></p>
+      <div class="tour-controls">
+        <button type="button" data-id="tourPrev">Prev</button>
+        <button type="button" data-id="tourNext">Next</button>
+        <button type="button" data-id="tourDismiss">Dismiss</button>
+      </div>
+    </div>
   </div>
 
   <template id="slumbrLayerTemplate">
@@ -320,15 +469,29 @@
         </div>
 
         <div class="save-load-buttons">
-          <button class="save-load-button" data-id="saveButton" aria-label="Save preset" type="button"></button>
-          <button class="save-load-button randomize" data-id="randomizeButton" aria-label="Randomize preset" type="button"></button>
-          <button class="save-load-button" data-id="loadButton" aria-label="Load preset" type="button"></button>
+          <button class="save-load-button load" data-id="loadButton" data-label="LOAD" aria-label="Load preset" type="button"></button>
+          <button class="save-load-button randomize" data-id="randomizeButton" data-label="RND" aria-label="Randomize preset" type="button"></button>
+          <button class="save-load-button save" data-id="saveButton" data-label="SAVE" aria-label="Save preset" type="button"></button>
         </div>
       </div>
     </div>
   </template>
 
   <script>
+  const AUDIO_PRELOAD_CORE_COUNT = 3;
+  const SharedAudioCache = {
+    _promises:new Map(),
+    async fetch(url){
+      if(!this._promises.has(url)){
+        this._promises.set(url, fetch(url).then(resp=>{
+          if(!resp.ok){ throw new Error(`HTTP ${resp.status} for ${url}`); }
+          return resp.arrayBuffer();
+        }));
+      }
+      return this._promises.get(url);
+    }
+  };
+
   class SlumbrLayer {
     constructor(root, index, options={}){
       this.root = root;
@@ -402,14 +565,157 @@
       this.layerTintBias = options.baseTint || null;
       this.layerTintBiasWeight = options.baseTintWeight ?? 0.2;
 
+      this.preloadCount = AUDIO_PRELOAD_CORE_COUNT;
+      this.loadingStats = {
+        total: this.computeTotalSampleCount(),
+        done: 0
+      };
+      this.coreLoadTarget = this.preloadCount * this.orderedChannelNames.length;
+      this.pendingChannelSelections = {};
+
+      this.prepareChannelSpinners();
       this.initializeEventListeners();
       if(this.el('layerBadge') && options.label){ this.el('layerBadge').textContent = options.label; }
       if(this.el('loadingText') && options.startText){ this.el('loadingText').textContent = options.startText; }
       this.refreshInitialKnobColours();
+      this.attachKnobInteractions();
     }
 
     el(id){ return this.root.querySelector(`[data-id="${id}"]`); }
     els(selector){ return Array.from(this.root.querySelectorAll(selector)); }
+
+    computeTotalSampleCount(){
+      return this.orderedChannelNames.reduce((acc, name)=>{
+        const files = this.channelData[name]?.files || [];
+        return acc + files.length;
+      }, 0);
+    }
+
+    prepareChannelSpinners(){
+      this.orderedChannelNames.forEach(name=>{
+        const spinner = this.el(`${name}Spinner`);
+        const data = this.channelData[name];
+        if(!spinner || !data) return;
+        spinner.innerHTML = '';
+        data.labels.forEach((label, index)=>{
+          const option = document.createElement('option');
+          option.value = String(index);
+          option.dataset.index = String(index);
+          option.dataset.label = label;
+          option.textContent = index < this.preloadCount ? label : `${label} • loading…`;
+          if(index >= this.preloadCount){ option.disabled = true; option.dataset.loading = 'true'; }
+          spinner.appendChild(option);
+        });
+        spinner.value = '0';
+      });
+    }
+
+    enableSpinnerOptions(channelName, indices){
+      const spinner = this.el(`${channelName}Spinner`);
+      const labels = this.channelData[channelName]?.labels || [];
+      if(!spinner) return;
+      const options = Array.from(spinner.options);
+      indices.forEach(index=>{
+        const option = options.find(opt=> parseInt(opt.value, 10) === index);
+        if(option){
+          option.disabled = false;
+          option.dataset.loading = 'false';
+          option.textContent = option.dataset.label || labels[index] || option.textContent;
+        }
+      });
+    }
+
+    applyPendingSelectionIfReady(channelName, index){
+      const pending = this.pendingChannelSelections[channelName];
+      if(typeof pending !== 'number' || pending !== index){ return; }
+      const spinner = this.el(`${channelName}Spinner`);
+      if(spinner){
+        spinner.value = String(index);
+        spinner.dispatchEvent(new Event('change', { bubbles:true }));
+      }else{
+        this.switchChannelSound(channelName, index);
+      }
+      delete this.pendingChannelSelections[channelName];
+    }
+
+    attachKnobInteractions(){
+      const containers = this.els('.knob-container');
+      containers.forEach(container=>{
+        if(container.dataset.knobReady){ return; }
+        const slider = container.querySelector('.knob-slider');
+        const image  = container.querySelector('.knob-image');
+        if(!slider || !image) return;
+
+        const updateAngleFromValue = ()=>{
+          const min = parseFloat(slider.min || '0');
+          const max = parseFloat(slider.max || '100');
+          const value = parseFloat(slider.value || '0');
+          const percent = (value - min) / Math.max(1, (max - min));
+          const angleRange = 270;
+          const angle = -135 + percent * angleRange;
+          image.style.setProperty('--knob-angle', `${angle}deg`);
+          image.style.transform = `rotate(${angle}deg)`;
+        };
+
+        let pointerState = null;
+        const sensitivity = container.classList.contains('large') ? 0.12 : 0.18;
+
+        const clampValue = (v)=>{
+          const min = parseFloat(slider.min || '0');
+          const max = parseFloat(slider.max || '100');
+          return Math.max(min, Math.min(max, v));
+        };
+
+        const commitValue = (v, dispatchEvent = true)=>{
+          slider.value = String(clampValue(v));
+          if(dispatchEvent){ slider.dispatchEvent(new Event('input', { bubbles:true })); }
+        };
+
+        container.addEventListener('pointerdown', (event)=>{
+          if(event.button !== 0 && event.pointerType !== 'touch'){ return; }
+          container.setPointerCapture(event.pointerId);
+          pointerState = {
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            startValue: parseFloat(slider.value || '0')
+          };
+          slider.focus({ preventScroll:true });
+          event.preventDefault();
+        });
+
+        container.addEventListener('pointermove', (event)=>{
+          if(!pointerState || pointerState.pointerId !== event.pointerId) return;
+          const deltaY = pointerState.startY - event.clientY;
+          const deltaX = event.clientX - pointerState.startX;
+          const delta = deltaY + deltaX*0.35;
+          const next = pointerState.startValue + delta * sensitivity;
+          commitValue(next, true);
+        });
+
+        const releasePointer = (event)=>{
+          if(!pointerState || pointerState.pointerId !== event.pointerId) return;
+          container.releasePointerCapture(event.pointerId);
+          pointerState = null;
+          slider.dispatchEvent(new Event('change', { bubbles:true }));
+        };
+
+        container.addEventListener('pointerup', releasePointer);
+        container.addEventListener('pointercancel', releasePointer);
+
+        container.addEventListener('wheel', (event)=>{
+          event.preventDefault();
+          const delta = event.deltaY > 0 ? -1 : 1;
+          const step = slider.step ? parseFloat(slider.step) : 1;
+          const next = parseFloat(slider.value || '0') + delta * step * 2;
+          commitValue(next, true);
+        }, { passive:false });
+
+        slider.addEventListener('input', updateAngleFromValue);
+        updateAngleFromValue();
+        container.dataset.knobReady = 'true';
+      });
+    }
 
     gainFromSlider(v){ return Math.pow(v/100, 2.2); }
     randBetween(min,max){ return min + Math.random()*(max-min); }
@@ -463,16 +769,13 @@
           this.setupAudioGraph();
           this.startLFOs();
 
-          this.updateLoadingProgress(
-            0,
-            this.orderedChannelNames.reduce((a,n)=>a + this.channelData[n].files.length, 0)
-          );
-
-          await this.loadAllSounds();
+          await this.loadCoreSounds();
 
           this.isInitialized = true;
           if(loadingIndicator){ loadingIndicator.style.display = 'none'; loadingIndicator.style.color = ''; }
           this.loadState();
+
+          this.beginDeferredSoundLoading();
 
           this.requestWakeLock();
           this.updateTintOverlay();
@@ -624,36 +927,111 @@
       channel.abPhase = Math.random()*Math.PI*2;
       channel.abFreq  = 1 / (180 + Math.random()*120);
       channel.abTimer = null;
+      channel.audioBuffers = new Array(this.channelData[channelName].files.length).fill(null);
+      channel.loadingPromises = new Map();
+      channel.loadedIndices = new Set();
+      channel.currentIndex = null;
     }
 
-    updateLoadingProgress(done, total){
+    updateLoadingProgress(done = this.loadingStats?.done ?? 0, total = this.loadingStats?.total ?? 0){
       const text = this.el('loadingText');
       const bar  = this.el('progressBar');
       const pct  = total > 0 ? Math.round((done/total)*100) : 0;
-      if(text) text.textContent = `Loading ${pct}%`;
+      if(text){
+        const phase = done < this.coreLoadTarget ? 'Priming essentials' : 'Layering ambience';
+        text.textContent = `${phase} ${pct}%`;
+      }
       if(bar)  bar.style.width   = `${pct}%`;
     }
 
-    async loadAllSounds(){
-      const total = this.orderedChannelNames.reduce((acc, name) => acc + this.channelData[name].files.length, 0);
-      let done = 0;
-      const bump = () => { done++; this.updateLoadingProgress(done, total); };
+    incrementLoadingProgress(){
+      if(!this.loadingStats) return;
+      this.loadingStats.done = Math.min(this.loadingStats.total, this.loadingStats.done + 1);
+      this.updateLoadingProgress();
+    }
 
+    async loadCoreSounds(){
+      this.updateLoadingProgress(0, this.loadingStats.total);
       for(const channelName of this.orderedChannelNames){
-        const data = this.channelData[channelName];
-        this.channels[channelName].audioBuffers = [];
-        for(const filename of data.files){
-          try{
-            const loaded = await this.loadAudioFile(`sounds/${filename}`);
-            this.channels[channelName].audioBuffers.push(loaded);
-            bump();
-          }catch{
-            const silent = this.audioContext.createBuffer(1, Math.max(1, this.audioContext.sampleRate*0.02), this.audioContext.sampleRate);
-            this.channels[channelName].audioBuffers.push({ buffer:silent, pregain:1 });
-            bump();
-          }
-        }
+        await this.loadChannelCore(channelName);
       }
+    }
+
+    async loadChannelCore(channelName){
+      const data = this.channelData[channelName];
+      if(!data) return;
+      const targetIndices = data.files.map((_, idx)=> idx).slice(0, this.preloadCount);
+      for(const index of targetIndices){
+        await this.ensureChannelBuffer(channelName, index);
+      }
+      this.enableSpinnerOptions(channelName, targetIndices);
+      const spinner = this.el(`${channelName}Spinner`);
+      if(spinner){
+        const preferred = parseInt(spinner.value, 10) || 0;
+        const fallback = targetIndices.includes(preferred) ? preferred : targetIndices[0] || 0;
+        if(spinner.value !== String(fallback)){ spinner.value = String(fallback); }
+        this.switchChannelSound(channelName, fallback);
+      }
+    }
+
+    beginDeferredSoundLoading(){
+      this.orderedChannelNames.forEach(channelName=>{
+        const data = this.channelData[channelName];
+        if(!data) return;
+        const remaining = data.files.map((_, idx)=> idx).slice(this.preloadCount);
+        if(!remaining.length) return;
+        const run = async()=>{
+          for(const index of remaining){
+            await this.ensureChannelBuffer(channelName, index);
+          }
+        };
+        run().catch(err=> console.warn(`Deferred load failed for ${channelName}`, err));
+      });
+    }
+
+    async ensureChannelBuffer(channelName, index){
+      const channel = this.channels[channelName];
+      if(!channel) return null;
+      if(channel.audioBuffers[index] && channel.audioBuffers[index].buffer){
+        return channel.audioBuffers[index];
+      }
+      if(channel.loadingPromises.has(index)){
+        return channel.loadingPromises.get(index);
+      }
+      const data = this.channelData[channelName];
+      const file = data?.files?.[index];
+      if(!file){ return null; }
+      const url = `sounds/${file}`;
+
+      const promise = SharedAudioCache.fetch(url)
+        .then(arrayBuffer=> this.decodeArrayBuffer(arrayBuffer))
+        .then(audioBuffer=> this.prepareBufferMeta(audioBuffer))
+        .catch(err=>{
+          console.warn(`Falling back to silence for ${url}`, err);
+          return this.prepareBufferMeta(this.createSilentBuffer());
+        })
+        .then(meta=>{
+          channel.audioBuffers[index] = meta;
+          channel.loadedIndices.add(index);
+          this.incrementLoadingProgress();
+          this.enableSpinnerOptions(channelName, [index]);
+          this.applyPendingSelectionIfReady(channelName, index);
+          return meta;
+        })
+        .finally(()=>{
+          channel.loadingPromises.delete(index);
+        });
+
+      channel.loadingPromises.set(index, promise);
+      return promise;
+    }
+
+    async decodeArrayBuffer(arrayBuffer){
+      if(!this.audioContext) throw new Error('AudioContext not ready');
+      const copy = arrayBuffer.slice(0);
+      return new Promise((resolve, reject)=>{
+        this.audioContext.decodeAudioData(copy, resolve, reject);
+      });
     }
 
     computeRMS(buf){
@@ -663,15 +1041,16 @@
       return Math.sqrt(sum/Math.max(1,n));
     }
 
-    async loadAudioFile(url){
-      const response = await fetch(url);
-      if(!response.ok){ throw new Error(`HTTP ${response.status} for ${url}`); }
-      const arrayBuffer = await response.arrayBuffer();
-      const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+    prepareBufferMeta(audioBuffer){
       const rms = this.computeRMS(audioBuffer);
       const target = 0.16;
       const pregain = Math.min(4, Math.max(0.25, target/(rms + 1e-6)));
       return { buffer:audioBuffer, pregain };
+    }
+
+    createSilentBuffer(){
+      if(!this.audioContext){ throw new Error('AudioContext not ready'); }
+      return this.audioContext.createBuffer(1, Math.max(1, this.audioContext.sampleRate*0.02), this.audioContext.sampleRate);
     }
 
     getABIndex(channelName, index){
@@ -685,13 +1064,23 @@
     switchChannelSound(channelName, index){
       if(!this.isInitialized || !this.audioContext || this.audioContext.state !== 'running'){ return; }
       const ch = this.channels[channelName];
+      if(!ch){ return; }
+      if(!ch.loadedIndices.has(index)){
+        this.pendingChannelSelections[channelName] = index;
+        this.ensureChannelBuffer(channelName, index).catch(()=>{});
+        return;
+      }
       const metaA = ch.audioBuffers[index];
       if(!metaA || !metaA.buffer || metaA.buffer.duration < 0.05){
         this.stopChannelPair(channelName);
         return;
       }
       const Bindex = this.getABIndex(channelName, index);
-      const metaB = ch.audioBuffers[Bindex];
+      let metaB = ch.audioBuffers[Bindex];
+      if(!metaB || !metaB.buffer){
+        this.ensureChannelBuffer(channelName, Bindex).catch(()=>{});
+        metaB = metaA;
+      }
 
       const now = this.audioContext.currentTime;
       const fade = 0.35;
@@ -722,6 +1111,7 @@
       }
 
       ch.pair = { srcA, srcB, preA, preB, crossA, crossB, indexA:index, indexB:Bindex };
+      ch.currentIndex = index;
 
       this.updatePanWidthFromAstral();
       this.updateABDepthForChannel(channelName);
@@ -740,6 +1130,7 @@
       }catch{}
       ch.pair = null;
       if(ch.abTimer){ clearInterval(ch.abTimer); ch.abTimer = null; }
+      ch.currentIndex = null;
     }
 
     updateABDepthForChannel(channelName){
@@ -1049,8 +1440,10 @@
       };
       this.orderedChannelNames.forEach(name=>{
         const spinner = this.el(`${name}Spinner`);
-        const optionCount = spinner ? spinner.options.length : (this.channelData[name]?.files?.length || 1);
-        const selectionIndex = this.randomInt(0, Math.max(0, optionCount - 1));
+        const availableOptions = spinner ? Array.from(spinner.options).filter(opt=> !opt.disabled) : [];
+        const optionValues = availableOptions.length ? availableOptions.map(opt=> parseInt(opt.value, 10)) : this.channelData[name]?.files?.map((_, idx)=> idx) || [0];
+        const choiceIndex = this.randomInt(0, Math.max(0, optionValues.length - 1));
+        const selectionIndex = optionValues[choiceIndex] ?? 0;
         state.channels[name] = {
           volume: randomSliderValue(35, 85),
           selection: String(selectionIndex)
@@ -1068,17 +1461,27 @@
         el.value = String(Number.isFinite(v) ? v : 0);
         el.dispatchEvent(new Event('input', { bubbles:true }));
       };
-      const applySpinner = (id, value)=>{
-        const el = this.el(id);
+      const applySpinner = (channelName, value)=>{
+        const el = this.el(`${channelName}Spinner`);
         if(!el || value === undefined || value === null) return;
         const desired = String(value);
         const options = Array.from(el.options || []);
-        if(!options.some(opt=> opt.value === desired)){
-          if(options.length){ el.value = options[0].value; }
-        }else{
+        const valid = options.find(opt=> opt.value === desired && !opt.disabled);
+        if(valid){
           el.value = desired;
+          el.dispatchEvent(new Event('change', { bubbles:true }));
+          return;
         }
-        el.dispatchEvent(new Event('change', { bubbles:true }));
+        const numeric = parseInt(desired, 10);
+        if(Number.isFinite(numeric)){
+          this.pendingChannelSelections[channelName] = numeric;
+          this.ensureChannelBuffer(channelName, numeric).catch(()=>{});
+        }
+        const fallback = options.find(opt=> !opt.disabled) || options[0];
+        if(fallback){
+          el.value = fallback.value;
+          el.dispatchEvent(new Event('change', { bubbles:true }));
+        }
       };
 
       applySlider('masterSlider', state.master ?? '40');
@@ -1090,7 +1493,7 @@
           const channelState = state.channels[name];
           if(!channelState) return;
           applySlider(`${name}Slider`, channelState.volume);
-          applySpinner(`${name}Spinner`, channelState.selection);
+          applySpinner(name, channelState.selection);
         });
       }
 
@@ -1175,6 +1578,7 @@
       this.layerButtons = Array.from(document.querySelectorAll('.layer-dot'));
       this.layers = [];
       this.activeIndex = 0;
+      this.onLayerChange = null;
 
       this.layerConfigs = [
         { label:'Aurora', baseTint:{ r:120, g:180, b:255 }, baseTintWeight:0.30, theme:'layer-theme-blue', startText:'Start Aurora' },
@@ -1217,6 +1621,12 @@
       this.layers.forEach((l, idx)=>{ if(l){ l.setVisible(idx === index); } });
       this.layerButtons.forEach((btn, idx)=> btn.classList.toggle('active', idx === index));
       this.activeIndex = index;
+      if(typeof this.onLayerChange === 'function'){ this.onLayerChange(index); }
+    }
+
+    getActiveLayerElement(){
+      const activeLayer = this.layers[this.activeIndex];
+      return activeLayer ? activeLayer.root : null;
     }
 
     saveAll(forceInitialize = false){
@@ -1272,6 +1682,169 @@
   }
 
   const slumbrLayers = new SlumbrLayersManager();
+
+  class SlumbrGuidedTour {
+    constructor(manager){
+      this.manager = manager;
+      this.overlay = document.querySelector('[data-id="tourOverlay"]');
+      if(!this.overlay) return;
+      this.card = this.overlay.querySelector('[data-id="tourCard"]');
+      this.pointer = this.overlay.querySelector('[data-id="tourPointer"]');
+      this.titleEl = this.overlay.querySelector('[data-id="tourTitle"]');
+      this.copyEl = this.overlay.querySelector('[data-id="tourCopy"]');
+      this.prevBtn = this.overlay.querySelector('[data-id="tourPrev"]');
+      this.nextBtn = this.overlay.querySelector('[data-id="tourNext"]');
+      this.dismissBtn = this.overlay.querySelector('[data-id="tourDismiss"]');
+      this.activeHighlight = null;
+      this.storageKey = 'slumbr_tour_seen_v2';
+      this.steps = [
+        {
+          title:'Master output',
+          copy:'Turn SLUMBR on with this main dial and set the overall volume and force for your mix.',
+          getTarget:()=> this.activeLayerQuery('.control-knob.master')
+        },
+        {
+          title:'Element mixers',
+          copy:'Each element has its own volume knob and a spinner underneath – tap it to choose from different textures for that element.',
+          getTarget:()=> this.activeLayerQuery('.channel.sky')
+        },
+        {
+          title:'Astral & Lucid modes',
+          copy:'Astral widens the panorama while Lucid adds motion and depth. Blend them together for evolving soundscapes.',
+          getTarget:()=> this.activeLayerQuery('.control-knob.astral')
+        },
+        {
+          title:'Triplets mode',
+          copy:'Use the triple-dot selector to engage up to three simultaneous scenes for richer, triplet-style layering.',
+          getTarget:()=> document.querySelector('.layer-switcher')
+        },
+        {
+          title:'Save, Load & Randomise',
+          copy:'Store your favourite blends, recall past sessions, or let SLUMBR surprise you at any moment.',
+          getTarget:()=> this.activeLayerQuery('.save-load-buttons')
+        }
+      ];
+      this.index = 0;
+      this.boundResize = ()=> this.positionCurrentStep();
+      this.bindEvents();
+      if(this.manager){ this.manager.onLayerChange = ()=> this.positionCurrentStep(); }
+      setTimeout(()=> this.startIfNeeded(), 600);
+    }
+
+    activeLayerQuery(selector){
+      const layer = this.manager?.getActiveLayerElement?.();
+      if(layer){ return layer.querySelector(selector); }
+      return document.querySelector(selector);
+    }
+
+    bindEvents(){
+      if(this.prevBtn){ this.prevBtn.addEventListener('click', ()=> this.prev()); }
+      if(this.nextBtn){ this.nextBtn.addEventListener('click', ()=> this.next()); }
+      if(this.dismissBtn){ this.dismissBtn.addEventListener('click', ()=> this.finish()); }
+      window.addEventListener('resize', this.boundResize);
+      document.addEventListener('visibilitychange', ()=>{ if(!document.hidden){ this.positionCurrentStep(); } });
+    }
+
+    startIfNeeded(){
+      if(!this.overlay) return;
+      try{
+        if(localStorage.getItem(this.storageKey)){ return; }
+      }catch{}
+      this.showStep(0);
+    }
+
+    showStep(index){
+      if(!this.overlay) return;
+      this.index = Math.min(Math.max(index, 0), this.steps.length - 1);
+      const step = this.steps[this.index];
+      const target = step?.getTarget?.();
+      this.overlay.hidden = false;
+      if(this.titleEl){ this.titleEl.textContent = step?.title || ''; }
+      if(this.copyEl){ this.copyEl.textContent = step?.copy || ''; }
+      this.toggleButtonState();
+      this.highlightTarget(target);
+      this.positionCard(target);
+    }
+
+    highlightTarget(target){
+      if(this.activeHighlight){ this.activeHighlight.classList.remove('tour-highlight'); }
+      if(target){
+        target.classList.add('tour-highlight');
+        this.activeHighlight = target;
+      }else{
+        this.activeHighlight = null;
+      }
+    }
+
+    positionCard(target){
+      if(!this.card) return;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const padding = 24;
+      const cardRect = this.card.getBoundingClientRect();
+      const cardWidth = cardRect.width || 300;
+      const cardHeight = cardRect.height || 180;
+      let top = padding;
+      let left = (viewportWidth - cardWidth) / 2;
+      let pointerClass = '';
+
+      if(target){
+        const rect = target.getBoundingClientRect();
+        left = rect.left + rect.width/2 - cardWidth/2;
+        left = Math.max(padding, Math.min(viewportWidth - cardWidth - padding, left));
+        top = rect.bottom + 16;
+        pointerClass = '';
+        if(top + cardHeight > viewportHeight - padding){
+          top = rect.top - cardHeight - 16;
+          pointerClass = 'bottom';
+        }
+        if(top < padding){ top = padding; }
+      }
+
+      this.card.style.left = `${left}px`;
+      this.card.style.top = `${top}px`;
+      if(this.pointer){
+        this.pointer.classList.toggle('bottom', pointerClass === 'bottom');
+        const rect = target ? target.getBoundingClientRect() : null;
+        if(rect){
+          const cardLeft = left;
+          const pointerOffset = rect.left + rect.width/2 - cardLeft;
+          this.pointer.style.left = `${Math.max(24, Math.min(cardWidth - 24, pointerOffset)) - 14}px`;
+        }else{
+          this.pointer.style.left = 'calc(50% - 14px)';
+        }
+      }
+    }
+
+    positionCurrentStep(){
+      const step = this.steps[this.index];
+      const target = step?.getTarget?.();
+      this.positionCard(target);
+    }
+
+    toggleButtonState(){
+      if(this.prevBtn){ this.prevBtn.disabled = this.index === 0; }
+      if(this.nextBtn){ this.nextBtn.textContent = this.index === this.steps.length - 1 ? 'Finish' : 'Next'; }
+    }
+
+    prev(){
+      if(this.index <= 0){ return; }
+      this.showStep(this.index - 1);
+    }
+
+    next(){
+      if(this.index >= this.steps.length - 1){ this.finish(); return; }
+      this.showStep(this.index + 1);
+    }
+
+    finish(){
+      if(this.activeHighlight){ this.activeHighlight.classList.remove('tour-highlight'); this.activeHighlight = null; }
+      if(this.overlay){ this.overlay.hidden = true; }
+      try{ localStorage.setItem(this.storageKey, '1'); }catch{}
+    }
+  }
+
+  const slumbrTour = new SlumbrGuidedTour(slumbrLayers);
 
   window.addEventListener('beforeunload', ()=> slumbrLayers.saveAll(false));
 
