@@ -13,7 +13,7 @@
     *{ margin:0; padding:0; box-sizing:border-box; }
     body{
       font-family:Arial, sans-serif;
-      background:#1a1a2e;
+      background:#050811 url('backgroundlatest.png') center/cover fixed;
       color:white;
       user-select:none;
       overflow-x:hidden;
@@ -24,18 +24,17 @@
 
     .app-container{
       position:relative;
-      width:min(540px, 92vw);
+      width:min(620px, 94vw);
       aspect-ratio:540 / 835;
       height:auto;
-      margin:clamp(12px, 4vh, 28px) auto;
-      max-height:calc(100vh - 80px);
+      margin:clamp(12px, 4vh, 32px) auto;
     }
     @supports not (aspect-ratio: 1){
       .app-container{ height:835px; }
     }
 
     .layer-switcher{
-      position:absolute; top:18px; left:50%; transform:translateX(-50%);
+      position:absolute; top:10%; left:50%; transform:translateX(-50%);
       display:flex; gap:10px; z-index:25;
     }
     .layer-dot{
@@ -58,7 +57,7 @@
 
     .layer-surface{
       position:relative; width:100%; height:100%;
-      background-image:url('background.png'); background-size:cover; background-position:center; background-repeat:no-repeat;
+      background-image:url('background.png'); background-size:100% 100%; background-position:center; background-repeat:no-repeat;
     }
 
     .layer-surface::after{
@@ -66,8 +65,8 @@
     }
 
     .layer-badge{
-      position:absolute; top:20px; left:26px; background:rgba(0,0,0,0.55); padding:6px 12px; border-radius:999px;
-      font-size:12px; letter-spacing:0.08em; text-transform:uppercase; opacity:0.8; pointer-events:none;
+      position:absolute; top:28px; left:26px; background:rgba(0,0,0,0.55); padding:4px 10px; border-radius:999px;
+      font-size:10px; letter-spacing:0.08em; text-transform:uppercase; opacity:0.7; pointer-events:none;
     }
 
     .tintOverlay{
@@ -83,7 +82,8 @@
     .knob-slider{ position:absolute; width:100%; height:100%; opacity:0; cursor:pointer; z-index:2; margin:0; }
     .knob-image{
       position:absolute; width:100%; height:100%; background-size:contain; background-repeat:no-repeat; background-position:center;
-      pointer-events:none; filter:hue-rotate(180deg) saturate(1.5); transition:filter 0.1s ease;
+      pointer-events:none; filter:hue-rotate(180deg) saturate(1.5); transition:filter 0.12s ease, transform 0.18s ease;
+      transform:rotate(var(--rotation, 0deg));
     }
     .knob-readout{ width:75px; height:24px; text-align:center; font-size:12px; color:white; line-height:24px; margin-top:2px; }
 
@@ -133,6 +133,10 @@
     }
     .save-load-button:hover{ background:rgba(255,255,255,0.12); transform:translateY(-2px); }
     .save-load-button:active{ transform:translateY(0); }
+    .save-load-button.load{ background:rgba(255,255,255,0.04) url('load.png') center/40px 40px no-repeat; }
+    .save-load-button.load:hover{ background:rgba(255,255,255,0.12) url('load.png') center/40px 40px no-repeat; }
+    .save-load-button.save{ background:rgba(255,255,255,0.04) url('save.png') center/40px 40px no-repeat; }
+    .save-load-button.save:hover{ background:rgba(255,255,255,0.12) url('save.png') center/40px 40px no-repeat; }
     .save-load-button.randomize{
       background:rgba(255,255,255,0.05) url('random.png') center/40px 40px no-repeat;
       border:1px solid rgba(255,255,255,0.22);
@@ -161,13 +165,13 @@
     .eq-brown{ background: rgba(165,94,41,0.32); }
     .eq-black{ background: rgba(20,24,30,0.55); }
 
-    .channel.sky{ left:calc(28% - 47.5px); top:calc(58% - 120px); }
-    .channel.fire{ left:calc(74% - 47.5px); top:calc(58% - 120px); }
-    .channel.earth{ left:calc(27% - 47.5px); top:calc(78% - 120px); }
-    .channel.sea{ left:calc(73% - 47.5px); top:calc(78% - 120px); }
-    .control-knob.astral{ left:calc(38% - 25px); top:calc(28% - 25px); }
-    .control-knob.lucid{ left:calc(62% - 25px); top:calc(28% - 25px); }
-    .control-knob.master{ left:calc(50% - 75px); top:calc(64% - 75px); }
+    .channel.sky{ left:24%; top:50%; transform:translate(-50%, -50%); }
+    .channel.fire{ left:76%; top:50%; transform:translate(-50%, -50%); }
+    .channel.earth{ left:26%; top:76%; transform:translate(-50%, -50%); }
+    .channel.sea{ left:74%; top:78%; transform:translate(-50%, -50%); }
+    .control-knob.astral{ left:38%; top:26%; transform:translate(-50%, -50%); }
+    .control-knob.lucid{ left:62%; top:26%; transform:translate(-50%, -50%); }
+    .control-knob.master{ left:50%; top:63%; transform:translate(-50%, -50%); }
 
     .channel-content{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; width:100%; }
     .channel.earth .channel-content > .channel-spinner,
@@ -183,6 +187,15 @@
     .channel.sky .channel-content > .channel-spinner,
     .channel.fire .channel-content > .channel-spinner{ order:3; }
 
+    .channel-status{
+      margin-top:4px;
+      font-size:10px;
+      letter-spacing:0.05em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,0.6);
+      min-height:14px;
+    }
+
     .loading-indicator{
       position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
       color:white; font-size:18px; text-align:center; padding:20px; background-color:rgba(0,0,0,0.5); border-radius:8px;
@@ -196,6 +209,17 @@
     .layer-theme-green .layer-surface{ filter:hue-rotate(28deg) saturate(1.05); }
     .layer-theme-red .layer-surface{ filter:hue-rotate(-58deg) saturate(1.12); }
 
+    @media (max-width:780px){
+      .app-container{
+        width:min(520px, 92vw);
+      }
+      .channel.sky{ left:26%; top:52%; }
+      .channel.fire{ left:74%; top:52%; }
+      .control-knob.master{ top:65%; }
+      .channel.earth{ top:80%; }
+      .channel.sea{ top:82%; }
+    }
+
     @media (max-width:560px){
       body{ padding:0 6px 24px; }
       .app-container{
@@ -204,7 +228,107 @@
         margin:clamp(8px, 4vh, 20px) auto;
         max-height:none;
       }
-      .layer-switcher{ top:12px; }
+      .layer-switcher{ top:8%; }
+      .channel.sky{ left:30%; top:50%; }
+      .channel.fire{ left:70%; top:50%; }
+      .control-knob.astral{ left:34%; top:24%; }
+      .control-knob.lucid{ left:66%; top:24%; }
+      .control-knob.master{ top:64%; }
+      .channel.earth{ left:32%; top:78%; }
+      .channel.sea{ left:68%; top:80%; }
+    }
+
+    @media (max-width:420px){
+      .channel{ width:88px; }
+      .channel.sky{ left:34%; top:48%; }
+      .channel.fire{ left:66%; top:48%; }
+      .control-knob.astral{ left:32%; }
+      .control-knob.lucid{ left:68%; }
+      .channel.earth{ left:36%; top:78%; }
+      .channel.sea{ left:64%; top:80%; }
+      .save-load-button{ width:70px; height:70px; }
+    }
+
+    .coachmark-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(8,11,22,0.78);
+      z-index:9999;
+      display:none;
+    }
+    .coachmark-overlay.is-visible{ display:block; }
+    .coachmark-card{
+      position:absolute;
+      max-width:320px;
+      background:rgba(18,22,38,0.92);
+      border:1px solid rgba(120,160,255,0.35);
+      border-radius:18px;
+      padding:18px 20px 20px;
+      box-shadow:0 18px 48px rgba(0,0,0,0.45);
+      color:#f0f4ff;
+    }
+    .coachmark-pointer{
+      position:absolute;
+      width:16px; height:16px;
+      background:rgba(18,22,38,0.92);
+      border:1px solid rgba(120,160,255,0.35);
+      transform:rotate(45deg);
+      pointer-events:none;
+    }
+    .coachmark-card[data-pointer='top'] .coachmark-pointer{
+      top:-8px;
+      left:var(--pointer-left, 50%);
+      transform:translateX(-50%) rotate(45deg);
+    }
+    .coachmark-card[data-pointer='bottom'] .coachmark-pointer{
+      bottom:-8px;
+      left:var(--pointer-left, 50%);
+      transform:translateX(-50%) rotate(45deg);
+    }
+    .coachmark-title{
+      font-size:16px;
+      font-weight:600;
+      margin-bottom:10px;
+      letter-spacing:0.04em;
+      text-transform:uppercase;
+    }
+    .coachmark-text{
+      font-size:14px;
+      line-height:1.5;
+      color:rgba(228,234,255,0.9);
+    }
+    .coachmark-actions{
+      margin-top:16px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .coachmark-actions button{
+      flex:1;
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid rgba(120,160,255,0.45);
+      background:rgba(32,44,72,0.7);
+      color:#f3f6ff;
+      font-size:13px;
+      letter-spacing:0.06em;
+      text-transform:uppercase;
+      cursor:pointer;
+      transition:background 0.2s ease, transform 0.12s ease;
+    }
+    .coachmark-actions button:hover{ background:rgba(72,98,140,0.9); transform:translateY(-1px); }
+    .coachmark-actions button:active{ transform:translateY(0); }
+    .coachmark-actions button:disabled{
+      opacity:0.4;
+      cursor:default;
+      transform:none;
+    }
+    .coachmark-highlight{
+      position:relative !important;
+      z-index:10000 !important;
+      box-shadow:0 0 0 3px rgba(120,160,255,0.55), 0 0 12px rgba(120,160,255,0.45);
+      border-radius:14px;
+    }
     }
   </style>
 </head>
@@ -258,6 +382,7 @@
               <option value="0">Tempest</option><option value="1">Breeze</option><option value="2">Balmy</option>
               <option value="3">Temple</option><option value="4">Rain</option><option value="5">Mountains</option><option value="6">Spring</option>
             </select>
+            <div class="channel-status" data-id="skyStatus" aria-live="polite"></div>
           </div>
         </div>
 
@@ -272,6 +397,7 @@
               <option value="0">Hearth</option><option value="1">Forge</option><option value="2">Ember</option>
               <option value="3">Crackle</option><option value="4">Campfire</option><option value="5">Summer</option><option value="6">Desert</option>
             </select>
+            <div class="channel-status" data-id="fireStatus" aria-live="polite"></div>
           </div>
         </div>
 
@@ -294,6 +420,7 @@
               <div class="knob-image" data-id="earthKnob" style="background-image:url('earth_knob.png');" role="img" aria-label="Earth channel knob"></div>
             </div>
             <div class="knob-readout" data-id="earthReadout" aria-live="polite">50</div>
+            <div class="channel-status" data-id="earthStatus" aria-live="polite"></div>
           </div>
         </div>
 
@@ -308,6 +435,7 @@
               <div class="knob-image" data-id="seaKnob" style="background-image:url('sea_knob.png');" role="img" aria-label="Sea channel knob"></div>
             </div>
             <div class="knob-readout" data-id="seaReadout" aria-live="polite">50</div>
+            <div class="channel-status" data-id="seaStatus" aria-live="polite"></div>
           </div>
         </div>
 
@@ -319,14 +447,27 @@
           <button class="eq-button eq-black" data-id="eqBlack" title="Black EQ" aria-label="Black EQ"></button>
         </div>
 
-        <div class="save-load-buttons">
-          <button class="save-load-button" data-id="saveButton" aria-label="Save preset" type="button"></button>
-          <button class="save-load-button randomize" data-id="randomizeButton" aria-label="Randomize preset" type="button"></button>
-          <button class="save-load-button" data-id="loadButton" aria-label="Load preset" type="button"></button>
-        </div>
+    <div class="save-load-buttons">
+      <button class="save-load-button load" data-id="loadButton" aria-label="Load preset" type="button"></button>
+      <button class="save-load-button randomize" data-id="randomizeButton" aria-label="Randomize preset" type="button"></button>
+      <button class="save-load-button save" data-id="saveButton" aria-label="Save preset" type="button"></button>
+    </div>
+  </div>
+</div>
+</template>
+
+  <div class="coachmark-overlay" id="coachmarkOverlay" aria-hidden="true">
+    <div class="coachmark-card" role="dialog" aria-modal="true" aria-live="polite">
+      <span class="coachmark-pointer" aria-hidden="true"></span>
+      <div class="coachmark-title" data-id="coachmarkTitle"></div>
+      <div class="coachmark-text" data-id="coachmarkText"></div>
+      <div class="coachmark-actions">
+        <button type="button" data-id="coachmarkPrev">Prev</button>
+        <button type="button" data-id="coachmarkNext">Next</button>
+        <button type="button" data-id="coachmarkDismiss">Dismiss</button>
       </div>
     </div>
-  </template>
+  </div>
 
   <script>
   class SlumbrLayer {
@@ -401,6 +542,12 @@
 
       this.layerTintBias = options.baseTint || null;
       this.layerTintBiasWeight = options.baseTintWeight ?? 0.2;
+
+      this.EAGER_SOUND_COUNT = 3;
+      this.channelLoadStates = {};
+      this.totalSoundCount = 0;
+      this.loadedSoundCount = 0;
+      this.lazyLoadPromise = null;
 
       this.initializeEventListeners();
       if(this.el('layerBadge') && options.label){ this.el('layerBadge').textContent = options.label; }
@@ -630,30 +777,181 @@
       const text = this.el('loadingText');
       const bar  = this.el('progressBar');
       const pct  = total > 0 ? Math.round((done/total)*100) : 0;
-      if(text) text.textContent = `Loading ${pct}%`;
+      if(text) text.textContent = pct >= 100 ? 'Soundscape ready' : `Priming soundscapes ${pct}%`;
       if(bar)  bar.style.width   = `${pct}%`;
     }
 
     async loadAllSounds(){
-      const total = this.orderedChannelNames.reduce((acc, name) => acc + this.channelData[name].files.length, 0);
-      let done = 0;
-      const bump = () => { done++; this.updateLoadingProgress(done, total); };
+      const eagerLimit = this.EAGER_SOUND_COUNT;
+      this.totalSoundCount = this.orderedChannelNames.reduce((acc, name) => {
+        const files = this.channelData[name]?.files?.length || 0;
+        return acc + Math.min(eagerLimit, files);
+      }, 0);
+      this.loadedSoundCount = 0;
+      this.channelLoadStates = {};
+      this.updateLoadingProgress(0, this.totalSoundCount);
+
+      const eagerPromises = [];
 
       for(const channelName of this.orderedChannelNames){
         const data = this.channelData[channelName];
-        this.channels[channelName].audioBuffers = [];
-        for(const filename of data.files){
+        const channel = this.channels[channelName];
+        channel.audioBuffers = new Array(data.files.length).fill(null);
+        channel.loadingPromises = {};
+
+        this.channelLoadStates[channelName] = {
+          total: data.files.length,
+          loaded: 0,
+          loadedIndices: new Set(),
+          eagerReady: false,
+          complete: false,
+          progressCount: 0
+        };
+
+        this.prepareSpinnerOptions(channelName, data.files.length);
+
+        const eagerTarget = Math.min(eagerLimit, data.files.length);
+        for(let i=0;i<data.files.length;i++){
+          this.updateSpinnerOptionState(channelName, i, i < eagerTarget ? 'priming' : 'loading');
+          if(i < eagerTarget){ eagerPromises.push(this.ensureSoundLoaded(channelName, i)); }
+        }
+        this.updateChannelStatus(channelName);
+      }
+
+      await Promise.all(eagerPromises);
+      this.orderedChannelNames.forEach(name=> this.updateChannelStatus(name));
+
+      this.lazyLoadPromise = this.lazyLoadRemainingSounds(eagerLimit);
+      if(this.lazyLoadPromise){
+        this.lazyLoadPromise
+          .then(()=> this.orderedChannelNames.forEach(name=> this.updateChannelStatus(name)))
+          .catch(err=> console.error('Lazy loading error', err));
+      }
+    }
+
+    prepareSpinnerOptions(channelName, total){
+      const spinner = this.el(`${channelName}Spinner`);
+      if(!spinner) return;
+      Array.from(spinner.options).forEach((option, idx)=>{
+        if(!option.dataset.baseLabel){ option.dataset.baseLabel = option.textContent; }
+        option.disabled = true;
+        option.textContent = option.dataset.baseLabel;
+        if(idx >= total){ option.style.display = 'none'; }
+      });
+    }
+
+    updateSpinnerOptionState(channelName, index, state){
+      const spinner = this.el(`${channelName}Spinner`);
+      if(!spinner || !spinner.options || !spinner.options[index]) return;
+      const option = spinner.options[index];
+      const base = option.dataset.baseLabel || option.textContent;
+      const suffix = state === 'priming' ? ' • priming' : state === 'loading' ? ' • loading' : '';
+      option.textContent = suffix ? `${base}${suffix}` : base;
+      if(state === 'ready'){
+        option.disabled = false;
+      }else{
+        option.disabled = true;
+      }
+    }
+
+    updateChannelStatus(channelName){
+      const statusEl = this.el(`${channelName}Status`);
+      if(!statusEl) return;
+      const state = this.channelLoadStates[channelName];
+      if(!state){ statusEl.textContent = ''; return; }
+      const eagerTarget = Math.min(state.total, this.EAGER_SOUND_COUNT);
+      if(!state.eagerReady){
+        statusEl.textContent = `Priming textures ${state.loaded}/${eagerTarget}`;
+      }else if(!state.complete){
+        statusEl.textContent = `Layering extras ${state.loaded}/${state.total}`;
+      }else{
+        statusEl.textContent = '';
+      }
+    }
+
+    registerSoundLoaded(channelName, index){
+      const state = this.channelLoadStates[channelName];
+      if(!state || state.loadedIndices.has(index)) return;
+      state.loadedIndices.add(index);
+      state.loaded += 1;
+      const eagerTarget = Math.min(state.total, this.EAGER_SOUND_COUNT);
+      if(state.progressCount < eagerTarget){
+        state.progressCount += 1;
+        this.loadedSoundCount = Math.min(this.totalSoundCount, this.loadedSoundCount + 1);
+      }
+      if(state.loaded >= eagerTarget){ state.eagerReady = true; }
+      if(state.loaded >= state.total){ state.complete = true; }
+      this.updateLoadingProgress(this.loadedSoundCount, this.totalSoundCount);
+      this.updateChannelStatus(channelName);
+    }
+
+    createSilentMeta(){
+      const frames = Math.max(1, Math.floor(this.audioContext.sampleRate * 0.02));
+      const buffer = this.audioContext.createBuffer(1, frames, this.audioContext.sampleRate);
+      return { buffer, pregain:1 };
+    }
+
+    async ensureSoundLoaded(channelName, index){
+      const channel = this.channels[channelName];
+      const data = this.channelData[channelName];
+      if(!channel || !data || typeof data.files[index] === 'undefined'){ return null; }
+
+      if(channel.audioBuffers && channel.audioBuffers[index]){
+        this.updateSpinnerOptionState(channelName, index, 'ready');
+        return channel.audioBuffers[index];
+      }
+
+      if(!channel.loadingPromises){ channel.loadingPromises = {}; }
+      if(channel.loadingPromises[index]){ return channel.loadingPromises[index]; }
+
+      this.updateSpinnerOptionState(channelName, index, index < this.EAGER_SOUND_COUNT ? 'priming' : 'loading');
+
+      const filename = data.files[index];
+      const promise = (async()=>{
+        try{
+          const loaded = await this.loadAudioFile(`sounds/${filename}`);
+          channel.audioBuffers[index] = loaded;
+          return loaded;
+        }catch(err){
+          console.error(`Failed to load sound ${filename}:`, err);
+          const silent = this.createSilentMeta();
+          channel.audioBuffers[index] = silent;
+          return silent;
+        }finally{
+          delete channel.loadingPromises[index];
+          this.updateSpinnerOptionState(channelName, index, 'ready');
+          this.registerSoundLoaded(channelName, index);
+        }
+      })();
+
+      channel.loadingPromises[index] = promise;
+      return promise;
+    }
+
+    async lazyLoadRemainingSounds(eagerLimit){
+      for(const channelName of this.orderedChannelNames){
+        const data = this.channelData[channelName];
+        for(let i=eagerLimit;i<data.files.length;i++){
           try{
-            const loaded = await this.loadAudioFile(`sounds/${filename}`);
-            this.channels[channelName].audioBuffers.push(loaded);
-            bump();
-          }catch{
-            const silent = this.audioContext.createBuffer(1, Math.max(1, this.audioContext.sampleRate*0.02), this.audioContext.sampleRate);
-            this.channels[channelName].audioBuffers.push({ buffer:silent, pregain:1 });
-            bump();
+            await this.ensureSoundLoaded(channelName, i);
+          }catch(err){
+            console.error('Lazy sound load failed:', err);
           }
         }
       }
+    }
+
+    static getArrayBuffer(url){
+      if(!SlumbrLayer.arrayBufferCache){ SlumbrLayer.arrayBufferCache = new Map(); }
+      if(!SlumbrLayer.arrayBufferCache.has(url)){
+        SlumbrLayer.arrayBufferCache.set(url,
+          fetch(url).then(resp=>{
+            if(!resp.ok){ throw new Error(`HTTP ${resp.status} for ${url}`); }
+            return resp.arrayBuffer();
+          })
+        );
+      }
+      return SlumbrLayer.arrayBufferCache.get(url);
     }
 
     computeRMS(buf){
@@ -664,10 +962,8 @@
     }
 
     async loadAudioFile(url){
-      const response = await fetch(url);
-      if(!response.ok){ throw new Error(`HTTP ${response.status} for ${url}`); }
-      const arrayBuffer = await response.arrayBuffer();
-      const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+      const sourceBuffer = await SlumbrLayer.getArrayBuffer(url);
+      const audioBuffer = await this.audioContext.decodeAudioData(sourceBuffer.slice(0));
       const rms = this.computeRMS(audioBuffer);
       const target = 0.16;
       const pregain = Math.min(4, Math.max(0.25, target/(rms + 1e-6)));
@@ -682,15 +978,18 @@
       return (index + 1) % len;
     }
 
-    switchChannelSound(channelName, index){
+    async switchChannelSound(channelName, index){
       if(!this.isInitialized || !this.audioContext || this.audioContext.state !== 'running'){ return; }
+      await this.ensureSoundLoaded(channelName, index);
+      const Bindex = this.getABIndex(channelName, index);
+      await this.ensureSoundLoaded(channelName, Bindex);
+
       const ch = this.channels[channelName];
       const metaA = ch.audioBuffers[index];
       if(!metaA || !metaA.buffer || metaA.buffer.duration < 0.05){
         this.stopChannelPair(channelName);
         return;
       }
-      const Bindex = this.getABIndex(channelName, index);
       const metaB = ch.audioBuffers[Bindex];
 
       const now = this.audioContext.currentTime;
@@ -848,6 +1147,17 @@
       const targetHue = hueMinDeg + (hueMaxDeg - hueMinDeg)*value;
       const brightness = 0.8 + 0.4*value;
       knobImage.style.filter = `hue-rotate(${targetHue}deg) saturate(1.5) brightness(${brightness})`;
+      this.updateKnobRotation(elementId, percentage);
+    }
+
+    updateKnobRotation(elementId, percentage){
+      const knobImage = this.el(elementId);
+      if(!knobImage) return;
+      const value = Math.max(0, Math.min(100, parseFloat(percentage)));
+      const minDeg = -135;
+      const maxDeg = 135;
+      const rotation = minDeg + ((maxDeg - minDeg) * (value/100));
+      knobImage.style.setProperty('--rotation', `${rotation}deg`);
     }
 
     refreshInitialKnobColours(){
@@ -983,10 +1293,11 @@
           this.updateTintOverlay();
         });
 
-        spinner.addEventListener('change', (e)=>{
+        spinner.addEventListener('change', async (e)=>{
           if(!this.isInitialized) return;
           const index = parseInt(e.target.value, 10);
-          this.switchChannelSound(channelName, index);
+          if(Number.isNaN(index)) return;
+          await this.switchChannelSound(channelName, index);
         });
       });
 
@@ -1049,8 +1360,19 @@
       };
       this.orderedChannelNames.forEach(name=>{
         const spinner = this.el(`${name}Spinner`);
-        const optionCount = spinner ? spinner.options.length : (this.channelData[name]?.files?.length || 1);
-        const selectionIndex = this.randomInt(0, Math.max(0, optionCount - 1));
+        let selectionIndex = 0;
+        if(spinner && spinner.options){
+          const options = Array.from(spinner.options);
+          const available = options.filter(opt=> !opt.disabled);
+          const pool = available.length ? available : options;
+          if(pool.length){
+            const choice = pool[this.randomInt(0, Math.max(0, pool.length - 1))];
+            selectionIndex = choice ? parseInt(choice.value, 10) || 0 : 0;
+          }
+        }else{
+          const optionCount = this.channelData[name]?.files?.length || 1;
+          selectionIndex = this.randomInt(0, Math.max(0, optionCount - 1));
+        }
         state.channels[name] = {
           volume: randomSliderValue(35, 85),
           selection: String(selectionIndex)
@@ -1073,10 +1395,19 @@
         if(!el || value === undefined || value === null) return;
         const desired = String(value);
         const options = Array.from(el.options || []);
-        if(!options.some(opt=> opt.value === desired)){
-          if(options.length){ el.value = options[0].value; }
-        }else{
+        const channelName = id.replace('Spinner','');
+        const matched = options.find(opt=> opt.value === desired);
+        if(matched){ matched.disabled = false; }
+        const index = parseInt(desired, 10);
+        if(Number.isFinite(index)){ this.ensureSoundLoaded(channelName, index).catch(()=>{}); }
+        if(matched){
           el.value = desired;
+        }else if(options.length){
+          const fallbackValue = options[0].value;
+          options[0].disabled = false;
+          el.value = fallbackValue;
+          const fallbackIndex = parseInt(fallbackValue, 10);
+          if(Number.isFinite(fallbackIndex)){ this.ensureSoundLoaded(channelName, fallbackIndex).catch(()=>{}); }
         }
         el.dispatchEvent(new Event('change', { bubbles:true }));
       };
@@ -1167,6 +1498,8 @@
       if(active){ this.updateTintOverlay(); }
     }
   }
+
+  SlumbrLayer.arrayBufferCache = new Map();
 
   class SlumbrLayersManager {
     constructor(){
@@ -1271,7 +1604,171 @@
     }
   }
 
+  class SlumbrCoachmarks{
+    constructor(){
+      this.overlay = document.getElementById('coachmarkOverlay');
+      if(!this.overlay) return;
+      this.card = this.overlay.querySelector('.coachmark-card');
+      if(this.card){ this.card.setAttribute('tabindex', '-1'); }
+      this.titleEl = this.overlay.querySelector('[data-id="coachmarkTitle"]');
+      this.textEl = this.overlay.querySelector('[data-id="coachmarkText"]');
+      this.prevBtn = this.overlay.querySelector('[data-id="coachmarkPrev"]');
+      this.nextBtn = this.overlay.querySelector('[data-id="coachmarkNext"]');
+      this.dismissBtn = this.overlay.querySelector('[data-id="coachmarkDismiss"]');
+
+      this.steps = [
+        {
+          selector: '.control-knob.master',
+          title: 'Master Flow',
+          body: 'Turn SLUMBR on here and steer the overall force of every layer with one sweep.'
+        },
+        {
+          selector: '.channel.sky',
+          title: 'Element Layers',
+          body: 'Blend each element volume and use the selectors to choose the exact ambience you want.'
+        },
+        {
+          selector: '.control-knob.astral',
+          title: 'Astral & Lucid',
+          body: 'Astral widens the motion while Lucid deepens the movement for evolving textures.'
+        },
+        {
+          selector: '.layer-switcher',
+          title: 'Triplet Realms',
+          body: 'Aurora, Verdant, and Crimson layers run together—shuffle them for three rich simultaneous scenes.'
+        },
+        {
+          selector: '.save-load-buttons',
+          title: 'Save • Load • Random',
+          body: 'Keep favourite blends, recall them instantly, or tap random for a fresh constellation.'
+        }
+      ];
+
+      this.index = 0;
+      this.currentTarget = null;
+      this.isActive = false;
+      this.storageKey = 'slumbr_coachmarks_v1';
+
+      this.bindEvents();
+      this.boot();
+    }
+
+    bindEvents(){
+      if(this.prevBtn){ this.prevBtn.addEventListener('click', ()=> this.show(this.index - 1)); }
+      if(this.nextBtn){ this.nextBtn.addEventListener('click', ()=> this.handleNext()); }
+      if(this.dismissBtn){ this.dismissBtn.addEventListener('click', ()=> this.complete()); }
+      if(this.overlay){ this.overlay.addEventListener('click', (evt)=>{ if(evt.target === this.overlay){ this.complete(); } }); }
+      window.addEventListener('resize', ()=>{ if(this.isActive){ this.position(); } });
+      window.addEventListener('scroll', ()=>{ if(this.isActive){ this.position(); } }, { passive:true });
+      window.addEventListener('keydown', (evt)=>{
+        if(!this.isActive) return;
+        if(evt.key === 'Escape'){ evt.preventDefault(); this.complete(); }
+        else if(evt.key === 'ArrowRight'){ evt.preventDefault(); this.handleNext(); }
+        else if(evt.key === 'ArrowLeft'){ evt.preventDefault(); this.show(this.index - 1); }
+      });
+    }
+
+    boot(){
+      try{
+        if(localStorage.getItem(this.storageKey) === 'hidden'){ return; }
+      }catch{}
+      this.steps = this.steps.filter(step=> document.querySelector(step.selector));
+      if(!this.steps.length) return;
+      setTimeout(()=> this.show(0), 800);
+    }
+
+    show(requestedIndex){
+      if(requestedIndex < 0){ requestedIndex = 0; }
+      if(requestedIndex >= this.steps.length){ this.complete(); return; }
+      const step = this.steps[requestedIndex];
+      const target = document.querySelector(step.selector);
+      if(!target){
+        this.show(requestedIndex + 1);
+        return;
+      }
+
+      this.index = requestedIndex;
+      this.isActive = true;
+      this.overlay.classList.add('is-visible');
+      this.overlay.setAttribute('aria-hidden', 'false');
+      this.setHighlight(target);
+
+      if(this.titleEl) this.titleEl.textContent = step.title;
+      if(this.textEl) this.textEl.textContent = step.body;
+      this.updateButtons();
+      this.position();
+      if(this.card){ this.card.focus({ preventScroll:true }); }
+    }
+
+    position(){
+      if(!this.card || !this.currentTarget) return;
+      const rect = this.currentTarget.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const margin = 16;
+
+      const cardWidth = Math.min(320, viewportWidth - margin*2);
+      this.card.style.width = `${cardWidth}px`;
+      this.card.style.maxWidth = `${cardWidth}px`;
+
+      const cardHeight = this.card.offsetHeight;
+      let top = rect.bottom + 18;
+      let pointer = 'top';
+      if(top + cardHeight > viewportHeight - margin){
+        top = rect.top - cardHeight - 18;
+        pointer = 'bottom';
+        if(top < margin){
+          top = Math.min(viewportHeight - cardHeight - margin, Math.max(margin, rect.top + rect.height/2 - cardHeight/2));
+        }
+      }
+      top = Math.max(margin, Math.min(top, viewportHeight - cardHeight - margin));
+
+      let left = rect.left + (rect.width/2) - (cardWidth/2);
+      left = Math.max(margin, Math.min(left, viewportWidth - cardWidth - margin));
+
+      this.card.style.top = `${top}px`;
+      this.card.style.left = `${left}px`;
+      this.card.dataset.pointer = pointer;
+
+      const pointerOffset = rect.left + (rect.width/2) - left;
+      const clampedPointer = Math.max(18, Math.min(cardWidth - 18, pointerOffset));
+      this.card.style.setProperty('--pointer-left', `${clampedPointer}px`);
+    }
+
+    updateButtons(){
+      if(this.prevBtn){ this.prevBtn.disabled = this.index === 0; }
+      if(this.nextBtn){ this.nextBtn.textContent = this.index === this.steps.length - 1 ? 'Finish' : 'Next'; }
+    }
+
+    handleNext(){
+      if(this.index >= this.steps.length - 1){ this.complete(); }
+      else{ this.show(this.index + 1); }
+    }
+
+    setHighlight(target){
+      if(this.currentTarget){ this.currentTarget.classList.remove('coachmark-highlight'); }
+      this.currentTarget = target;
+      if(this.currentTarget){ this.currentTarget.classList.add('coachmark-highlight'); }
+    }
+
+    complete(){
+      this.hide();
+      try{ localStorage.setItem(this.storageKey, 'hidden'); }
+      catch{}
+    }
+
+    hide(){
+      if(this.currentTarget){ this.currentTarget.classList.remove('coachmark-highlight'); this.currentTarget = null; }
+      if(this.overlay){
+        this.overlay.classList.remove('is-visible');
+        this.overlay.setAttribute('aria-hidden', 'true');
+      }
+      this.isActive = false;
+    }
+  }
+
   const slumbrLayers = new SlumbrLayersManager();
+  const slumbrCoachmarks = new SlumbrCoachmarks();
 
   window.addEventListener('beforeunload', ()=> slumbrLayers.saveAll(false));
 
