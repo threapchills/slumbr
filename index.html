@@ -1100,7 +1100,24 @@
         return;
       }
       const Bindex = this.getABIndex(channelName, index);
-      const metaB = ch.audioBuffers[Bindex];
+      let metaB = ch.audioBuffers[Bindex];
+
+      // On slower devices some A/B partner buffers may not be loaded yet. Without
+      // a fallback the crossfade modulator would sweep into silence which sounds
+      // like hard stuttering, especially on mobile. Temporarily mirror the
+      // primary buffer until the partner finishes loading so playback stays
+      // stable.
+      const needsFallback = !metaB || !metaB.buffer || metaB.buffer.duration < 0.05;
+      if(needsFallback){
+        metaB = metaA;
+        if(!this.isSoundLoaded(channelName, Bindex)){
+          this.pendingSpinnerSelections[channelName] = index;
+        }
+      }else{
+        if(this.pendingSpinnerSelections[channelName] === index){
+          delete this.pendingSpinnerSelections[channelName];
+        }
+      }
 
       const now = this.audioContext.currentTime;
       const fade = 0.35;
