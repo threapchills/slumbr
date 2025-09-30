@@ -1078,6 +1078,33 @@
       return Math.sqrt(sum/Math.max(1,n));
     }
 
+    static decodeAudioData(context, arrayBuffer){
+      return new Promise((resolve, reject)=>{
+        if(!context){
+          reject(new Error('No AudioContext available'));
+          return;
+        }
+
+        let settled = false;
+        const finish = (fn)=> (value)=>{
+          if(settled) return;
+          settled = true;
+          fn(value);
+        };
+        const handleResolve = finish(resolve);
+        const handleReject  = finish(err=> reject(err instanceof Error ? err : new Error(String(err))));
+
+        try{
+          const maybePromise = context.decodeAudioData(arrayBuffer, handleResolve, handleReject);
+          if(maybePromise && typeof maybePromise.then === 'function'){
+            maybePromise.then(handleResolve, handleReject);
+          }
+        }catch(err){
+          handleReject(err);
+        }
+      });
+    }
+
     async loadAudioFile(url){
       const shared = await SlumbrLayer.fetchSharedAudio(url);
       return shared;
@@ -1610,7 +1637,7 @@
         const response = await fetch(url, { cache:'force-cache' });
         if(!response.ok){ throw new Error(`HTTP ${response.status} for ${url}`); }
         const arrayBuffer = await response.arrayBuffer();
-        const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+        const audioBuffer = await SlumbrLayer.decodeAudioData(ctx, arrayBuffer);
         const rms = SlumbrLayer.computeRMS(audioBuffer);
         const target = 0.16;
         const pregain = Math.min(4, Math.max(0.25, target/(rms + 1e-6)));
