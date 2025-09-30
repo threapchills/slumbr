@@ -11,26 +11,32 @@
 
   <style>
     *{ margin:0; padding:0; box-sizing:border-box; }
+    html{ height:100%; }
     body{
       font-family:Arial, sans-serif;
       background:#0f1220 url('backgroundlatest.png') center/cover fixed;
       color:white;
       user-select:none;
-      overflow-x:hidden;
-      overflow-y:auto;
-      min-height:100dvh;
-      padding:0 12px 32px;
+      overflow:hidden;
+      min-height:100vh;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:clamp(16px, 6vh, 48px) clamp(14px, 6vw, 40px);
       position:relative;
     }
 
     .app-container{
       position:relative;
-      width:min(580px, 94vw);
+      width:min(580px, 94vw, calc((100vh - 96px) * 540 / 835));
       aspect-ratio:540 / 835;
       height:auto;
-      margin:clamp(12px, 4vh, 28px) auto;
-      max-height:calc(100vh - 80px);
+      margin:0 auto;
+      max-height:calc(100vh - 96px);
       --layer-scale:1;
+      flex:0 0 auto;
     }
     @supports not (aspect-ratio: 1){
       .app-container{ height:835px; }
@@ -249,12 +255,14 @@
     }
 
     @media (max-width:560px){
-      body{ padding:0 6px 24px; }
+      body{
+        padding:clamp(12px, 6vh, 28px) clamp(10px, 6vw, 18px);
+      }
       .app-container{
-        width:100%;
+        width:min(100%, calc((100vh - 72px) * 540 / 835));
         max-width:420px;
-        margin:clamp(8px, 4vh, 20px) auto;
-        max-height:none;
+        margin:0 auto;
+        max-height:calc(100vh - 72px);
       }
     }
 
@@ -414,11 +422,16 @@
   <script>
     (function(){
       const BASE_WIDTH = 540;
+      const BASE_HEIGHT = 835;
       const updateScale = ()=>{
         document.querySelectorAll('.app-container').forEach(container=>{
-          const width = container.clientWidth;
-          if(!width) return;
-          const scale = width / BASE_WIDTH;
+          const rect = container.getBoundingClientRect();
+          const width = rect.width;
+          const height = rect.height;
+          if(!width || !height) return;
+          const widthScale = width / BASE_WIDTH;
+          const heightScale = height / BASE_HEIGHT;
+          const scale = Math.min(widthScale, heightScale);
           container.style.setProperty('--layer-scale', scale.toFixed(4));
         });
       };
