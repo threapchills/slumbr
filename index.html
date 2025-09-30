@@ -623,6 +623,30 @@
     randBetween(min,max){ return min + Math.random()*(max-min); }
     randomInt(min, max){ return Math.floor(Math.random()*(max - min + 1)) + min; }
 
+    createStereoPannerNode(){
+      if(!this.audioContext){ return { node:null, param:null }; }
+      if(typeof this.audioContext.createStereoPanner === 'function'){
+        try{
+          const node = this.audioContext.createStereoPanner();
+          return { node, param: node.pan };
+        }catch(err){
+          console.warn('StereoPannerNode creation failed, falling back to PannerNode.', err);
+        }
+      }
+      if(typeof this.audioContext.createPanner === 'function'){
+        const node = this.audioContext.createPanner();
+        try{ node.panningModel = 'equalpower'; }catch{}
+        try{ node.positionY.value = 0; node.positionZ.value = 1; }catch{}
+        try{ node.positionX.value = 0; }catch{}
+        try{ node.setPosition(0, 0, 1); }catch{}
+        if(node.positionX){
+          return { node, param: node.positionX };
+        }
+      }
+      const node = this.audioContext.createGain();
+      return { node, param:null };
+    }
+
     removeStartListeners(){
       if(!this.startEvents || !this.boundInitializeListener) return;
       this.startEvents.forEach(evt=>{
@@ -771,31 +795,55 @@
 
       channel.sum = this.audioContext.createGain();
 
-      channel.pannerA = this.audioContext.createStereoPanner();
-      channel.pannerB = this.audioContext.createStereoPanner();
-      channel.pannerA.pan.value = 0;
-      channel.pannerB.pan.value = 0;
+      const pannerA = this.createStereoPannerNode();
+      channel.pannerA = pannerA.node;
+      channel.pannerAParam = pannerA.param;
+      if(channel.pannerAParam){
+        if(typeof channel.pannerAParam.setValueAtTime === 'function'){
+          channel.pannerAParam.setValueAtTime(0, this.audioContext.currentTime);
+        }else{
+          channel.pannerAParam.value = 0;
+        }
+      }
+
+      const pannerB = this.createStereoPannerNode();
+      channel.pannerB = pannerB.node;
+      channel.pannerBParam = pannerB.param;
+      if(channel.pannerBParam){
+        if(typeof channel.pannerBParam.setValueAtTime === 'function'){
+          channel.pannerBParam.setValueAtTime(0, this.audioContext.currentTime);
+        }else{
+          channel.pannerBParam.value = 0;
+        }
+      }
 
       channel.panLFOfreqA = this.randBetween(1/30, 1/12);
       channel.panLFOfreqB = this.randBetween(1/30, 1/12);
-
-      channel.panLFOA = this.audioContext.createOscillator();
-      channel.panLFOA.type = 'sine';
-      channel.panLFOA.frequency.value = channel.panLFOfreqA;
-
-      channel.panLFOB = this.audioContext.createOscillator();
-      channel.panLFOB.type = 'sine';
-      channel.panLFOB.frequency.value = channel.panLFOfreqB;
 
       channel.panDepthA = this.audioContext.createGain();
       channel.panDepthB = this.audioContext.createGain();
       channel.panDepthA.gain.value = 0;
       channel.panDepthB.gain.value = 0;
 
-      channel.panLFOA.connect(channel.panDepthA).connect(channel.pannerA.pan);
-      channel.panLFOB.connect(channel.panDepthB).connect(channel.pannerB.pan);
-      channel.panLFOA.start();
-      channel.panLFOB.start();
+      if(channel.pannerAParam){
+        channel.panLFOA = this.audioContext.createOscillator();
+        channel.panLFOA.type = 'sine';
+        channel.panLFOA.frequency.value = channel.panLFOfreqA;
+        channel.panLFOA.connect(channel.panDepthA).connect(channel.pannerAParam);
+        channel.panLFOA.start();
+      }else{
+        channel.panLFOA = null;
+      }
+
+      if(channel.pannerBParam){
+        channel.panLFOB = this.audioContext.createOscillator();
+        channel.panLFOB.type = 'sine';
+        channel.panLFOB.frequency.value = channel.panLFOfreqB;
+        channel.panLFOB.connect(channel.panDepthB).connect(channel.pannerBParam);
+        channel.panLFOB.start();
+      }else{
+        channel.panLFOB = null;
+      }
 
       channel.pannerA.connect(channel.sum);
       channel.pannerB.connect(channel.sum);
@@ -1147,8 +1195,12 @@
         ch.panDepthA.gain.setTargetAtTime(depth, this.audioContext.currentTime, 0.2);
         ch.panDepthB.gain.setTargetAtTime(depth, this.audioContext.currentTime, 0.2);
         if(depth < 0.001){
-          ch.pannerA.pan.setTargetAtTime(0, this.audioContext.currentTime, 0.1);
-          ch.pannerB.pan.setTargetAtTime(0, this.audioContext.currentTime, 0.1);
+          if(ch.pannerAParam && typeof ch.pannerAParam.setTargetAtTime === 'function'){
+            ch.pannerAParam.setTargetAtTime(0, this.audioContext.currentTime, 0.1);
+          }
+          if(ch.pannerBParam && typeof ch.pannerBParam.setTargetAtTime === 'function'){
+            ch.pannerBParam.setTargetAtTime(0, this.audioContext.currentTime, 0.1);
+          }
         }
       });
     }
