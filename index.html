@@ -17,24 +17,24 @@
       background:#0f1220 url('backgroundlatest.png') center/cover fixed;
       color:white;
       user-select:none;
-      overflow:hidden;
+      overflow-x:hidden;
+      overflow-y:auto;
       min-height:100vh;
       height:100%;
       display:flex;
       flex-direction:column;
       align-items:center;
-      justify-content:center;
+      justify-content:flex-start;
       padding:clamp(16px, 6vh, 48px) clamp(14px, 6vw, 40px);
       position:relative;
     }
 
     .app-container{
       position:relative;
-      width:min(580px, 94vw, calc((100vh - 96px) * 540 / 835));
+      width:min(580px, 94vw);
       aspect-ratio:540 / 835;
       height:auto;
       margin:0 auto;
-      max-height:calc(100vh - 96px);
       --layer-scale:1;
       flex:0 0 auto;
     }
@@ -259,10 +259,8 @@
         padding:clamp(12px, 6vh, 28px) clamp(10px, 6vw, 18px);
       }
       .app-container{
-        width:min(100%, calc((100vh - 72px) * 540 / 835));
-        max-width:420px;
+        width:min(100%, 420px);
         margin:0 auto;
-        max-height:calc(100vh - 72px);
       }
     }
 
