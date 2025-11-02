@@ -177,7 +177,15 @@
       transform:scale(0.97);
     }
     .save-load-button.load{ background-image:url('load.png'); }
+    .save-load-button.load:hover{
+      background:rgba(255,255,255,0.12) url('load.png') center/ calc(var(--layer-scale) * 40px) calc(var(--layer-scale) * 40px) no-repeat;
+      transform:translateY(-2px);
+    }
     .save-load-button.save{ background-image:url('save.png'); }
+    .save-load-button.save:hover{
+      background:rgba(255,255,255,0.12) url('save.png') center/ calc(var(--layer-scale) * 40px) calc(var(--layer-scale) * 40px) no-repeat;
+      transform:translateY(-2px);
+    }
 
     .eq-buttons{ position:absolute; bottom:calc(var(--layer-scale) * 100px); left:50%; transform:translateX(-50%); display:flex; gap:calc(var(--layer-scale) * 6px); align-items:center; justify-content:center; }
     .eq-button{
