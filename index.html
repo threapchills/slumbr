@@ -44,7 +44,7 @@
 
     .layer-switcher{
       position:absolute;
-      top:calc(var(--layer-scale) * 100px);
+      top:calc(var(--layer-scale) * 120px);
       left:50%;
       transform:translateX(-50%);
       display:flex;
@@ -82,6 +82,7 @@
     .layer-badge{
       position:absolute; top:calc(var(--layer-scale) * 26px); left:calc(var(--layer-scale) * 26px); background:rgba(0,0,0,0.45); padding:calc(var(--layer-scale) * 3px) calc(var(--layer-scale) * 8px); border-radius:999px;
       font-size:clamp(7px, var(--layer-scale) * 9px, 9px); letter-spacing:0.12em; text-transform:uppercase; opacity:0.7; pointer-events:none;
+      display: none;
     }
 
     .tintOverlay{
@@ -205,11 +206,11 @@
 
     .channel.sky{ --pos-x:152px; --pos-y:470px; }
     .channel.fire{ --pos-x:388px; --pos-y:470px; }
-    .channel.earth{ --pos-x:152px; --pos-y:716px; }
-    .channel.sea{ --pos-x:388px; --pos-y:716px; }
+    .channel.earth{ --pos-x:152px; --pos-y:690px; }
+    .channel.sea{ --pos-x:388px; --pos-y:690px; }
     .control-knob.astral{ --pos-x:205px; --pos-y:268px; }
     .control-knob.lucid{ --pos-x:335px; --pos-y:268px; }
-    .control-knob.master{ --pos-x:270px; --pos-y:576px; }
+    .control-knob.master{ --pos-x:270px; --pos-y:550px; }
 
     .channel-content{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:calc(var(--layer-scale) * 4px); width:100%; }
     .channel.earth .channel-content > .channel-spinner,
@@ -227,7 +228,7 @@
 
     .loading-indicator{
       position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-      color:white; font-size:clamp(14px, var(--layer-scale) * 18px, 18px); text-align:center; padding:calc(var(--layer-scale) * 20px); background-color:rgba(0,0,0,0.5); border-radius:calc(var(--layer-scale) * 8px);
+      color:white; font-size:clamp(14px, var(--layer-scale) * 12px, 12px); text-align:center; padding:calc(var(--layer-scale) * 12px); background-color:rgba(0,0,0,0.5); border-radius:calc(var(--layer-scale) * 8px);
       cursor:pointer;
       touch-action:manipulation;
     }
@@ -1675,9 +1676,9 @@
       this.activeIndex = 0;
 
       this.layerConfigs = [
-        { label:'Aurora', baseTint:{ r:120, g:180, b:255 }, baseTintWeight:0.30, theme:'layer-theme-blue', startText:'Start Aurora' },
-        { label:'Verdant', baseTint:{ r:110, g:240, b:170 }, baseTintWeight:0.28, theme:'layer-theme-green', startText:'Start Verdant' },
-        { label:'Crimson', baseTint:{ r:255, g:150, b:160 }, baseTintWeight:0.32, theme:'layer-theme-red', startText:'Start Crimson' }
+        { label:'Aurora', baseTint:{ r:120, g:180, b:255 }, baseTintWeight:0.30, theme:'layer-theme-blue', startText:'Start SLumbr' },
+        { label:'Verdant', baseTint:{ r:110, g:240, b:170 }, baseTintWeight:0.28, theme:'layer-theme-green', startText:'Start SLumbr' },
+        { label:'Crimson', baseTint:{ r:255, g:150, b:160 }, baseTintWeight:0.32, theme:'layer-theme-red', startText:'Start SLumbr' }
       ];
 
       this.layerButtons.forEach((button, idx)=>{
