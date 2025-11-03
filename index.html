@@ -44,7 +44,7 @@
 
     .layer-switcher{
       position:absolute;
-      top:calc(var(--layer-scale) * 120px);
+      top:calc(var(--layer-scale) * 150px);
       left:50%;
       transform:translateX(-50%);
       display:flex;
@@ -228,9 +228,13 @@
 
     .loading-indicator{
       position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-      color:white; font-size:clamp(14px, var(--layer-scale) * 12px, 12px); text-align:center; padding:calc(var(--layer-scale) * 12px); background-color:rgba(0,0,0,0.5); border-radius:calc(var(--layer-scale) * 8px);
+      color:white; font-size:clamp(11px, var(--layer-scale) * 13px, 13px); text-align:center; 
+      width:calc(var(--layer-scale) * 90px); height:calc(var(--layer-scale) * 90px);
+      display:flex; align-items:center; justify-content:center;
+      padding:calc(var(--layer-scale) * 8px);
+      background-color:rgba(0,0,0,0.6); border-radius:50%;
       cursor:pointer;
-      touch-action:manipulation;
+      touch-action:manipulation;  
     }
     .progress{ margin-top:calc(var(--layer-scale) * 12px); width:calc(var(--layer-scale) * 260px); height:calc(var(--layer-scale) * 6px); background:rgba(255,255,255,0.15); border-radius:calc(var(--layer-scale) * 3px); overflow:hidden; }
     .progress-bar{ height:100%; width:0%; background:#2ecc71; transition:width 0.2s ease; }
@@ -1676,9 +1680,9 @@
       this.activeIndex = 0;
 
       this.layerConfigs = [
-        { label:'Aurora', baseTint:{ r:120, g:180, b:255 }, baseTintWeight:0.30, theme:'layer-theme-blue', startText:'Start SLumbr' },
-        { label:'Verdant', baseTint:{ r:110, g:240, b:170 }, baseTintWeight:0.28, theme:'layer-theme-green', startText:'Start SLumbr' },
-        { label:'Crimson', baseTint:{ r:255, g:150, b:160 }, baseTintWeight:0.32, theme:'layer-theme-red', startText:'Start SLumbr' }
+        { label:'Aurora', baseTint:{ r:120, g:180, b:255 }, baseTintWeight:0.30, theme:'layer-theme-blue', startText:'Start Slumbr' },
+        { label:'Verdant', baseTint:{ r:110, g:240, b:170 }, baseTintWeight:0.28, theme:'layer-theme-green', startText:'Start Slumbr' },
+        { label:'Crimson', baseTint:{ r:255, g:150, b:160 }, baseTintWeight:0.32, theme:'layer-theme-red', startText:'Start Slumbr' }
       ];
 
       this.layerButtons.forEach((button, idx)=>{
