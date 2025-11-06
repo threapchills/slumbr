@@ -434,8 +434,40 @@
     (function(){
       const BASE_WIDTH = 540;
       const BASE_HEIGHT = 835;
+
       const updateScale = ()=>{
+        const viewportWidth = document.documentElement?.clientWidth || window.innerWidth;
+        const viewportHeight = window.innerHeight || document.documentElement?.clientHeight || 0;
+        const bodyStyles = window.getComputedStyle(document.body);
+        const bodyPaddingX = parseFloatOrZero(bodyStyles.paddingLeft) + parseFloatOrZero(bodyStyles.paddingRight);
+        const bodyPaddingY = parseFloatOrZero(bodyStyles.paddingTop) + parseFloatOrZero(bodyStyles.paddingBottom);
+
         document.querySelectorAll('.app-container').forEach(container=>{
+
+          const containerStyles = window.getComputedStyle(container);
+          const marginTop = parseFloatOrZero(containerStyles.marginTop);
+          const marginBottom = parseFloatOrZero(containerStyles.marginBottom);
+
+          const availableWidth = Math.max(0,
+            Math.min(
+              MAX_WIDTH,
+              viewportWidth * VIEWPORT_WIDTH_RATIO,
+              viewportWidth - bodyPaddingX
+            )
+          );
+
+          const availableHeightRaw = viewportHeight - marginTop - marginBottom - bodyPaddingY;
+          const scaleFromWidth = availableWidth > 0 ? (availableWidth / BASE_WIDTH) : 1;
+          const scaleFromHeight = availableHeightRaw > 0 ? (availableHeightRaw / BASE_HEIGHT) : scaleFromWidth;
+          const rawScale = Math.min(scaleFromWidth, scaleFromHeight);
+          const scale = rawScale > 0 && Number.isFinite(rawScale) ? rawScale : 1;
+
+          const targetWidth = BASE_WIDTH * scale;
+          const targetHeight = BASE_HEIGHT * scale;
+
+          container.style.width = `${targetWidth}px`;
+          container.style.height = `${targetHeight}px`;
+=======
           const rect = container.getBoundingClientRect();
           const width = rect.width;
           const height = rect.height;
@@ -443,6 +475,7 @@
           const widthScale = width / BASE_WIDTH;
           const heightScale = height / BASE_HEIGHT;
           const scale = Math.min(widthScale, heightScale);
+
           container.style.setProperty('--layer-scale', scale.toFixed(4));
         });
       };
@@ -452,6 +485,9 @@
         document.querySelectorAll('.app-container').forEach(container=>resizeObserver.observe(container));
       }
       window.addEventListener('resize', updateScale, { passive:true });
+      if(window.visualViewport){
+        window.visualViewport.addEventListener('resize', updateScale, { passive:true });
+      }
       updateScale();
     })();
   </script>
