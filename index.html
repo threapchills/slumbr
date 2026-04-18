@@ -188,6 +188,149 @@
       transform:translateY(-2px);
     }
 
+    .unison-toggle{
+      width:calc(var(--layer-scale) * 26px);
+      height:calc(var(--layer-scale) * 26px);
+      border-radius:50%;
+      border:1px solid rgba(120,180,255,0.45);
+      background:radial-gradient(circle at 35% 35%, rgba(120,180,255,0.10), rgba(18,24,46,0.55));
+      cursor:pointer;
+      position:relative;
+      padding:0;
+      flex:0 0 auto;
+      transition:box-shadow 0.25s ease, background 0.25s ease, transform 0.12s ease, border-color 0.25s ease;
+      align-self:center;
+      touch-action:manipulation;
+    }
+    .unison-toggle::after{
+      content:"";
+      position:absolute;
+      inset:calc(var(--layer-scale) * 6px);
+      border-radius:50%;
+      background:rgba(120,180,255,0.10);
+      transition:background 0.25s ease, box-shadow 0.25s ease;
+    }
+    .unison-toggle:hover{ transform:scale(1.08); border-color:rgba(160,210,255,0.7); }
+    .unison-toggle.is-on{
+      border-color:rgba(150,205,255,0.9);
+      box-shadow:0 0 14px rgba(80,150,255,0.55), inset 0 0 4px rgba(180,220,255,0.35);
+    }
+    .unison-toggle.is-on::after{
+      background:radial-gradient(circle at 30% 30%, rgba(225,240,255,0.95), rgba(70,150,255,0.9));
+      box-shadow:0 0 6px rgba(160,200,255,0.55);
+    }
+    .unison-toggle:focus-visible{ outline:2px solid rgba(140,200,255,0.85); outline-offset:3px; }
+
+    .app-loader{
+      position:absolute;
+      inset:0;
+      z-index:340;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      pointer-events:auto;
+      border-radius:12px;
+      overflow:hidden;
+      transition:opacity 0.55s ease;
+    }
+    .app-loader.is-hidden{
+      pointer-events:none;
+      opacity:0;
+    }
+    .app-loader__dim{
+      position:absolute;
+      inset:0;
+      background:rgba(8,10,22,0.18);
+      pointer-events:none;
+    }
+    .app-loader__fill{
+      position:absolute;
+      bottom:0;
+      left:0;
+      right:0;
+      height:0%;
+      background:linear-gradient(to top, rgba(70,140,210,0.55) 0%, rgba(120,200,230,0.32) 70%, rgba(180,230,255,0.10) 100%);
+      transition:height 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+      pointer-events:none;
+    }
+    .app-loader__fill::after{
+      content:"";
+      position:absolute;
+      top:-1px;
+      left:0;
+      right:0;
+      height:2px;
+      background:linear-gradient(to right, transparent, rgba(190,235,255,0.85), transparent);
+      filter:blur(1px);
+      pointer-events:none;
+    }
+    .app-loader__content{
+      position:relative;
+      z-index:2;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:18px;
+      text-align:center;
+      pointer-events:none;
+      padding:24px;
+    }
+    .app-loader__start{
+      pointer-events:auto;
+      appearance:none;
+      background:radial-gradient(circle at 30% 30%, rgba(180,220,255,0.18), rgba(20,30,50,0.55));
+      border:1px solid rgba(180,220,255,0.45);
+      color:#f5f8ff;
+      border-radius:999px;
+      padding:18px 40px;
+      cursor:pointer;
+      font-family:Arial, sans-serif;
+      transition:transform 0.15s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+      box-shadow:0 0 24px rgba(80,140,220,0.25), inset 0 0 18px rgba(180,220,255,0.05);
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      align-items:center;
+      touch-action:manipulation;
+    }
+    .app-loader__start:hover{
+      transform:translateY(-2px);
+      border-color:rgba(200,230,255,0.75);
+      box-shadow:0 0 32px rgba(120,180,255,0.4), inset 0 0 22px rgba(180,220,255,0.08);
+    }
+    .app-loader__start:active{ transform:translateY(0); }
+    .app-loader__start-text{
+      font-size:clamp(13px, 2vw, 16px);
+      letter-spacing:0.32em;
+      text-transform:uppercase;
+      font-weight:600;
+    }
+    .app-loader__start-sub{
+      font-size:clamp(9px, 1.4vw, 11px);
+      letter-spacing:0.22em;
+      opacity:0.7;
+      text-transform:uppercase;
+    }
+    .app-loader__progress{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      align-items:center;
+      color:#f5f8ff;
+      font-size:clamp(11px, 1.6vw, 13px);
+      letter-spacing:0.22em;
+      text-transform:uppercase;
+      opacity:0.85;
+    }
+    .app-loader__progress[hidden]{ display:none; }
+    .app-loader.is-loading .app-loader__start{ display:none; }
+    .app-container.is-loading .layer-stack,
+    .app-container.is-loading .layer-switcher,
+    .app-container.is-loading .hint-replay-button{ opacity:0.5; transition:opacity 0.4s ease; }
+    .app-container.is-loading .hint-replay-button{ pointer-events:none; }
+    .app-container.is-loading .layer-switcher .layer-dot{ pointer-events:none; }
+    .loading-indicator{ display:none !important; }
+
     .eq-buttons{ position:absolute; bottom:calc(var(--layer-scale) * 100px); left:50%; transform:translateX(-50%); display:flex; gap:calc(var(--layer-scale) * 6px); align-items:center; justify-content:center; }
     .eq-button{
       width:calc(var(--layer-scale) * 16px); height:calc(var(--layer-scale) * 16px); border-radius:50%;
@@ -294,7 +437,7 @@
 </style></style>
 </head>
 <body>
-  <div class="app-container">
+  <div class="app-container is-loading">
     <button type="button" class="hint-replay-button" data-action="show-hints" aria-label="Show SLUMBR guide">?</button>
     <div class="layer-switcher" role="tablist" aria-label="Sound layer selector">
       <button class="layer-dot active" data-index="0" aria-label="Aurora layer"></button>
@@ -302,6 +445,19 @@
       <button class="layer-dot" data-index="2" aria-label="Crimson layer"></button>
     </div>
     <div id="layerStack" class="layer-stack"></div>
+    <div id="appLoader" class="app-loader" aria-live="polite">
+      <div class="app-loader__dim"></div>
+      <div class="app-loader__fill" data-id="appLoaderFill"></div>
+      <div class="app-loader__content">
+        <button type="button" class="app-loader__start" data-id="appLoaderStart">
+          <span class="app-loader__start-text">Start SLUMBR</span>
+          <span class="app-loader__start-sub">Tap to wake the rig</span>
+        </button>
+        <div class="app-loader__progress" data-id="appLoaderProgress" hidden>
+          <div class="app-loader__progress-text" data-id="appLoaderText">Loading 0%</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <template id="slumbrLayerTemplate">
@@ -409,6 +565,7 @@
 
         <div class="save-load-buttons">
           <button class="save-load-button load" data-id="loadButton" aria-label="Load preset" type="button"></button>
+          <button class="unison-toggle" data-id="unisonToggle" aria-label="Unison mode: play all three layers at once" aria-pressed="false" title="Unison: layer all three realms together" type="button"></button>
           <button class="save-load-button randomize" data-id="randomizeButton" aria-label="Randomize preset" type="button"></button>
           <button class="save-load-button save" data-id="saveButton" aria-label="Save preset" type="button"></button>
         </div>
@@ -480,7 +637,14 @@
       this.suppressUserStartCallback = false;
       this.initializingPromise = null;
 
-      this.corePreloadCount = 3;
+      // Coarse-pointer (mobile / touch-only) devices struggle to decode many OGGs
+      // at once; preload fewer per channel up-front so the global loader unlocks
+      // sooner and the rest streams in on the lazy pass.
+      const isCoarsePointer = typeof window !== 'undefined' && window.matchMedia
+        ? window.matchMedia('(pointer: coarse)').matches
+        : false;
+      this.corePreloadCount = isCoarsePointer ? 2 : 3;
+      this.idleGapMs = isCoarsePointer ? 64 : 32;
       this.channelLoadStatus = {};
       this.pendingSpinnerSelections = {};
       this.lazyLoadingPromise = null;
@@ -715,6 +879,10 @@
           this.requestWakeLock();
           this.updateTintOverlay();
           this.updatePanWidthFromAstral();
+          if(typeof this.options.onInitialized === 'function'){
+            try{ this.options.onInitialized(this); }
+            catch(err){ console.error('onInitialized handler failed', err); }
+          }
         }catch(err){
           console.error('Failed to initialize SLUMBR:', err);
           if(loadingIndicator){
@@ -750,13 +918,38 @@
       this.limiter.attack.value = 0.003;
       this.limiter.release.value = 0.08;
 
+      this.presenceGain = this.audioContext.createGain();
+      this.presenceGain.gain.value = this._enabledTarget != null ? this._enabledTarget : 0;
+
       this.masterGain.connect(low);
       low.connect(mid); mid.connect(high); high.connect(dark); dark.connect(this.limiter);
-      this.limiter.connect(this.audioContext.destination);
+      this.limiter.connect(this.presenceGain);
+      this.presenceGain.connect(this.audioContext.destination);
 
       for(const channelName of this.orderedChannelNames){ this.setupChannelAudio(channelName); }
 
       this.setEQMode('white');
+    }
+
+    setEnabled(isEnabled, immediate=false){
+      const target = isEnabled ? 1 : 0;
+      this._enabledTarget = target;
+      if(!this.presenceGain || !this.audioContext){ return; }
+      const t = this.audioContext.currentTime;
+      this.presenceGain.gain.cancelScheduledValues(t);
+      if(immediate){
+        this.presenceGain.gain.setValueAtTime(target, t);
+      }else{
+        this.presenceGain.gain.setValueAtTime(this.presenceGain.gain.value, t);
+        this.presenceGain.gain.linearRampToValueAtTime(target, t + 0.35);
+      }
+    }
+
+    setUnisonVisual(isOn){
+      const toggle = this.el('unisonToggle');
+      if(!toggle) return;
+      toggle.classList.toggle('is-on', !!isOn);
+      toggle.setAttribute('aria-pressed', isOn ? 'true' : 'false');
     }
 
     setEQMode(mode){
@@ -896,6 +1089,10 @@
         text.textContent = done >= total ? 'Ready' : `Loading essentials ${pct}%`;
       }
       if(bar)  bar.style.width   = `${pct}%`;
+      if(typeof this.options.onCoreProgress === 'function'){
+        try{ this.options.onCoreProgress(this, done, total); }
+        catch(err){ console.error('onCoreProgress handler failed', err); }
+      }
     }
 
     async loadAllSounds(){
@@ -999,7 +1196,7 @@
       if(typeof window !== 'undefined' && 'requestIdleCallback' in window){
         return new Promise(resolve=> requestIdleCallback(()=> resolve(), { timeout:180 }));
       }
-      return new Promise(resolve=> setTimeout(resolve, 32));
+      return new Promise(resolve=> setTimeout(resolve, this.idleGapMs || 32));
     }
 
     markSoundLoaded(channelName, index, meta){
@@ -1513,6 +1710,24 @@
           this.applyState(state);
         });
       }
+
+      const unisonToggle = this.el('unisonToggle');
+      if(unisonToggle){
+        const stop = (event)=>{
+          event.preventDefault();
+          event.stopPropagation();
+        };
+        // Block the layer-root start listener from firing when the toggle is tapped.
+        unisonToggle.addEventListener('pointerdown', stop);
+        unisonToggle.addEventListener('touchstart', stop, { passive:false });
+        unisonToggle.addEventListener('click', (event)=>{
+          event.preventDefault();
+          event.stopPropagation();
+          if(this.options.onToggleUnison){
+            this.options.onToggleUnison(this);
+          }
+        });
+      }
     }
 
     generateRandomState(){
@@ -1673,11 +1888,23 @@
 
   class SlumbrLayersManager {
     constructor(){
+      this.appContainer = document.querySelector('.app-container');
       this.layerStack = document.getElementById('layerStack');
       this.template = document.getElementById('slumbrLayerTemplate');
       this.layerButtons = Array.from(document.querySelectorAll('.layer-dot'));
       this.layers = [];
       this.activeIndex = 0;
+      this.unisonStorageKey = 'slumbr_unison_v1';
+      this.unisonEnabled = this.loadUnisonState();
+
+      this.appLoader = document.getElementById('appLoader');
+      this.appLoaderFill = document.querySelector('[data-id="appLoaderFill"]');
+      this.appLoaderStart = document.querySelector('[data-id="appLoaderStart"]');
+      this.appLoaderProgress = document.querySelector('[data-id="appLoaderProgress"]');
+      this.appLoaderText = document.querySelector('[data-id="appLoaderText"]');
+      this.loadProgress = [];
+      this.loadHasStarted = false;
+      this.loadCompleted = false;
 
       this.layerConfigs = [
         { label:'Aurora', baseTint:{ r:120, g:180, b:255 }, baseTintWeight:0.30, theme:'layer-theme-blue', startText:'Start Slumbr' },
@@ -1690,7 +1917,142 @@
       });
 
       this.layerConfigs.forEach((_, idx)=> this.ensureLayer(idx));
+      this.layers.forEach(layer=> layer && layer.setUnisonVisual(this.unisonEnabled));
       this.activateLayer(0);
+      this.bindAppLoader();
+    }
+
+    bindAppLoader(){
+      if(!this.appLoaderStart) return;
+      const handler = (event)=>{
+        if(event){ event.preventDefault(); }
+        if(this.loadHasStarted) return;
+        this.loadHasStarted = true;
+        // Resume the AudioContext synchronously inside the user gesture so iOS
+        // Safari accepts it; then kick off the async init for all layers.
+        try{
+          const ctx = SlumbrLayer.getAudioContext();
+          if(ctx && ctx.state === 'suspended'){
+            const resumePromise = ctx.resume();
+            if(resumePromise && typeof resumePromise.catch === 'function'){
+              resumePromise.catch(()=>{});
+            }
+          }
+        }catch(err){ console.warn('AudioContext resume failed at start', err); }
+        this.appLoader.classList.add('is-loading');
+        if(this.appLoaderProgress){ this.appLoaderProgress.hidden = false; }
+        this.setLoadingFill(0.02);
+        this.startGlobalLoad();
+      };
+      this.appLoaderStart.addEventListener('click', handler);
+      this.appLoaderStart.addEventListener('touchend', handler, { passive:false });
+    }
+
+    startGlobalLoad(){
+      this.layers.forEach(layer=>{
+        if(!layer) return;
+        if(layer.isInitialized){
+          this.handleCoreProgress(layer, 1, 1);
+          return;
+        }
+        layer.externalInitialize().catch(err=>{
+          console.error('Layer init failed', err);
+          this.handleCoreProgress(layer, 1, 1);
+        });
+      });
+    }
+
+    handleCoreProgress(layer, done, total){
+      if(!layer) return;
+      this.loadProgress[layer.index] = { done, total };
+      let totalAcross = 0;
+      let doneAcross = 0;
+      this.loadProgress.forEach(p=>{
+        if(!p) return;
+        totalAcross += p.total || 0;
+        doneAcross += p.done || 0;
+      });
+      const ratio = totalAcross > 0 ? doneAcross / totalAcross : 0;
+      this.setLoadingFill(ratio);
+      const allReporting = this.layers.every((l, idx)=> !l || this.loadProgress[idx]);
+      const allComplete = allReporting && this.loadProgress.every(p=> !p || (p.total > 0 && p.done >= p.total));
+      if(allComplete && !this.loadCompleted){
+        this.completeLoading();
+      }
+    }
+
+    setLoadingFill(ratio){
+      if(!this.appLoaderFill) return;
+      const pct = Math.max(0, Math.min(1, ratio));
+      this.appLoaderFill.style.height = `${(pct*100).toFixed(1)}%`;
+      if(this.appLoaderText){
+        this.appLoaderText.textContent = `Loading ${Math.round(pct*100)}%`;
+      }
+    }
+
+    completeLoading(){
+      if(this.loadCompleted) return;
+      this.loadCompleted = true;
+      this.setLoadingFill(1);
+      if(this.appLoaderText){ this.appLoaderText.textContent = 'Ready'; }
+      window.setTimeout(()=>{
+        if(this.appLoader){ this.appLoader.classList.add('is-hidden'); }
+        if(this.appContainer){ this.appContainer.classList.remove('is-loading'); }
+      }, 320);
+      window.setTimeout(()=>{
+        if(this.appLoader && this.appLoader.parentNode){
+          this.appLoader.parentNode.removeChild(this.appLoader);
+        }
+      }, 1100);
+    }
+
+    loadUnisonState(){
+      try{ return localStorage.getItem(this.unisonStorageKey) === '1'; }
+      catch{ return false; }
+    }
+
+    saveUnisonState(){
+      try{ localStorage.setItem(this.unisonStorageKey, this.unisonEnabled ? '1' : '0'); }
+      catch{}
+    }
+
+    targetLayers(){
+      if(this.unisonEnabled) return this.layers.filter(Boolean);
+      const active = this.layers[this.activeIndex];
+      return active ? [active] : [];
+    }
+
+    applyEnabledState(){
+      this.layers.forEach((layer, idx)=>{
+        if(!layer) return;
+        const enabled = this.unisonEnabled || idx === this.activeIndex;
+        layer.setEnabled(enabled);
+      });
+    }
+
+    toggleUnison(){
+      this.setUnison(!this.unisonEnabled);
+    }
+
+    setUnison(enabled){
+      this.unisonEnabled = !!enabled;
+      this.saveUnisonState();
+      this.layers.forEach(layer=> layer && layer.setUnisonVisual(this.unisonEnabled));
+      if(this.unisonEnabled){
+        this.layers.forEach(layer=>{
+          if(layer && !layer.isInitialized){
+            layer.externalInitialize().catch(err=> console.error('Failed to init layer for unison', err));
+          }
+        });
+      }
+      this.applyEnabledState();
+    }
+
+    handleLayerInitialized(layer){
+      if(!layer) return;
+      layer.setUnisonVisual(this.unisonEnabled);
+      const enabled = this.unisonEnabled || layer.index === this.activeIndex;
+      layer.setEnabled(enabled, true);
     }
 
     ensureLayer(index){
@@ -1706,7 +2068,10 @@
         onUserStart: (layerInstance)=> this.handleLayerUserStart(layerInstance),
         onRequestSaveAll: ()=> this.saveAll(true),
         onRequestLoadAll: ()=> this.loadAll(),
-        onRequestRandomizeAll: ()=> this.randomizeAll()
+        onRequestRandomizeAll: ()=> this.randomizeAll(),
+        onToggleUnison: ()=> this.toggleUnison(),
+        onInitialized: (layerInstance)=> this.handleLayerInitialized(layerInstance),
+        onCoreProgress: (layerInstance, done, total)=> this.handleCoreProgress(layerInstance, done, total)
       };
 
       const layer = new SlumbrLayer(fragment, index, layerOptions);
@@ -1717,13 +2082,23 @@
     activateLayer(index){
       const layer = this.ensureLayer(index);
       if(!layer) return;
+      this.activeIndex = index;
       this.layers.forEach((l, idx)=>{ if(l){ l.setVisible(idx === index); } });
       this.layerButtons.forEach((btn, idx)=> btn.classList.toggle('active', idx === index));
-      this.activeIndex = index;
+      // In single mode, activating a layer that has not booted yet should boot it
+      // so the user actually hears something instead of switching into silence.
+      if(!layer.isInitialized){
+        const anyInitialized = this.layers.some(l=> l && l.isInitialized);
+        if(anyInitialized){
+          layer.externalInitialize().catch(err=> console.error('Failed to init activated layer', err));
+        }
+      }
+      this.applyEnabledState();
     }
 
     saveAll(forceInitialize = false){
-      this.layers.forEach(layer=>{
+      const targets = this.targetLayers();
+      targets.forEach(layer=>{
         if(!layer) return;
         const performSave = ()=>{ try{ layer.saveState(); }catch(err){ console.error('Failed to save layer state', err); } };
         if(layer.isInitialized){
@@ -1735,7 +2110,8 @@
     }
 
     loadAll(){
-      this.layers.forEach(layer=>{
+      const targets = this.targetLayers();
+      targets.forEach(layer=>{
         if(!layer) return;
         const performLoad = ()=>{ try{ layer.loadState(); }catch(err){ console.error('Failed to load layer state', err); } };
         if(layer.isInitialized){
@@ -1747,7 +2123,8 @@
     }
 
     randomizeAll(){
-      this.layers.forEach(layer=>{
+      const targets = this.targetLayers();
+      targets.forEach(layer=>{
         if(!layer) return;
         const applyRandom = ()=>{
           try{
@@ -1766,6 +2143,7 @@
     }
 
     handleLayerUserStart(originLayer){
+      if(!this.unisonEnabled) return;
       this.layers.forEach(layer=>{
         if(layer && layer !== originLayer && !layer.isInitialized){
           layer.externalInitialize().catch(err=> console.error('Failed to auto-start layer', err));
@@ -1829,15 +2207,16 @@
           placement:'bottom'
         },
         {
-          title:'Triplets Mode',
-          body:'Use these orbit dots to run up to three realms at once—triplets mode layers richer, more nuanced textures.',
+          title:'Three Realms',
+          body:'These orbit dots switch between three independent rigs: Aurora, Verdant and Crimson. Only one plays at a time by default.',
           target:()=> document.querySelector('.layer-switcher'),
           placement:'bottom'
         },
         {
-          title:'Save, Load & Random',
-          body:'Save tonight\'s blend, reload favourites, or randomise the full rig whenever you crave something new.',
+          title:'Save, Load, Random & Unison',
+          body:'Save tonight\'s blend, reload favourites, or roll the dice for something new. Tap the small blue light to enter Unison Mode and run all three realms together.',
           target:()=> this.queryActive('.save-load-buttons'),
+          extras:()=> [this.queryActive('.unison-toggle')].filter(Boolean),
           placement:'top'
         }
       ];
@@ -2012,11 +2391,5 @@
     window.addEventListener('load', ()=>{ navigator.serviceWorker.register('./sw.js').catch(()=>{}); });
   }
   </script>
-
-  <div style="text-align:center; margin-top:20px;">
-    <a href="https://mikewhyle.com/ai/" target="_blank" rel="noopener">
-      <img src="ad-mikewhyle-ai-consultant.png" alt="AI Consultant" style="max-width:100%; height:auto;">
-    </a>
-  </div>
 </body>
 </html>
